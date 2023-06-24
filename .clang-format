@@ -1,0 +1,15 @@
+{
+    "BasedOnStyle": "WebKit",
+    "IndentWidth": 4,
+    "TabWidth": 4,
+    "UseTab": false,
+    "BreakBeforeBraces": "WebKit",
+    "BreakConstructorInitializersBeforeComma": false,
+    "ColumnLimit": 120,
+    "AllowShortBlocksOnASingleLine": false,
+    "AllowShortCaseLabelsOnASingleLine": false,
+    "AllowShortFunctionsOnASingleLine": "All",
+    "AllowShortLambdasOnASingleLine": true,
+    "SpacesBeforeTrailingComments": 2,
+    "Standard": "c++20"
+}
