@@ -1,9 +1,15 @@
 #pragma once
 #include <cstdint>
+#include <cstring>
+#include <exception>
 #include <iostream>
 #include <map>
+#include <netinet/in.h>
 #include <ostream>
 #include <string>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <vector>
 
 namespace http {
 class Response {
@@ -41,7 +47,6 @@ public:
         os.append(std::string { "\r\n\r\n" });
         os.append(this->body);
 
-
         return os;
     }
 
@@ -57,5 +62,39 @@ private:
 
     // Body
     std::string body;
+};
+
+class Request {
+private:
+    size_t buf_limit;
+    size_t bytes_recv;
+    int client_fd;
+    int recv_flag = 0;
+    std::string buffer;
+
+    /**
+    Returns:
+    0 : Everything's okay
+    -1 : Buffer's empty (len 0)
+    */
+    int from_buffer() noexcept;
+
+public:
+    std::string http_version;
+    std::string code;
+    std::string reason_phrase;
+
+    // Headers
+    std::map<std::string, std::string> headers;
+
+    // Body
+    std::string body;
+
+    // Move/Copy semantics
+    Request(const Request&) = default;
+    Request(Request&&) = default;
+    Request& operator=(const Request&) = default;
+    Request& operator=(Request&&) = default;
+    Request(int client_fd, size_t req_size_limit = 4096);
 };
 }
