@@ -1,4 +1,5 @@
 #include "./http.hpp"
+#include <algorithm>
 
 // Request
 http::Request::Request(int client_fd, size_t req_size_limit)
@@ -27,14 +28,66 @@ int http::Request::from_buffer() noexcept
         return -1;
     }
 
-    int line = 0;
-
-
-
-    for (size_t i = 0; i < this->buffer.length(); i++) {
-        char8_t ch = this->buffer[i];
-        
+    std::vector<std::string> lines;
+    std::string line;
+    for (const auto& ch : this->buffer) {
+        if (ch == '\n') {
+            lines.push_back(line);
+            line.clear();
+            continue;
+        }
+        line.push_back(ch);
     }
 
+    for (size_t i = 0; i < lines.size(); i++) {
+        if (i == 0) {
+            int spaces = 0;
+            std::string buffer;
+            for (const char& ch : lines[0]) {
+                if (ch == ' ') {
+                    switch (spaces) {
+                    case 0:
+                        this->method = buffer;
+                        break;
+                    case 1:
+                        this->route = buffer;
+                        break;
+                    }
+                    spaces++;
+                    buffer.clear();
+                } else {
+                    buffer.push_back(ch);
+                }
+            }
+            this->http_version = buffer;
+            continue;
+        }
+
+        if (lines[i] == "\r\n") {
+            for (; i < lines.size(); i++) {
+                this->body.append(lines[i]);
+            }
+            break;
+        }
+
+        std::string key;
+        std::string val;
+        bool toggle = false;
+        if (lines[i].find(":") != std::string::npos) {
+            for (const auto& ch : lines[i]) {
+                if (ch == ':' && !toggle) {
+                    toggle = !toggle;
+                } else if (ch != ' ' && ch != '\r') {
+                    if (!toggle) {
+                        key.push_back(ch);
+                    } else {
+                        val.push_back(ch);
+                    }
+                }
+            }
+        }
+
+        this->headers[key] = val;
+    }
     return 0;
 }

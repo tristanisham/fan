@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
   int ret = bind(sockfd, (struct sockaddr*)&addr, sizeof(addr));
   if (ret < 0) {
-    std::cerr << "Error binding to port" << std::endl;
+    std::cerr << "Error binding to port " << PORT << std::endl;
     return -1;
   }
 

@@ -81,8 +81,8 @@ private:
 
 public:
     std::string http_version;
-    std::string code;
-    std::string reason_phrase;
+    std::string method;
+    std::string route;
 
     // Headers
     std::map<std::string, std::string> headers;
@@ -96,5 +96,17 @@ public:
     Request& operator=(const Request&) = default;
     Request& operator=(Request&&) = default;
     Request(int client_fd, size_t req_size_limit = 4096);
+
+    friend std::ostream& operator<<(std::ostream& os, const Request& obj)
+    {
+        os << obj.method << " " << obj.route << " " << obj.http_version << "\r\n";
+        for (const auto& pair : obj.headers) {
+            os << pair.first << ": " << pair.second << "\r\n";
+        }
+        os << "\r\n";
+        os << obj.body;
+
+        return os;
+    };
 };
 }
