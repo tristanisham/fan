@@ -15,6 +15,7 @@
 
 namespace http {
 
+// Request represents a http request to the server.
 class Request {
 private:
     size_t buf_limit;
