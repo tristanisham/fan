@@ -1,5 +1,7 @@
 #include "server.hpp"
 #include <cstring>
+#include "../http/http.hpp"
+
 
 server::Client::Client(const int& client_id) { this->client_fd = client_id; }
 
