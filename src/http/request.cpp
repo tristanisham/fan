@@ -40,6 +40,7 @@ int http::Request::from_buffer() noexcept
     }
 
     for (size_t i = 0; i < lines.size(); i++) {
+        // Request info parser
         if (i == 0) {
             int spaces = 0;
             std::string buffer;
@@ -63,13 +64,18 @@ int http::Request::from_buffer() noexcept
             continue;
         }
 
+        // Body parser
         if (lines[i] == "\r\n") {
-            for (; i < lines.size(); i++) {
-                this->body.append(lines[i]);
+            if (i + 1 < lines.size()) {
+                for (; i + 1 < lines.size(); i++) {
+                    this->body.append(lines[i + 1]);
+                }
             }
+
             break;
         }
 
+        // Header parser
         std::string key;
         std::string val;
         bool toggle = false;
