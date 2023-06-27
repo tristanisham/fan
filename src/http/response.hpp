@@ -29,7 +29,7 @@ public:
         for (const auto& pair : obj.headers) {
             os << pair.first << ": " << pair.second << "\r\n";
         }
-        os << "\r\n";
+        os << "\r\n\r\n";
         os << obj.body;
 
         return os;

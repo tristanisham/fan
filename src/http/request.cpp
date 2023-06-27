@@ -9,9 +9,7 @@ http::Request::Request(int client_fd, size_t req_size_limit)
 
     char buffer[this->buf_limit];
     this->bytes_recv = recv(this->client_fd, buffer, this->buf_limit, this->recv_flag);
-    this->buffer.assign(buffer, this->buf_limit);
-    this->buffer.shrink_to_fit();
-    this->buffer.resize(this->buffer.find_last_of("\r\n"));
+    this->buffer.assign(buffer, this->bytes_recv);  // Adjust the buffer size based on the bytes received
 
     switch (this->from_buffer()) {
     case 0:
@@ -28,11 +26,11 @@ int http::Request::from_buffer() noexcept
         return -1;
     }
 
+    this->buffer.shrink_to_fit();
+
     std::vector<std::string> lines;
     std::string line;
     // Fill lines
-    this->buffer.shrink_to_fit();
-    std::cout << this->buffer << std::endl;
     for (const auto& ch : this->buffer) {
         if (ch == '\n') {
             lines.push_back(line);
@@ -70,36 +68,23 @@ int http::Request::from_buffer() noexcept
     bool body_toggle = false;
 
     while (i < lines.size()) {
-        if (lines[i] == "\r\n") {
-            std::cout << "Just \\r\\n: " << i << std::endl;
+        if (lines[i].empty()) { //#TODO
 
             body_toggle = true;
+            i++;
             continue;
-        } else if (lines[i] == "\n") {
         }
 
         if (!body_toggle) {
-            if (lines[i].find(":") != std::string::npos) {
-                // Header parser
-                std::string key, val;
-                bool toggle = false;
-                for (const auto& ch : lines[i]) {
-                    if (ch == ':' && !toggle) {
-                        if (!toggle) {
-                            toggle = true;
-                        }
-                    } else if (ch != ' ' && ch != '\r' && ch != '\n') {
-                        if (!toggle) {
-                            key.push_back(ch);
-                        } else {
-                            val.push_back(ch);
-                        }
-                    }
-                }
+            size_t colon_pos = lines[i].find(":");
+            if (colon_pos != std::string::npos) {
+                std::string key = lines[i].substr(0, colon_pos);
+                std::string val = lines[i].substr(colon_pos + 1, lines[i].size() - colon_pos - 1);
                 this->headers[key] = val;
             }
         } else {
             this->body.append(lines[i]);
+            this->body.push_back('\n');
         }
 
         i++;
@@ -121,7 +106,7 @@ const std::string http::Request::to_string()
         out.append(pair.second);
         out.append("\r\n");
     }
-    out.append("\r\n");
+    out.append("\r\n\r\n");
     out.append(this->body);
     return out;
 }
