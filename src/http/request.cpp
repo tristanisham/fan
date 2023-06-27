@@ -30,6 +30,9 @@ int http::Request::from_buffer() noexcept
 
     std::vector<std::string> lines;
     std::string line;
+    // Fill lines
+    this->buffer.shrink_to_fit();
+    std::cout << this->buffer << std::endl;
     for (const auto& ch : this->buffer) {
         if (ch == '\n') {
             lines.push_back(line);
@@ -39,61 +42,86 @@ int http::Request::from_buffer() noexcept
         line.push_back(ch);
     }
 
-    for (size_t i = 0; i < lines.size(); i++) {
-        // Request info parser
-        if (i == 0) {
-            int spaces = 0;
-            std::string buffer;
-            for (const char& ch : lines[0]) {
-                if (ch == ' ') {
-                    switch (spaces) {
-                    case 0:
-                        this->method = buffer;
-                        break;
-                    case 1:
-                        this->route = buffer;
-                        break;
-                    }
-                    spaces++;
-                    buffer.clear();
-                } else {
-                    buffer.push_back(ch);
-                }
-            }
-            this->http_version = buffer;
-            continue;
-        }
+    // Parse header line
+    {
 
-        // Body parser
-        if (lines[i] == "\r\n") {
-            if (i + 1 < lines.size()) {
-                for (; i + 1 < lines.size(); i++) {
-                    this->body.append(lines[i + 1]);
+        int spaces = 0;
+        std::string buffer;
+        for (const char& ch : lines[0]) {
+            if (ch == ' ') {
+                switch (spaces) {
+                case 0:
+                    this->method = buffer;
+                    break;
+                case 1:
+                    this->route = buffer;
+                    break;
                 }
-            }
-
-            break;
-        }
-
-        // Header parser
-        std::string key;
-        std::string val;
-        bool toggle = false;
-        if (lines[i].find(":") != std::string::npos) {
-            for (const auto& ch : lines[i]) {
-                if (ch == ':' && !toggle) {
-                    toggle = !toggle;
-                } else if (ch != ' ' && ch != '\r') {
-                    if (!toggle) {
-                        key.push_back(ch);
-                    } else {
-                        val.push_back(ch);
-                    }
-                }
+                spaces++;
+                buffer.clear();
+            } else {
+                buffer.push_back(ch);
             }
         }
-
-        this->headers[key] = val;
+        this->http_version = buffer;
     }
+
+    int i = 1;
+    bool body_toggle = false;
+
+    while (i < lines.size()) {
+        if (lines[i] == "\r\n") {
+            std::cout << "Just \\r\\n: " << i << std::endl;
+
+            body_toggle = true;
+            continue;
+        } else if (lines[i] == "\n") {
+        }
+
+        if (!body_toggle) {
+            if (lines[i].find(":") != std::string::npos) {
+                // Header parser
+                std::string key, val;
+                bool toggle = false;
+                for (const auto& ch : lines[i]) {
+                    if (ch == ':' && !toggle) {
+                        if (!toggle) {
+                            toggle = true;
+                        }
+                    } else if (ch != ' ' && ch != '\r' && ch != '\n') {
+                        if (!toggle) {
+                            key.push_back(ch);
+                        } else {
+                            val.push_back(ch);
+                        }
+                    }
+                }
+                this->headers[key] = val;
+            }
+        } else {
+            this->body.append(lines[i]);
+        }
+
+        i++;
+    }
+
     return 0;
+}
+
+const std::string http::Request::to_string()
+{
+    std::string out;
+    out.append(this->method);
+    out.append(this->route);
+    out.append(this->http_version);
+    out.append("\r\n");
+    for (const auto& pair : this->headers) {
+        out.append(pair.first);
+        out.append(": ");
+        out.append(pair.second);
+        out.append("\r\n");
+    }
+    out.append("\r\n");
+    out.append(this->body);
+    return out;
 }

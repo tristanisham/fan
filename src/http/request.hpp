@@ -59,5 +59,8 @@ public:
 
         return os;
     };
+
+    const std::string to_string();
+
 };
 }

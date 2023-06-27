@@ -17,7 +17,11 @@ namespace http {
 class Response {
 public:
     Response(std::string body) { this->body = body; }
-    
+    Response(const Response&) = default;
+    Response(Response&&) = default;
+    Response& operator=(const Response&) = default;
+    Response& operator=(Response&&) = default;
+
     // Bullshit to make the "<<" operator work for std::cout
     friend std::ostream& operator<<(std::ostream& os, const Response& obj)
     {
@@ -31,7 +35,7 @@ public:
         return os;
     };
 
-    std::string to_string()
+    const std::string to_string()
     {
         std::string os;
         os.append(this->http_version);
@@ -40,20 +44,22 @@ public:
         os.append(" ");
         os.append(this->reason_phrase);
         os.append(std::string { "\r\n" });
-        os.append("Content-Type: text/plain");
         for (const auto& pair : this->headers) {
             os.append(pair.first);
             os.append(": ");
             os.append(pair.second);
             os.append(std::string { "\r\n" });
         }
-        os.append(std::string { "\r\n\r\n" });
+        os.append(std::string { "\r\n" });
         os.append(this->body);
 
         return os;
     }
 
     size_t content_length() { return this->body.length(); }
+    void set_header(const std::string& key, const std::string& val);
+    // get_header() returns the value of the key if it exists, or an empty string.
+    const std::string get_header(const std::string& key) noexcept;
 
 private:
     std::string http_version = "HTTP/1.1";
