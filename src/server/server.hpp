@@ -14,17 +14,6 @@
 
 namespace server {
 
-class Router {
-  public:
-    void get(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void put(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void del(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void head(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void options(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void patch(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void trace(std::string route, std::function<http::Response(http::Request req)> ctx);
-};
-
 /**
  * ThreadPool for managing concurrent web requests.
  * Based off: https://stackoverflow.com/questions/15752659/thread-pooling-in-c11
@@ -60,6 +49,25 @@ private:
     int client_fd;
 };
 
-int start(int port);
+class Router : ThreadPool::Action {
+public:
+    void get(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void put(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void del(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void head(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void options(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void patch(std::string route, std::function<http::Response(http::Request req)> ctx);
+    void trace(std::string route, std::function<http::Response(http::Request req)> ctx);
+
+    void job() override;
+};
+
+std::shared_ptr<Router> default_router();
+
+/**
+@param port - The port for the server to bind to
+@param std::shared_ptr<Router> - A router for the server if you want one. Will be default_router() if not.
+*/
+int start(int port, std::shared_ptr<Router> = default_router());
 
 }

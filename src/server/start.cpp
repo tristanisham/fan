@@ -1,6 +1,6 @@
 #include "./server.hpp"
 
-int server::start(int port)
+int server::start(int port, std::shared_ptr<server::Router> router)
 {
   int sockfd;
   struct sockaddr_in addr;
