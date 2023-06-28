@@ -12,11 +12,8 @@ add_executable(void ${SRC_FILES})
 target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES})
 target_link_libraries(void PRIVATE pthread)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fsanitize=leak -fno-omit-frame-pointer")
+set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address -fsanitize=leak -fno-omit-frame-pointer")
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_options(-g -Wall -Wextra)
-else()
-    add_compile_options(-O3 -DNDEBUG)
-endif()
 
 install(TARGETS void RUNTIME DESTINATION bin)

@@ -2,7 +2,12 @@
 #include "server.hpp"
 #include <cstring>
 
-server::Client::Client(const int& client_id) { this->client_fd = client_id; }
+// server::Client::Client(const int& client_id) { this->client_fd = client_id; }
+server::Client::Client(const int& client_id, server::Router* router)
+{
+    this->client_fd = client_id;
+    this->router = router;
+};
 
 void server::Client::job()
 {
@@ -13,11 +18,8 @@ void server::Client::job()
     response.set_header("Content-Type", "text/plain");
     // std::cout << "DEBUG: Current Thread ID " << std::this_thread::get_id() << "\n" << std::endl;
     // TO BE DELETED
-    std::cout <<
-    " Method: " << request.method
-    << "\nRoute: " << request.route
-    << "\nStandard: " << request.http_version
-    << "\nHeaders:\n";
+    std::cout << " Method: " << request.method << "\nRoute: " << request.route << "\nStandard: " << request.http_version
+              << "\nHeaders:\n";
     for (const auto& header : request.headers) {
         std::cout << "\t" << header.first << ": " << header.second << "\n";
     }

@@ -7,9 +7,10 @@ http::Request::Request(int client_fd, size_t req_size_limit)
 {
     this->client_fd = client_fd;
     this->buf_limit = req_size_limit;
+    this->buffer.resize(this->buf_limit);
 
-    char buffer[this->buf_limit];
-    this->bytes_recv = recv(this->client_fd, buffer, this->buf_limit, this->recv_flag);
+
+    this->bytes_recv = recv(this->client_fd, this->buffer.data(), this->buf_limit, this->recv_flag);
     this->buffer.assign(buffer, this->bytes_recv);  // Adjust the buffer size based on the bytes received
 
     switch (this->from_buffer()) {

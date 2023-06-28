@@ -26,11 +26,17 @@ public:
         virtual void job() {};
     };
     void start();
+    /**
+    @param job Freed by reciever. Do not free as caller.
+    */
     void queue_job(Action* job);
     void stop();
     bool busy();
 
 private:
+    /**
+    thread_loop() frees *Actions after running
+    */
     void thread_loop();
     bool should_terminate = false;
     std::mutex queue_mutex;
@@ -39,18 +45,16 @@ private:
     std::queue<Action*> jobs;
 };
 
-class Client : public ThreadPool::Action {
+class Router {
 public:
-    Client(const int& client_id);
+    // Move/Copy semantics
+    Router() = default;
+    Router(const Router&) = default;
+    Router(Router&&) = default;
+    Router& operator=(const Router&) = default;
+    Router& operator=(Router&&) = default;
 
-    void job() override;
-
-private:
-    int client_fd;
-};
-
-class Router : ThreadPool::Action {
-public:
+    // Routing semantics
     void get(std::string route, std::function<http::Response(http::Request req)> ctx);
     void put(std::string route, std::function<http::Response(http::Request req)> ctx);
     void del(std::string route, std::function<http::Response(http::Request req)> ctx);
@@ -58,8 +62,18 @@ public:
     void options(std::string route, std::function<http::Response(http::Request req)> ctx);
     void patch(std::string route, std::function<http::Response(http::Request req)> ctx);
     void trace(std::string route, std::function<http::Response(http::Request req)> ctx);
+};
+
+class Client : public ThreadPool::Action {
+public:
+    // Client(const int& client_id);
+    Client(const int& client_id, Router* router);
 
     void job() override;
+
+private:
+    int client_fd;
+    Router* router;
 };
 
 std::shared_ptr<Router> default_router();
