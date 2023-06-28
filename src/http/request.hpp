@@ -29,7 +29,11 @@ private:
     0 : Everything's okay
     -1 : Buffer's empty (len 0)
     */
-    int from_buffer() noexcept;
+    int from_buffer();
+    /**
+    @return lin-pos for end of the first line.
+    */
+    size_t parse_routing() noexcept;
 
 public:
     std::string http_version;

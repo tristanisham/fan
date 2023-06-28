@@ -12,7 +12,17 @@ void server::Client::job()
     response.set_header("Content-Length", std::to_string((int)response.content_length()));
     response.set_header("Content-Type", "text/plain");
     // std::cout << "DEBUG: Current Thread ID " << std::this_thread::get_id() << "\n" << std::endl;
-    std::cout << request << std::endl;
+    // TO BE DELETED
+    std::cout <<
+    " Method: " << request.method
+    << "\nRoute: " << request.route
+    << "\nStandard: " << request.http_version
+    << "\nHeaders:\n";
+    for (const auto& header : request.headers) {
+        std::cout << "\t" << header.first << ": " << header.second << "\n";
+    }
+    std::cout << "Body:\n" << request.body << std::endl;
+    // END DELETE
 
     std::string response_str = response.to_string();
     if (send(this->client_fd, response_str.c_str(), response_str.size(), 0) < 0) {
