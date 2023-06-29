@@ -10,7 +10,7 @@ public:
     exception(const int& code)
     {
         this->code = code;
-        switch (this->code) {
+        switch (this->code) { // Need to handle more possibilities.
         case 400:
             this->status = "Bad Request";
             break;
