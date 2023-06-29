@@ -1,7 +1,6 @@
 #include "./request.hpp"
 #include "./exceptions.hpp"
 #include <algorithm>
-#include <stdexcept>
 #include <utility>
 
 // Request

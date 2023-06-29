@@ -1,7 +1,7 @@
 #include "../http/http.hpp"
 #include "server.hpp"
 #include <cstring>
-#include <stdexcept>
+#include <exception>
 
 // server::Client::Client(const int& client_id) { this->client_fd = client_id; }
 server::Backend::Backend(const int& client_id, server::Router* router)
