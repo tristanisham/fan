@@ -13,3 +13,4 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j8
 ```
 
+https://gavinchou.github.io/experience/summary/syntax/gcc-address-sanitizer/
