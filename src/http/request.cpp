@@ -11,7 +11,6 @@ http::Request::Request(int client_fd, size_t req_size_limit)
     this->buffer.resize(this->buf_limit);
 
     this->bytes_recv = recv(this->client_fd, this->buffer.data(), this->buf_limit, this->recv_flag);
-    std::cout << "DEBUG: 30 " << this->buffer << std::endl;
 
     switch (this->from_buffer()) {
     case 0:

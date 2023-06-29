@@ -20,7 +20,7 @@ void server::Backend::job()
         response.set_header("Content-Type", "text/plain");
         // std::cout << "DEBUG: Current Thread ID " << std::this_thread::get_id() << "\n" << std::endl;
         // TO BE DELETED
-        std::cout << " Method: " << request.method << "\nRoute: " << request.route
+        std::cout << "Method: " << request.method << "\nRoute: " << request.route
                   << "\nStandard: " << request.http_version << "\nHeaders:\n";
         for (const auto& header : request.headers) {
             std::cout << "\t" << header.first << ": " << header.second << "\n";
