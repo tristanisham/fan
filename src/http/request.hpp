@@ -25,15 +25,12 @@ private:
     std::string buffer;
 
     /**
-    Returns:
-    0 : Everything's okay
-    -1 : Buffer's empty (len 0)
+    @return 0 : Everything's okay
+    @return -1 : Buffer's empty (len 0)
+    @return -2 : Unable to parse http router
     */
     int from_buffer();
-    /**
-    @return lin-pos for end of the first line.
-    */
-    size_t parse_routing() noexcept;
+    size_t parse_routing();
 
 public:
     std::string http_version;

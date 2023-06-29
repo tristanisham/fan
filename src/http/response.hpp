@@ -29,7 +29,7 @@ public:
         for (const auto& pair : obj.headers) {
             os << pair.first << ": " << pair.second << "\r\n";
         }
-        os << "\r\n\r\n";
+        os << "\r\n";
         os << obj.body;
 
         return os;
@@ -55,6 +55,9 @@ public:
 
         return os;
     }
+
+    void status_code(const int& code);
+    void status(const std::string& message);
 
     size_t content_length() { return this->body.length(); }
     void set_header(const std::string& key, const std::string& val);

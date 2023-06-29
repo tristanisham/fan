@@ -1,5 +1,6 @@
 #pragma once
 #include "../http/http.hpp"
+#include "./router.hpp"
 #include <condition_variable>
 #include <functional>
 #include <iostream>
@@ -14,17 +15,6 @@
 
 namespace server {
 
-class Router {
-  public:
-    void get(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void put(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void del(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void head(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void options(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void patch(std::string route, std::function<http::Response(http::Request req)> ctx);
-    void trace(std::string route, std::function<http::Response(http::Request req)> ctx);
-};
-
 /**
  * ThreadPool for managing concurrent web requests.
  * Based off: https://stackoverflow.com/questions/15752659/thread-pooling-in-c11
@@ -35,13 +25,20 @@ public:
     class Action {
     public:
         virtual void job() {};
+        virtual ~Action() = default; // Add this line
     };
     void start();
+    /**
+    @param job Freed by reciever. Do not free as caller.
+    */
     void queue_job(Action* job);
     void stop();
     bool busy();
 
 private:
+    /**
+    thread_loop() frees *Actions after running
+    */
     void thread_loop();
     bool should_terminate = false;
     std::mutex queue_mutex;
@@ -50,16 +47,25 @@ private:
     std::queue<Action*> jobs;
 };
 
-class Client : public ThreadPool::Action {
+
+
+class Backend : public ThreadPool::Action {
 public:
-    Client(const int& client_id);
+    // Client(const int& client_id);
+    Backend(const int& client_id, Router* router);
 
     void job() override;
 
 private:
     int client_fd;
+    Router* router;
 };
 
-int start(int port);
+
+/**
+@param port - The port for the server to bind to
+@param std::shared_ptr<Router> - A router for the server if you want one. Will be default_router() if not.
+*/
+int start(int port, std::shared_ptr<Router> = default_router());
 
 }
