@@ -33,7 +33,7 @@ int server::start(int port, std::shared_ptr<server::Router> router)
     thread_pool.start();
 
     while ((new_sd = accept(sockfd, (sockaddr*)&client_addr, (socklen_t*)&length)) > 0) {
-        server::Client* conn = new server::Client { new_sd, router.get() };  // freed in server/client.cpp
+        server::Backend* conn = new server::Backend { new_sd, router.get() };  // freed in server/client.cpp
         thread_pool.queue_job(conn);
     }
 

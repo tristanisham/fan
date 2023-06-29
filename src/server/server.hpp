@@ -24,6 +24,7 @@ public:
     class Action {
     public:
         virtual void job() {};
+        virtual ~Action() = default; // Add this line
     };
     void start();
     /**
@@ -46,6 +47,8 @@ private:
 };
 
 class Router {
+private:
+
 public:
     // Move/Copy semantics
     Router() = default;
@@ -64,10 +67,10 @@ public:
     void trace(std::string route, std::function<http::Response(http::Request req)> ctx);
 };
 
-class Client : public ThreadPool::Action {
+class Backend : public ThreadPool::Action {
 public:
     // Client(const int& client_id);
-    Client(const int& client_id, Router* router);
+    Backend(const int& client_id, Router* router);
 
     void job() override;
 

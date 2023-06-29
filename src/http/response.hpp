@@ -56,6 +56,8 @@ public:
         return os;
     }
 
+    void status_code(int code);
+
     size_t content_length() { return this->body.length(); }
     void set_header(const std::string& key, const std::string& val);
     // get_header() returns the value of the key if it exists, or an empty string.

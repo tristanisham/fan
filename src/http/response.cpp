@@ -13,3 +13,7 @@ const std::string http::Response::get_header(const std::string& key) noexcept
 void http::Response::set_header(const std::string& key, const std::string& val) {
     this->headers.insert_or_assign(key, val);
 }
+
+void http::Response::status_code(int code) {
+    this->code = std::string{static_cast<char>(code)};
+}

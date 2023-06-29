@@ -1,5 +1,6 @@
 #include "./request.hpp"
 #include <algorithm>
+#include <stdexcept>
 #include <utility>
 
 // Request
@@ -9,22 +10,23 @@ http::Request::Request(int client_fd, size_t req_size_limit)
     this->buf_limit = req_size_limit;
     this->buffer.resize(this->buf_limit);
 
-
     this->bytes_recv = recv(this->client_fd, this->buffer.data(), this->buf_limit, this->recv_flag);
-    this->buffer.assign(buffer, this->bytes_recv);  // Adjust the buffer size based on the bytes received
+    std::cout << "DEBUG: 30 " << this->buffer << std::endl;
 
     switch (this->from_buffer()) {
     case 0:
         break;
     case -1:
-        std::cerr << "Buffer empty" << std::endl;
-        break;
+        throw std::runtime_error{"Error: Request buffer empty"};
+    case -2:
+        throw std::runtime_error{"Error: Unable to parse http routing"};
     }
 }
 
-size_t http::Request::parse_routing() noexcept
+size_t http::Request::parse_routing()
 {
-    auto header = this->buffer.substr(0, this->buffer.find("\r\n"));
+    auto end_first_line = this->buffer.find("\r\n");
+    auto header = this->buffer.substr(0, end_first_line);
     // Parse header line
 
     int spaces = 0;
@@ -46,7 +48,7 @@ size_t http::Request::parse_routing() noexcept
         }
     }
     this->http_version = buffer;
-    return this->buffer.find("\r\n");
+    return end_first_line;
 }
 
 std::vector<std::pair<std::string, std::string>> extract_headers(const std::string& buff)
@@ -56,10 +58,12 @@ std::vector<std::pair<std::string, std::string>> extract_headers(const std::stri
 
     size_t start = 0;
     size_t newline;
+
     while ((newline = buff.find("\r\n", start)) != std::string::npos) {
         lines.push_back(buff.substr(start, newline - start));
         start = newline + 2;  // skip over the "\r\n" delimiter
     }
+
     // add the last line, if any
     if (start < buff.size()) {
         lines.push_back(buff.substr(start));
@@ -71,7 +75,7 @@ std::vector<std::pair<std::string, std::string>> extract_headers(const std::stri
             size_t delim = line.find(':');
             std::string key, val;
             key = line.substr(0, delim);
-            val = line.substr(delim + 1, std::string::npos);
+            val = line.substr(delim + 1);
             std::pair<std::string, std::string> header(key, val);
             headers.push_back(header);
         }
@@ -86,17 +90,21 @@ int http::Request::from_buffer()
         return -1;
     }
 
-    size_t end_first_line = this->parse_routing();
-    // std::cout << "DEBUG: " << end_first_line << std::endl;
+    auto end_first_line = this->parse_routing();
+    if (end_first_line == std::string::npos) {
+        return -2;
+    }
+
     std::vector<std::pair<std::string, std::string>> headers;
     auto body_delim = this->buffer.find("\r\n\r\n");
-    // std::cout << "DEBUG: " << body_delim << std::endl;
     if (body_delim != std::string::npos) {
-        this->body = this->buffer.substr(body_delim + std::strlen("\r\n\r\n"), std::string::npos);
+
+        this->body = this->buffer.substr(body_delim + std::strlen("\r\n\r\n"));
+
         auto header_buff = this->buffer.substr(end_first_line, body_delim);
         headers = extract_headers(header_buff);
     } else {
-        auto header_buff = this->buffer.substr(end_first_line, std::string::npos);
+        auto header_buff = this->buffer.substr(end_first_line);
         headers = extract_headers(header_buff);
     }
 
