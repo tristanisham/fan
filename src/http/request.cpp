@@ -17,23 +17,27 @@ http::Request::Request(int client_fd, size_t req_size_limit)
         break;
     case -1:
         std::cerr << "Error: Request buffer empty" << std::endl;
-        throw http::exception { 400 };
+        throw http::Status { 400 };
     case -2:
         std::cerr << "Error: Unable to parse http routing" << std::endl;
-        throw http::exception { 400 };
+        throw http::Status { 400 };
     }
 }
 
+
+
 size_t http::Request::parse_routing()
 {
+
+    size_t start_index = this->buffer.find_first_not_of("\r\n");
+    if (start_index == std::string::npos) {
+        throw http::Status{400};
+    }
+    
     auto end_first_line = this->buffer.find("\r\n");
     auto header = this->buffer.substr(0, end_first_line);
     // I need to make this recursive
-    if (header == "\r\n") {
-        auto old_first_line = end_first_line;
-        end_first_line = this->buffer.find("\r\n", end_first_line + 1);
-        header = this->buffer.substr(old_first_line, end_first_line);
-    }
+   
     // Parse header line
 
     int spaces = 0;

@@ -5,9 +5,9 @@
 
 namespace http {
 
-class exception : public std::exception {
+class Status : public std::exception {
 public:
-    exception(const int& code)
+    Status(const int& code)
     {
         this->code = code;
         switch (this->code) { // Need to handle more possibilities.
