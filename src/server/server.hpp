@@ -25,7 +25,7 @@ public:
     class Action {
     public:
         virtual void job() {};
-        virtual ~Action() = default; // Add this line
+        virtual ~Action() = default;  // Add this line
     };
     void start();
     /**
@@ -47,25 +47,45 @@ private:
     std::queue<Action*> jobs;
 };
 
+class Config : public ThreadPool::Action {
+private:
+    int client_fd;
+    Router router;
+    // TODO
+
+    void bind_client_fd(const int& client_id);
+
+public:
+    // Move/Copy semantics
+    Config() = default;
+    Config(const Config&) = default;
+    Config(Config&&) = default;
+    Config& operator=(const Config&) = default;
+    Config& operator=(Config&&) = default;
 
 
+    void add_router(const Router& router);
+};
+
+std::shared_ptr<Config> default_config();
+
+// Implemented in ./backend.cpp
 class Backend : public ThreadPool::Action {
 public:
     // Client(const int& client_id);
-    Backend(const int& client_id, Router* router);
+    Backend(const int& client_id, Config* config);
 
     void job() override;
 
 private:
     int client_fd;
-    Router* router;
+    Config* config;
 };
-
 
 /**
 @param port - The port for the server to bind to
 @param std::shared_ptr<Router> - A router for the server if you want one. Will be default_router() if not.
 */
-int start(int port, std::shared_ptr<Router> = default_router());
+int start(int port, std::shared_ptr<Config> = default_config());
 
 }

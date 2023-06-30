@@ -2,12 +2,13 @@
 #include "server.hpp"
 #include <cstring>
 #include <exception>
+#include <memory>
 
 // server::Client::Client(const int& client_id) { this->client_fd = client_id; }
-server::Backend::Backend(const int& client_id, server::Router* router)
+server::Backend::Backend(const int& client_id, Config* config)
 {
     this->client_fd = client_id;
-    this->router = router;
+    this->config = config;
 };
 
 void server::Backend::job()
@@ -42,8 +43,8 @@ void server::Backend::job()
                       << "Error: "
                       << "\033[0m" << close_err << " closing the connection with " << this->client_fd << std::endl;
         }
-    } catch (http::exception e) {
-        auto response = http::Response{e.what()};
+    } catch (http::Status e) {
+        auto response = http::Response { e.what() };
         response.status_code(e.status_code());
         std::string response_str = response.to_string();
         if (send(this->client_fd, response_str.c_str(), response_str.size(), 0) < 0) {

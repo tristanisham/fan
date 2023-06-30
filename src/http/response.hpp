@@ -16,7 +16,7 @@
 namespace http {
 class Response {
 public:
-    Response(std::string body) { this->body = body; }
+    Response(const std::string& body) { this->body = body; }
     Response(const Response&) = default;
     Response(Response&&) = default;
     Response& operator=(const Response&) = default;
