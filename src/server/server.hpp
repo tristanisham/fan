@@ -13,6 +13,10 @@
 #include <unistd.h>
 #include <vector>
 
+extern "C" {
+#include "../sqlite/sqlite3.h"
+}
+
 namespace server {
 
 /**
@@ -62,7 +66,6 @@ public:
     Config(Config&&) = default;
     Config& operator=(const Config&) = default;
     Config& operator=(Config&&) = default;
-
 
     void add_router(const Router& router);
 };
