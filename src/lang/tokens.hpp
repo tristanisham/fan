@@ -1,9 +1,13 @@
 #pragma once
 #include <iostream>
-#include <ostream>
 #include <optional>
+#include <ostream>
+#include <unordered_map>
+
 
 namespace lang {
+
+
 enum class TokenType {
     // Single-character tokens.
     LEFT_PAREN,
@@ -56,6 +60,24 @@ enum class TokenType {
 
 const char* token_name(const TokenType& tk);
 
+static const std::unordered_map<std::string, TokenType> keywords = {
+    { "and", TokenType::AND },
+    { "class", TokenType::CLASS },
+    { "else", TokenType::ELSE },
+    { "false", TokenType::FALSE },
+    { "for", TokenType::FOR },
+    { "fun", TokenType::FUN },
+    { "if", TokenType::IF },
+    { "nil", TokenType::NIL },
+    { "or", TokenType::OR },
+    { "print", TokenType::PRINT },
+    { "return", TokenType::RETURN },
+    { "super", TokenType::SUPER },
+    { "this", TokenType::THIS },
+    { "true", TokenType::TRUE },
+    { "var", TokenType::VAR },
+    { "while", TokenType::WHILE },
+};
 
 class Token {
 public:
@@ -68,7 +90,8 @@ public:
     Token(Token&&) = default;
     Token& operator=(const Token&) = default;
     Token& operator=(Token&&) = default;
-    Token(const TokenType& type, const std::string& lexeme, const std::optional<std::string>& literal, const size_t& line)
+    Token(
+        const TokenType& type, const std::string& lexeme, const std::optional<std::string>& literal, const size_t& line)
     {
         this->type = type;
         this->lexeme = lexeme;
@@ -87,7 +110,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Token& obj)
     {
-        os << lang::token_name(obj.type) << " " << obj.lexeme << " " << obj.literal.value_or("<null>");
+        os << lang::token_name(obj.type) << " " << obj.lexeme << " " << obj.literal.value_or("");
         return os;
     };
 };

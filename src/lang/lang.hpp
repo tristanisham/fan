@@ -3,31 +3,13 @@
 #include <iostream>
 #include <optional>
 #include <sysexits.h>  // https://man.freebsd.org/cgi/man.cgi?query=sysexits&apropos=0&sektion=0&manpath=FreeBSD+4.3-RELEASE&format=html
-#include <unordered_map>
 #include <vector>
 
 namespace lang {
 
 static bool had_error = false;
 
-static const std::unordered_map<std::string, lang::TokenType> keywords = {
-    { "and", lang::TokenType::AND },
-    { "class", lang::TokenType::CLASS },
-    { "else", lang::TokenType::ELSE },
-    { "false", lang::TokenType::FALSE },
-    { "for", lang::TokenType::FOR },
-    { "fun", lang::TokenType::FUN },
-    { "if", lang::TokenType::IF },
-    { "nil", lang::TokenType::NIL },
-    { "or", lang::TokenType::OR },
-    { "print", lang::TokenType::PRINT },
-    { "return", lang::TokenType::RETURN },
-    { "super", lang::TokenType::SUPER },
-    { "this", lang::TokenType::THIS },
-    { "true", lang::TokenType::TRUE },
-    { "var", lang::TokenType::VAR },
-    { "while", lang::TokenType::WHILE },
-};
+
 
 void report(size_t line, const std::string& where, const std::string& message);
 
@@ -43,12 +25,21 @@ class Scanner {
 private:
     std::string source;
     std::vector<Token> tokens;
-    size_t start;
-    size_t current;
+    size_t start = 0;
+    size_t current = 0;
     size_t line = 1;
     const bool is_at_end();
-    const char advance();
+
+    /**
+    `advance` moves the iterator's cursor forward.
+    @param i The amount forward to move the cursor. Defaults to 1.
+    */
+    void advance(const size_t& i = 1);
+
+    // `match` check to see if the next character in the iterator matches `expected`.
+    // If so, it'll advance the cursor by 1.
     bool match(const char& expected);
+    // @depreciated Same as `cursor()`
     const char peek();
     const char peek_next();
     void string();
@@ -57,6 +48,8 @@ private:
     const bool is_alpha(const char& c);
     const bool is_alphanumeric(const char& c);
     void identifier();
+    // New methods
+    const char cursor();
 
     // Maniulation
     void add_token(const TokenType& tk, const std::optional<std::string>& literal = std::nullopt);

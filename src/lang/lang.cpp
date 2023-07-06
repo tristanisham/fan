@@ -22,8 +22,10 @@ void lang::run(const std::string& script)
     lang::Scanner scanner { script };
     auto tokens = scanner.scan_tokens();
     for (auto const& tk : tokens) {
-        std::cout << tk << std::endl;
+        std::cout << tk;
     }
+
+    std::cout << std::endl;
 }
 
 int lang::run_file(const std::string& path)
@@ -33,9 +35,10 @@ int lang::run_file(const std::string& path)
         return EX_NOINPUT;
     }
 
-    std::ifstream t_buff("file.txt");
+    std::ifstream t_buff(path);
     std::stringstream buffer;
     buffer << t_buff.rdbuf();
+    t_buff.close();
 
     lang::run(buffer.str());
 
