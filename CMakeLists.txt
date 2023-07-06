@@ -5,9 +5,7 @@ set(CMAKE_CXX_CLANG_FORMAT "clang-format -style=clang-format.json -fallback-styl
 
 set(CMAKE_CXX_STANDARD 20)
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
-include_directories("${CMAKE_PREFIX_PATH}/sqlite/")
 add_executable(void ${SRC_FILES})
-
 
 
 target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES})

@@ -1,4 +1,5 @@
 #include "server/server.hpp"
+#include "lang/lang.hpp"
 
 #ifdef NDEBUG
 const char VERSION[] = "v0.0.1";
@@ -14,6 +15,13 @@ int main(int argc, char** argv)
     if (first_arg == "--version" || first_arg == "-v") {
       std::cout << VERSION << std::endl;
       std::exit(0);
+    } else if (first_arg == "run") {
+      if (argc >= 3) {
+        std::string start_file_path{argv[2]};
+        return lang::run_file(start_file_path);
+      } else {
+        return lang::run_repl();
+      }
     }
 
     PORT = std::string { argv[1] };
