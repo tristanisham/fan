@@ -90,21 +90,17 @@ const bool lang::Scanner::is_alphanumeric(const char& c) { return (this->is_alph
 
 void lang::Scanner::identifier()
 {
-    std::cout << "START 0: " << this->start << std::endl;
     while (this->is_alphanumeric(this->peek())) {
-        std::cout << this->peek() << std::endl;
         this->advance();
     }
 
     auto text = this->source.substr(this->start, this->current);
-    std::cout << text << "\n"
-              << "START 1: " << this->start << std::endl;
-
+ 
     auto pos = lang::keywords.find(text);
     if (pos == lang::keywords.end()) {
         this->add_token(tk::IDENTIFIER);
     } else {
-        this->add_token(pos->second, text);
+        this->add_token(pos->second);
     }
 }
 
