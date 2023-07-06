@@ -11,9 +11,9 @@ static bool had_error = false;
 
 
 
-void report(size_t line, const std::string& where, const std::string& message);
+void report(const size_t& line, const size_t& start, const size_t& end, const std::string& message);
 
-void error(size_t line, const std::string& message);
+void error(const size_t& line, const size_t& start, const size_t& end, const std::string& message);
 
 int run_file(const std::string& path);
 

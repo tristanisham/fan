@@ -20,7 +20,7 @@ void lang::Scanner::advance(const size_t& i) { this->current += i; }
 void lang::Scanner::add_token(const TokenType& tk, const std::optional<std::string>& literal)
 {
     auto text = this->source.substr(this->start, this->current - this->start);
-    this->tokens.push_back(lang::Token { tk, text, literal, this->line });
+    this->tokens.push_back(lang::Token { tk, text, literal, this->line, this->start, this->current });
 }
 
 bool lang::Scanner::match(const char& expected)
@@ -36,8 +36,6 @@ bool lang::Scanner::match(const char& expected)
     this->advance();
     return true;
 }
-
-
 
 const char lang::Scanner::peek_next()
 {
@@ -58,7 +56,7 @@ void lang::Scanner::string()
 
     if (this->is_at_end()) {
         // Good place to add more detailed error message.
-        lang::error(this->line, "Unterminated string.");
+        lang::error(this->line, this->start, this->current, "Unterminated string.");
         return;
     }
 
@@ -206,7 +204,7 @@ void lang::Scanner::scan_token()
         } else if (this->is_alpha(c)) {
             this->identifier();
         } else {
-            lang::error(this->line, "Unexpected character: " + std::string(1, c));
+            lang::error(this->line, this->start, this->current, "Unexpected character: " + std::string(1, c));
         }
 
         break;
@@ -221,6 +219,7 @@ std::vector<lang::Token> lang::Scanner::scan_tokens()
         this->scan_token();
     }
 
-    this->tokens.push_back(lang::Token { tk::EOFILE, std::string { EOF }, std::nullopt, this->line });
+    this->tokens.push_back(lang::Token {
+        tk::EOFILE, std::string { EOF }, std::nullopt, this->line, this->tokens.size() - 1, this->tokens.size() });
     return this->tokens;
 }

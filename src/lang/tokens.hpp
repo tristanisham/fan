@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <iostream>
 #include <optional>
 #include <ostream>
@@ -85,13 +86,15 @@ public:
     std::string lexeme;
     std::optional<std::string> literal;
     size_t line;
+    size_t start;
+    size_t end;
 
     Token(const Token&) = default;
     Token(Token&&) = default;
     Token& operator=(const Token&) = default;
     Token& operator=(Token&&) = default;
     Token(
-        const TokenType& type, const std::string& lexeme, const std::optional<std::string>& literal, const size_t& line)
+        const TokenType& type, const std::string& lexeme, const std::optional<std::string>& literal, const size_t& line, const size_t& start, const size_t& end)
     {
         this->type = type;
         this->lexeme = lexeme;
