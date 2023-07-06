@@ -1,5 +1,0 @@
-fun hello_world(name) {
-    print "Hi, " + name;
-}
-
-hello_world("Tristan");
