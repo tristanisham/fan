@@ -39,8 +39,6 @@ private:
     // `match` check to see if the next character in the iterator matches `expected`.
     // If so, it'll advance the cursor by 1.
     bool match(const char& expected);
-    // @depreciated Same as `cursor()`
-    const char peek();
     const char peek_next();
     void string();
     const bool is_digit(const char& c);

@@ -7,7 +7,13 @@ lang::Scanner::Scanner(const std::string& src) { this->source = src; }
 
 const bool lang::Scanner::is_at_end() { return this->current >= this->source.length(); }
 
-const char lang::Scanner::cursor() { return this->source.at(this->current); }
+const char lang::Scanner::cursor()
+{
+    if (this->is_at_end()) {
+        return '\0';
+    }
+    return this->source.at(this->current);
+}
 
 void lang::Scanner::advance(const size_t& i) { this->current += i; }
 
@@ -31,12 +37,7 @@ bool lang::Scanner::match(const char& expected)
     return true;
 }
 
-const char lang::Scanner::peek()
-{
-    if (this->is_at_end())
-        return '\0';
-    return this->source.at(this->current);
-}
+
 
 const char lang::Scanner::peek_next()
 {
