@@ -1,4 +1,4 @@
-#include "lang.hpp"
+#include "../lang.hpp"
 
 void lang::report(const size_t& line, const size_t& start, const size_t& end, const std::string& message)
 {

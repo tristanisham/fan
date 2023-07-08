@@ -1,4 +1,4 @@
-#include "lang.hpp"
+#include "../lang.hpp"
 #include <stdexcept>
 
 using tk = lang::TokenType;

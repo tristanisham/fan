@@ -1,4 +1,4 @@
-#include "lang.hpp"
+#include "../lang.hpp"
 #include "tokens.hpp"
 #include <cstdio>
 #include <filesystem>

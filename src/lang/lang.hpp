@@ -1,9 +1,10 @@
 #pragma once
-#include "tokens.hpp"
+#include "scanner/tokens.hpp"
 #include <iostream>
 #include <optional>
 #include <sysexits.h>  // https://man.freebsd.org/cgi/man.cgi?query=sysexits&apropos=0&sektion=0&manpath=FreeBSD+4.3-RELEASE&format=html
 #include <vector>
+#include "vm/vm.hpp"
 
 namespace lang {
 
