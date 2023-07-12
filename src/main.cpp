@@ -29,8 +29,9 @@ int main(int argc, char** argv)
     }
 
     // return server::start(std::atoi(PORT.c_str()));
-    lang::Chunk chunk{};
-    chunk.push_back(lang::OpCode::OP_RETURN);
-    chunk.disassemble_chunk("test chunk");
+    lang::Chunk chunk {};
+    auto constant = chunk.add_constant(1.2);
+    chunk.write_chunk(lang::OpCode::OP_CONSTANT);
+    chunk.write_chunk(constant);
     return 0;
 }
