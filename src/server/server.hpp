@@ -13,9 +13,9 @@
 #include <unistd.h>
 #include <vector>
 
-extern "C" {
-#include "../sqlite/sqlite3.h"
-}
+// extern "C" {
+// #include "../sqlite/sqlite3.h"
+// }
 
 namespace server {
 
