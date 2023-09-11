@@ -30,6 +30,7 @@ int server::start(int port, std::shared_ptr<server::Config> config)
     socklen_t length = sizeof(sockaddr_in);
     int new_sd;
 
+    // Might have to remove due to race conditions from WrenVM?
     thread_pool.start();
 
     while ((new_sd = accept(sockfd, (sockaddr*)&client_addr, (socklen_t*)&length)) > 0) {
