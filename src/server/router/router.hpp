@@ -1,25 +1,31 @@
 #pragma once
+#include "../../http/http.hpp"
+#include "../../wren/wren.hpp"
+#include <functional>
 #include <iostream>
+#include <memory>
 
 namespace server {
-class Router {
-public:
-    // Move/Copy semantics
-    Router() = default;
-    Router(const Router&) = default;
-    Router(Router&&) = default;
-    Router& operator=(const Router&) = default;
-    Router& operator=(Router&&) = default;
+  class Router {
+    public:
+      virtual http::Response handle(const http::Request& request) {return http::Response("");};
+      virtual ~Router() = default;
+  };
 
-    void get(const std::string& route);
-    void post(const std::string& route);
-    void put(const std::string& route);
-    void del(const std::string& route);
-    void head(const std::string& route);
-    void options(const std::string& route);
-    void patch(const std::string& route);
-    void connect(const std::string& route);
+}
 
+namespace server::wren {
+
+class VirtualMachine: public server::Router {
 private:
+  std::shared_ptr<WrenVM> vm;
+public:
+    VirtualMachine();
+    ~VirtualMachine();
+
+    void run(const std::string& script, const std::string& module = "main");
+    http::Response handle(const http::Request& request) override;
 };
+
+
 }

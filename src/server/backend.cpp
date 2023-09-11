@@ -15,10 +15,9 @@ void server::Backend::job()
 {
     try {
         auto request = http::Request { this->client_fd };
-        auto response = http::Response { "Hey, right back!\n" };
+        auto response = this->config->route(request);
 
-        response.set_header("Content-Length", std::to_string((int)response.content_length()));
-        response.set_header("Content-Type", "text/plain");
+        #ifndef NDEBUG
         // std::cout << "DEBUG: Current Thread ID " << std::this_thread::get_id() << "\n" << std::endl;
         // TO BE DELETED
         std::cout << "Method: " << request.method << "\nRoute: " << request.route
@@ -28,6 +27,7 @@ void server::Backend::job()
         }
         std::cout << "Body:\n" << request.body << std::endl;
         // END DELETE
+        #endif
 
         std::string response_str = response.to_string();
         if (send(this->client_fd, response_str.c_str(), response_str.size(), 0) < 0) {

@@ -31,6 +31,7 @@ public:
         virtual void job() {};
         virtual ~Action() = default;  // Add this line
     };
+
     void start();
     /**
     @param job Freed by reciever. Do not free as caller.
@@ -51,11 +52,13 @@ private:
     std::queue<Action*> jobs;
 };
 
+/**
+ * @class Config handles routing/server instructions for Void
+ */
 class Config : public ThreadPool::Action {
 private:
     int client_fd;
-    Router router;
-    // TODO
+    std::shared_ptr<Router> router;
 
     void bind_client_fd(const int& client_id);
 
@@ -67,7 +70,11 @@ public:
     Config& operator=(const Config&) = default;
     Config& operator=(Config&&) = default;
 
-    void add_router(const Router& router);
+    // Removed const reference because I was unsure of lifetimes.
+    // Might be an extra copy.
+    void add_router(std::shared_ptr<Router> router);
+
+    http::Response route(const http::Request& req);
 };
 
 std::shared_ptr<Config> default_config();
