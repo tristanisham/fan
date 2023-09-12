@@ -22,7 +22,6 @@ int main(int argc, char** argv)
         PORT = std::string { argv[1] };
     }
 
-    auto vm = vm::VirtualMachine {};
 
     return server::start(std::atoi(PORT.c_str()));
 }

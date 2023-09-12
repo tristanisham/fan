@@ -34,7 +34,8 @@ int server::start(int port, std::shared_ptr<server::Config> config)
     thread_pool.start();
 
     while ((new_sd = accept(sockfd, (sockaddr*)&client_addr, (socklen_t*)&length)) > 0) {
-        server::Backend* conn = new server::Backend { new_sd, config.get() };  // freed in server/client.cpp
+        auto conf = config; // Will this cause a memory leak? 🤷‍♂️
+        server::Backend* conn = new server::Backend { new_sd, conf.get() };  // freed in server/client.cpp
         thread_pool.queue_job(conn);
     }
 
