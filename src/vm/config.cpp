@@ -57,6 +57,17 @@ WrenLoadModuleResult loadModule(WrenVM* vm, const char* name)
     return mod;
 }
 
+WrenForeignClassMethods forign_func_binder(WrenVM* vm, const char* module, const char* className)
+{
+    if (strcmp(module, "std/http") == 0 && strcmp(className, "Router") == 0) {
+        WrenForeignClassMethods methods;
+        methods.allocate = vm::bindings::vm_router_alloc;
+        methods.finalize = vm::bindings::vm_router_finalize;
+        return methods;
+    }
+    return (WrenForeignClassMethods) { nullptr, nullptr };
+}
+
 vm::VirtualMachine::~VirtualMachine() { wrenFreeVM(this->vm.get()); }
 
 vm::VirtualMachine::VirtualMachine()
@@ -66,15 +77,7 @@ vm::VirtualMachine::VirtualMachine()
     config.writeFn = &writeFn;
     config.errorFn = &errorFn;
     config.loadModuleFn = &loadModule;
-    config.bindForeignClassFn = [](WrenVM* vm, const char* module, const char* className) {
-        if (strcmp(module, "std/http") == 0 && strcmp(className, "Router") == 0) {
-            WrenForeignClassMethods methods;
-            methods.allocate = vm::bindings::vm_router_alloc;
-            methods.finalize = vm::bindings::vm_router_finalize;
-            return methods;
-        }
-        return (WrenForeignClassMethods){nullptr, nullptr};
-    };
+    config.bindForeignClassFn = &forign_func_binder;
     config.bindForeignMethodFn = [](WrenVM* vm, const char* module, const char* className, bool isStatic,
                                      const char* signature) -> void (*)(WrenVM*) {
         if (strcmp(module, "std/http") == 0 && strcmp(className, "Server") == 0) {
