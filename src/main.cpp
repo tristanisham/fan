@@ -1,4 +1,6 @@
+#include "server/router/router.hpp"
 #include "server/server.hpp"
+#include "vm/vm.hpp"
 
 #ifdef NDEBUG
 const char VERSION[] = "v0.0.1";
@@ -19,5 +21,7 @@ int main(int argc, char** argv)
     PORT = std::string { argv[1] };
   }
 
-  return server::start(std::atoi(PORT.c_str()));
+  auto vm = vm::VirtualMachine{};
+
+  return 0;
 }

@@ -14,18 +14,3 @@ namespace server {
 
 }
 
-namespace server::wren {
-
-class VirtualMachine: public server::Router {
-private:
-  std::shared_ptr<WrenVM> vm;
-public:
-    VirtualMachine();
-    ~VirtualMachine();
-
-    void run(const std::string& script, const std::string& module = "main");
-    http::Response handle(const http::Request& request) override;
-};
-
-
-}
