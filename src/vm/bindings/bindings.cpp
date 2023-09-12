@@ -19,30 +19,10 @@ void vm_router_alloc(WrenVM* vm)
 
 void vm_router_finalize(void* data) { delete static_cast<server::Router*>(data); }
 
-void vm_router_get(WrenVM* vm)
-{
-    server::Router* router = static_cast<server::Router*>(wrenGetSlotForeign(vm, 0));
-    const char* path = wrenGetSlotString(vm, 1);
 
-    // Capture the Wren function in a slot to prevent it from being garbage collected
-    int handlerSlot = 2;  // Assuming the handler function is in slot 2
-    wrenEnsureSlots(vm, handlerSlot + 1);
-    wrenSetSlotHandle(vm, handlerSlot, wrenGetSlotHandle(vm, handlerSlot));
-
-
-
-    // Wrap the Wren function in a C++ lambda
-    auto handler = [vm, handlerSlot](http::Request request) -> server::BasicCValue {
-        wrenEnsureSlots(vm, 3);
-        // ... set up the request object in slot 1, if needed
-        wrenCall(vm, wrenGetSlotHandle(vm, handlerSlot));
-        // ... handle the result, if needed
-    };
-
-    router->get(path, handler);
-}
 
 void vm_handle_request(WrenVM* vm) {
+    
     wrenEnsureSlots(vm, 4); // one extra 🤷‍♂️
 
     server::Router* router = static_cast<server::Router*>(wrenGetSlotForeign(vm, 0));

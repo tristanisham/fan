@@ -26,6 +26,10 @@ std::optional<std::string> extract_module(const char* name, std::optional<std::f
     std::filesystem::path mod { name };
 
     auto full_mod = starting_dir.value_or(cwd) / mod;
+    if (!full_mod.has_extension()) {
+        full_mod.replace_extension(".wren");
+    }
+
     if (!std::filesystem::exists(full_mod)) {
         return std::nullopt;
     }

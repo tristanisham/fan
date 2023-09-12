@@ -11,6 +11,9 @@ foreign class Router {
         // ... add other HTTP methods as needed
     }
 
+    foreign get_routes
+    foreign set_routes(val)
+
     // Method to add a GET request handler.
     get(path, handler) {
         _routes["GET"][path] = handler
