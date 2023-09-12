@@ -7,7 +7,7 @@ void vm_serve(WrenVM* vm) {
     // wrenSetSlotDouble(vm, 0, result);
 }
 
-http::Response vm::VirtualMachine::handle(const http::Request& request) { }
+// http::Response vm::VirtualMachine::handle(const http::Request& request) { }
 
 
 void vm_router_alloc(WrenVM* vm)
