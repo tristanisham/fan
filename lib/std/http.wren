@@ -1,4 +1,4 @@
-class Router {
+foreign class Router {
     // A dictionary to store route handlers based on HTTP methods and paths.
     static _routes = {
         "GET": {},
@@ -12,37 +12,37 @@ class Router {
     }
 
     // Method to add a GET request handler.
-    static get(path, handler) {
+    get(path, handler) {
         _routes["GET"][path] = handler
     }
 
     // Method to add a PUT request handler.
-    static put(path, handler) {
+    put(path, handler) {
         _routes["PUT"][path] = handler
     }
 
     // Method to add a POST request handler.
-    static post(path, handler) {
+    post(path, handler) {
         _routes["POST"][path] = handler
     }
 
     // Method to add a DELETE request handler.
-    static delete(path, handler) {
+    delete(path, handler) {
         _routes["DELETE"][path] = handler
     }
 
     // Method to add a PATCH request handler.
-    static patch(path, handler) {
+    patch(path, handler) {
         _routes["PATCH"][path] = handler
     }
 
     // Method to add an OPTIONS request handler.
-    static options(path, handler) {
+    options(path, handler) {
         _routes["OPTIONS"][path] = handler
     }
 
     // Method to add a HEAD request handler.
-    static head(path, handler) {
+    head(path, handler) {
         _routes["HEAD"][path] = handler
     }
 
@@ -50,7 +50,7 @@ class Router {
 
     // Method to handle a request. This is just a basic example.
     // In a real scenario, you'd probably have a more complex request object.
-    static handleRequest(method, path, ctx) {
+    foreign handleRequest(method, path, ctx) {
         if (_routes.containsKey(method) && _routes[method].containsKey(path)) {
             var handler = _routes[method][path]
             handler.call(ctx)
@@ -61,8 +61,4 @@ class Router {
     }
 }
 
-
-class Server {
-    foreign static serve(port)
-}
 

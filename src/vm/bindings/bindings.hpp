@@ -5,24 +5,18 @@
 #include <iostream>
 
 namespace vm::bindings {
-void vm_serve(WrenVM* vm);
 
-class Router {
-public:
-    void get(const std::string& path, std::function<void(http::Request)> handler);
-    void post(const std::string& path, std::function<void(http::Request)> handler);
-    void put(const std::string& path, std::function<void(http::Request)> handler);
-    // Using del because delete is a keyword in C++
-    void del(const std::string& path, std::function<void(http::Request)> handler);
-    void patch(const std::string& path, std::function<void(http::Request)> handler);
-    void options(const std::string& path, std::function<void(http::Request)> handler);
-    void head(const std::string& path, std::function<void(http::Request)> handler);
-};
+
+WrenForeignMethodFn bindForeignMethodFn(
+    WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature);
+
+WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const char* className);
 
 void vm_router_alloc(WrenVM* vm);
 
 void vm_router_finalize(void* data);
 
-void vm_router_get(WrenVM* vm);
+// Handles routing created by user per-request
+void vm_handle_request(WrenVM* vm);
 
 }

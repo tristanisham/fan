@@ -21,6 +21,7 @@ public:
     ~VirtualMachine();
 
     http::Response handle(const http::Request& request) override;
+
 };
 
 }

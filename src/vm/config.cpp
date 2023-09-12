@@ -1,5 +1,6 @@
 #include "bindings/bindings.hpp"
 #include "vm.hpp"
+#include <cstring>
 
 static void writeFn(WrenVM* vm, const char* text) { printf("%s", text); }
 
@@ -57,15 +58,31 @@ WrenLoadModuleResult loadModule(WrenVM* vm, const char* name)
     return mod;
 }
 
-WrenForeignClassMethods forign_func_binder(WrenVM* vm, const char* module, const char* className)
+WrenForeignClassMethods bindForeignClassFunc(WrenVM* vm, const char* module, const char* className)
 {
-    if (strcmp(module, "std/http") == 0 && strcmp(className, "Router") == 0) {
-        WrenForeignClassMethods methods;
-        methods.allocate = vm::bindings::vm_router_alloc;
-        methods.finalize = vm::bindings::vm_router_finalize;
-        return methods;
+    if (strcmp(module, "std/http") == 0) {
+
+        if (strcmp(className, "Router") == 0) {
+            WrenForeignClassMethods methods;
+            methods.allocate = vm::bindings::vm_router_alloc;
+            methods.finalize = vm::bindings::vm_router_finalize;
+            return methods;
+        }
     }
     return (WrenForeignClassMethods) { nullptr, nullptr };
+}
+
+WrenForeignMethodFn bindForeignMethodFn(
+    WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature)
+{
+    if (strcmp(module, "std/http") == 0) {
+        if (strcmp(className, "Router") == 0) {
+            if (!isStatic && strcmp(signature, "handleRequest(_,_,_)") == 0) {
+                return vm::bindings::vm_handle_request;
+            }
+        }
+    }
+    return nullptr;
 }
 
 vm::VirtualMachine::~VirtualMachine() { wrenFreeVM(this->vm.get()); }
@@ -77,14 +94,8 @@ vm::VirtualMachine::VirtualMachine()
     config.writeFn = &writeFn;
     config.errorFn = &errorFn;
     config.loadModuleFn = &loadModule;
-    config.bindForeignClassFn = &forign_func_binder;
-    config.bindForeignMethodFn = [](WrenVM* vm, const char* module, const char* className, bool isStatic,
-                                     const char* signature) -> void (*)(WrenVM*) {
-        if (strcmp(module, "std/http") == 0 && strcmp(className, "Server") == 0) {
-            return vm::bindings::vm_serve;
-        }
-        return nullptr;
-    };
+    config.bindForeignClassFn = &bindForeignClassFunc;
+    config.bindForeignMethodFn = &bindForeignMethodFn;
     // Stores own copy of config. Can drop config.
     WrenVM* unsafe_vm = wrenNewVM(&config);
 
@@ -96,3 +107,5 @@ vm::VirtualMachine::VirtualMachine()
 
     this->vm = vm;
 }
+
+http::Response handle(const http::Request& request) { }
