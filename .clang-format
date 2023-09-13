@@ -8,7 +8,7 @@
     "ColumnLimit": 120,
     "AllowShortBlocksOnASingleLine": false,
     "AllowShortCaseLabelsOnASingleLine": false,
-    "AllowShortFunctionsOnASingleLine": "All",
+    "AllowShortFunctionsOnASingleLine": false,
     "AllowShortLambdasOnASingleLine": true,
     "SpacesBeforeTrailingComments": 2,
     "Standard": "c++20"

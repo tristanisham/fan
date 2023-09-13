@@ -2,7 +2,10 @@
 #include "vm.hpp"
 #include <cstring>
 
-static void writeFn(WrenVM* vm, const char* text) { printf("%s", text); }
+static void writeFn(WrenVM* vm, const char* text)
+{
+    printf("%s", text);
+}
 
 void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg)
 {
@@ -89,7 +92,10 @@ WrenForeignMethodFn bindForeignMethodFn(
     return nullptr;
 }
 
-vm::VirtualMachine::~VirtualMachine() { wrenFreeVM(this->vm.get()); }
+vm::VirtualMachine::~VirtualMachine()
+{
+    wrenFreeVM(this->vm.get());
+}
 
 vm::VirtualMachine::VirtualMachine()
 {
@@ -112,4 +118,7 @@ vm::VirtualMachine::VirtualMachine()
     this->vm = vm;
 }
 
-http::Response handle(const http::Request& request) { }
+http::Response vm::VirtualMachine::handle(const http::Request& request)
+{
+    return http::Response("Implement me, bozo");
+}

@@ -1,27 +1,20 @@
 #include "../vm.hpp"
+#include "bindings.hpp"
 
 
-void vm_serve(WrenVM* vm)
-{
-    int port
-        = wrenGetSlotDouble(vm, 1);  // Assuming the port is passed as a double (Wren doesn't have a native int type)
-    int result = vm::serve(port);
-    wrenSetSlotNull(vm, 1);
-    // wrenSetSlotDouble(vm, 0, result);
-}
 
 // http::Response vm::VirtualMachine::handle(const http::Request& request) { }
 
-void vm_router_alloc(WrenVM* vm)
+void vm::bindings::vm_router_alloc(WrenVM* vm)
 {
     auto router = static_cast<server::Router*>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(server::Router)));
 }
 
-void vm_router_finalize(void* data) { delete static_cast<server::Router*>(data); }
+void vm::bindings::vm_router_finalize(void* data) { delete static_cast<server::Router*>(data); }
 
 
 
-void vm_handle_request(WrenVM* vm) {
+void vm::bindings::vm_handle_request(WrenVM* vm) {
     
     wrenEnsureSlots(vm, 4); // one extra 🤷‍♂️
 
