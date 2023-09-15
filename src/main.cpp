@@ -1,27 +1,31 @@
-#include "server/router/router.hpp"
-#include "server/server.hpp"
-#include "vm/vm.hpp"
-#include <memory>
-
-#ifdef NDEBUG
-const char VERSION[] = "v0.0.1";
-#else
-const char VERSION[] = "v0.0.1 (debug)";
-#endif
+#include "cli.hpp"
+#include "vm.hpp"
+#include "void.hpp"
+#include <cstdlib>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
 
 int main(int argc, char** argv)
 {
-    std::string PORT { "8080" };
-    if (argc >= 2) {
-        auto first_arg = std::string { argv[1] };
-        if (first_arg == "--version" || first_arg == "-v") {
-            std::cout << VERSION << std::endl;
-            std::exit(0);
-        }
+	vm::Runtime runtime {};
+	if (argc <= 1) {
+		runtime.repl();
+		std::exit(0);
+	}
 
-        PORT = std::string { argv[1] };
-    }
+	std::filesystem::path target { argv[argc - 1] };
+	if (std::filesystem::exists(target) && target.extension() == ".wren") {
+		std::ifstream file(target);
+		if (!file.is_open()) {
+			throw std::string { "Unable to run " }.append(target);
+		}
 
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		runtime.execute(buffer.str());
+		file.close();
+	}
 
-    return server::start(std::atoi(PORT.c_str()));
+	return 0;
 }
