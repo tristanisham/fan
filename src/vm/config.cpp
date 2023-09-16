@@ -10,8 +10,8 @@
 #include <optional>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <tuple>
+#include <vector>
 
 static void writeFn(WrenVM* vm, const char* text)
 {
@@ -33,6 +33,13 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, con
 	}
 }
 
+static void loadModuleComplete(WrenVM* vm, const char* module, WrenLoadModuleResult result)
+{
+	if (result.source) {
+		delete[] result.source;
+		result.source = nullptr;
+	}
+}
 
 WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 {
@@ -67,11 +74,12 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 		file.seekg(0, std::ios::beg);
 
 		// Resize the vector to the file size and read the file into it
-		std::shared_ptr<char[]> buffer(new char[fileSize]);
-		file.read(buffer.get(), fileSize);
+		char* buffer = new char[fileSize];
+		file.read(buffer, fileSize);
 
-		mod.source = buffer.get();
-		
+		mod.source = buffer;
+		mod.onComplete = &loadModuleComplete;
+
 		file.close();
 
 	} else {
@@ -99,7 +107,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 {
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
-			if (isStatic && strcmp(signature, "pow(_,_,)") == 0) {
+			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
 				return vm_pow;
 			}
 		}
@@ -114,7 +122,7 @@ vm::Runtime::Runtime()
 	wrenInitConfiguration(&config);
 	config.writeFn = &writeFn;
 	config.errorFn = &errorFn;
-	config.loadModuleFn = &loadModuleFn; // t
+	config.loadModuleFn = &loadModuleFn;  // t
 	config.bindForeignClassFn = &bindForeignClassFn;
 	config.bindForeignMethodFn = &bindForeignMethodFn;
 	// Stores own copy of config. Can drop config.
