@@ -87,7 +87,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 {
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
-			if (!isStatic && strcmp(signature, "pow(_,_,)") == 0) {
+			if (isStatic && strcmp(signature, "pow(_,_,)") == 0) {
 				return vm_pow;
 			}
 		}
