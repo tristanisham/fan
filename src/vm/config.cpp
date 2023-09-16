@@ -8,6 +8,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <vector>
 
 static void writeFn(WrenVM* vm, const char* text)
 {
@@ -54,12 +55,19 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 
 	searchPath.replace_extension(".wren");
 
-	std::ifstream file { searchPath };
+	std::ifstream file { searchPath, std::ifstream::binary | std::ios::ate };
 
 	if (file.is_open()) {
-		std::stringstream buff;
-		buff << file.rdbuf();
-		mod.source = buff.str().c_str();
+		// Determine the size of the file
+		std::streamsize fileSize = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		// Resize the vector to the file size and read the file into it
+		std::vector<char> buffer(fileSize);
+		file.read(buffer.data(), fileSize);
+
+		mod.source = buffer.data();
+
 		file.close();
 
 	} else {
