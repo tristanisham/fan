@@ -1,10 +1,12 @@
-#include "vm.hpp"
 #include "lib.hpp"
+#include "vm.hpp"
 #include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <optional>
 #include <iostream>
+#include <iterator>
+#include <optional>
+#include <sstream>
 #include <string>
 
 static void writeFn(WrenVM* vm, const char* text)
@@ -27,46 +29,42 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, con
 	}
 }
 
-std::optional<std::string> extract_module(const char* name, std::optional<std::filesystem::path> starting_dir)
-{
-
-	auto cwd = std::filesystem::current_path();
-	std::filesystem::path mod { name };
-
-	auto full_mod = starting_dir.value_or(cwd) / mod;
-	if (!full_mod.has_extension()) {
-		full_mod.replace_extension(".wren");
-	}
-
-	if (!std::filesystem::exists(full_mod)) {
-		return std::nullopt;
-	}
-
-	std::ifstream file(full_mod);
-	if (!file.is_open()) {
-		return std::nullopt;
-	}
-
-	std::stringstream buffer;
-	buffer << file.rdbuf();
-    file.close();
-	return buffer.str();
-}
-
 WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 {
 	WrenLoadModuleResult mod;
-	// @TODO implement module resolution algorithm
-	std::optional<std::string> mod_txt;
-	auto void_install = std::getenv("VOID_LIB");
-	if (void_install == NULL) {
-		mod_txt = extract_module(name, std::nullopt);
-	} else {
-		std::filesystem::path p { void_install };
-		mod_txt = extract_module(name, p);
+	std::filesystem::path p { name };
+	std::filesystem::path searchPath {};
+
+	int i = 0;
+	for (const auto& seg : p) {
+		if (i == 0 && seg == "std") {
+			auto void_install = std::getenv("VOID_LIB");
+			if (void_install != NULL) {
+				searchPath.append(void_install);
+			} else {
+				searchPath = (std::filesystem::current_path());
+			}
+			continue;
+		}
+
+		searchPath = searchPath / seg;
+
+		i++;
 	}
 
-	mod.source = (mod_txt.has_value()) ? mod_txt.value().c_str() : NULL;
+	searchPath.replace_extension(".wren");
+
+	std::ifstream file { searchPath };
+
+	if (file.is_open()) {
+		std::stringstream buff;
+		buff << file.rdbuf();
+		mod.source = buff.str().c_str();
+		file.close();
+
+	} else {
+		mod.source = NULL;
+	}
 
 	return mod;
 }
@@ -90,7 +88,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
 			if (!isStatic && strcmp(signature, "pow(_,_,)") == 0) {
-                return vm_pow;
+				return vm_pow;
 			}
 		}
 	}
@@ -119,22 +117,24 @@ vm::Runtime::Runtime()
 	this->vm = vm;
 }
 
-WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module) {
-    return wrenInterpret(this->vm.get(), module.c_str(), code.c_str());
+WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module)
+{
+	return wrenInterpret(this->vm.get(), module.c_str(), code.c_str());
 }
 
-void vm::Runtime::repl() {
-    std::string input;
-    std::cout << "> ";
-    while (true) {
-        std::getline(std::cin, input);
+void vm::Runtime::repl()
+{
+	std::string input;
+	std::cout << "> ";
+	while (true) {
+		std::getline(std::cin, input);
 
-        if (input == "exit") {
-            break;
-        }
+		if (input == "exit") {
+			break;
+		}
 
-        this->execute(input);
+		this->execute(input);
 
-        std::cout << "> ";
-    }
+		std::cout << "> ";
+	}
 }
