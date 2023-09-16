@@ -3,7 +3,7 @@
 #include "wren.hpp"
 #include <functional>
 #include <memory>
-
+#include <vector>
 
 namespace vm {
 
@@ -18,6 +18,7 @@ public:
     void repl();
 private:
 	std::shared_ptr<WrenVM> vm;
+    std::vector<std::shared_ptr<char[]>> modules;
 
 };
 }

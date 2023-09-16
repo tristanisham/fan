@@ -1,14 +1,17 @@
 #include "lib.hpp"
 #include "vm.hpp"
+#include "wren.h"
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <tuple>
 
 static void writeFn(WrenVM* vm, const char* text)
 {
@@ -29,6 +32,7 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, con
 	} break;
 	}
 }
+
 
 WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 {
@@ -63,11 +67,11 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 		file.seekg(0, std::ios::beg);
 
 		// Resize the vector to the file size and read the file into it
-		std::vector<char> buffer(fileSize);
-		file.read(buffer.data(), fileSize);
+		std::shared_ptr<char[]> buffer(new char[fileSize]);
+		file.read(buffer.get(), fileSize);
 
-		mod.source = buffer.data();
-
+		mod.source = buffer.get();
+		
 		file.close();
 
 	} else {
@@ -110,7 +114,7 @@ vm::Runtime::Runtime()
 	wrenInitConfiguration(&config);
 	config.writeFn = &writeFn;
 	config.errorFn = &errorFn;
-	config.loadModuleFn = &loadModuleFn;
+	config.loadModuleFn = &loadModuleFn; // t
 	config.bindForeignClassFn = &bindForeignClassFn;
 	config.bindForeignMethodFn = &bindForeignMethodFn;
 	// Stores own copy of config. Can drop config.
