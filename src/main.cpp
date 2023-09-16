@@ -1,5 +1,4 @@
 #include "cli.hpp"
-#include "vm.hpp"
 #include "void.hpp"
 #include <cstdlib>
 #include <cstring>
