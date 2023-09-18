@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
 	vm::Runtime runtime {};
 	std::filesystem::path target { argv[argc - 1] };
-	if (std::filesystem::exists(target) && target.extension() == ".wren") {
+	if (std::filesystem::exists(target) && target.extension() == ".vd") {
 		std::ifstream file(target);
 		if (!file.is_open()) {
 			throw std::string { "Unable to run " }.append(target);
@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
 		buffer << file.rdbuf();
 		runtime.execute(buffer.str());
 		file.close();
+	} else {
+		fprintf(stderr, "File %s does not exist, or is not .vd\n", target.c_str());
+		return 1;
 	}
 
 	return 0;

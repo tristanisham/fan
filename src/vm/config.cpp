@@ -60,7 +60,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 		i++;
 	}
 
-	searchPath.replace_extension(".wren");
+	searchPath.replace_extension(".vd");
 
 	std::ifstream file { searchPath, std::ifstream::binary | std::ios::ate };
 
