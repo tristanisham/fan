@@ -21,12 +21,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 * @var a base
 * @var b exponent
 */
-void vm_math_pow(WrenVM* vm)
+void lib::math::pow(WrenVM* vm)
 {
 	double a = wrenGetSlotDouble(vm, 1);
 	double b = wrenGetSlotDouble(vm, 2);
 
-	double result = pow(a, b);
+	double result = ::pow(a, b);
 
 	wrenSetSlotDouble(vm, 0, result);
 }

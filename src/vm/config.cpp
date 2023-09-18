@@ -96,8 +96,8 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 	if (strcmp(module, "std/fs") == 0) {
 
 		if (strcmp(className, "File") == 0) {
-			methods.allocate = vm_fileAlloc;
-			methods.finalize = vm_fileFinalize;
+			methods.allocate = lib::fs::fileAlloc; // vm/std/fs.cpp
+			methods.finalize = lib::fs::fileFinalize; // vm/std/fs.cpp
 			return methods;
 		}
 	}
@@ -111,7 +111,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
 			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
-				return vm_math_pow;
+				return lib::math::pow;
 			}
 		}
 	} 
@@ -119,15 +119,15 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (strcmp(module, "std/fs") == 0) {
 		if (strcmp(className, "File") == 0) {
 			if (!isStatic && strcmp(signature, "write(_)") == 0) {
-				return vm_fileWrite;
+				return lib::fs::fileWrite;
 			}
 
 			if (!isStatic && strcmp(signature, "close()") == 0) {
-				return vm_fileClose;
+				return lib::fs::fileClose;
 			}
 		}
 	}
-	
+
 	return nullptr;
 }
 

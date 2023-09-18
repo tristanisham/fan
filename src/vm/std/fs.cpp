@@ -5,27 +5,28 @@
 static void closeFile(FILE** file)
 {
 	// Already closed.
-	if (*file == NULL)
+	if (*file == NULL) {
 		return;
+    }
 
 	fclose(*file);
 	*file = NULL;
 }
 
 
-void vm_fileAlloc(WrenVM* vm)
+void lib::fs::fileAlloc(WrenVM* vm)
 {
 	FILE** file = (FILE**)wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*));
 	const char* path = wrenGetSlotString(vm, 1);
 	*file = fopen(path, "w");
 }
 
-void vm_fileFinalize(void* data)
+void lib::fs::fileFinalize(void* data)
 {
 	closeFile((FILE**)data);
 }
 
-void vm_fileWrite(WrenVM* vm)
+void lib::fs::fileWrite(WrenVM* vm)
 {
 	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
 
@@ -39,7 +40,7 @@ void vm_fileWrite(WrenVM* vm)
 	fwrite(text, sizeof(char), strlen(text), *file);
 }
 
-void vm_fileClose(WrenVM* vm) {
+void lib::fs::fileClose(WrenVM* vm) {
     FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
     closeFile(file);
 }

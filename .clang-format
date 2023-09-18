@@ -12,5 +12,6 @@
     "AllowShortFunctionsOnASingleLine": false,
     "AllowShortLambdasOnASingleLine": true,
     "SpacesBeforeTrailingComments": 2,
-    "Standard": "c++20"
+    "Standard": "c++20",
+    "NamespaceIndentation": "Inner"
 }
