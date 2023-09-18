@@ -2,32 +2,27 @@
 #include <cstring>
 #include <stdio.h>
 
-static void closeFile(FILE** file)
-{
+static void closeFile(FILE** file) {
 	// Already closed.
 	if (*file == NULL) {
 		return;
-    }
+	}
 
 	fclose(*file);
 	*file = NULL;
 }
 
-
-void lib::fs::fileAlloc(WrenVM* vm)
-{
+void lib::fs::fileAlloc(WrenVM* vm) {
 	FILE** file = (FILE**)wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*));
 	const char* path = wrenGetSlotString(vm, 1);
 	*file = fopen(path, "w");
 }
 
-void lib::fs::fileFinalize(void* data)
-{
+void lib::fs::fileFinalize(void* data) {
 	closeFile((FILE**)data);
 }
 
-void lib::fs::fileWrite(WrenVM* vm)
-{
+void lib::fs::fileWrite(WrenVM* vm) {
 	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
 
 	if (*file == NULL) {
@@ -41,6 +36,6 @@ void lib::fs::fileWrite(WrenVM* vm)
 }
 
 void lib::fs::fileClose(WrenVM* vm) {
-    FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
-    closeFile(file);
+	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
+	closeFile(file);
 }

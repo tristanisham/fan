@@ -13,13 +13,11 @@
 #include <tuple>
 #include <vector>
 
-static void writeFn(WrenVM* vm, const char* text)
-{
+static void writeFn(WrenVM* vm, const char* text) {
 	printf("%s", text);
 }
 
-static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg)
-{
+static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
 		printf("[%s line %d] [Error] %s\n", module, line, msg);
@@ -33,16 +31,14 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, con
 	}
 }
 
-static void loadModuleComplete(WrenVM* vm, const char* module, WrenLoadModuleResult result)
-{
+static void loadModuleComplete(WrenVM* vm, const char* module, WrenLoadModuleResult result) {
 	if (result.source) {
 		delete[] result.source;
 		result.source = nullptr;
 	}
 }
 
-WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
-{
+WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	WrenLoadModuleResult mod;
 	std::filesystem::path p { name };
 	std::filesystem::path searchPath {};
@@ -89,33 +85,30 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 	return mod;
 }
 
-WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const char* className)
-{
+WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const char* className) {
 	auto methods = (WrenForeignClassMethods) { nullptr, nullptr };
 
 	if (strcmp(module, "std/fs") == 0) {
 
 		if (strcmp(className, "File") == 0) {
-			methods.allocate = lib::fs::fileAlloc; // vm/std/fs.cpp
-			methods.finalize = lib::fs::fileFinalize; // vm/std/fs.cpp
+			methods.allocate = lib::fs::fileAlloc;	// vm/std/fs.cpp
+			methods.finalize = lib::fs::fileFinalize;  // vm/std/fs.cpp
 			return methods;
 		}
 	}
 
-
 	return methods;
 }
 
-WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature)
-{
+WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
 			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
 				return lib::math::pow;
 			}
 		}
-	} 
-	
+	}
+
 	if (strcmp(module, "std/fs") == 0) {
 		if (strcmp(className, "File") == 0) {
 			if (!isStatic && strcmp(signature, "write(_)") == 0) {
@@ -131,8 +124,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	return nullptr;
 }
 
-vm::Runtime::Runtime()
-{
+vm::Runtime::Runtime() {
 
 	WrenConfiguration config;
 	wrenInitConfiguration(&config);
@@ -153,13 +145,11 @@ vm::Runtime::Runtime()
 	this->vm = vm;
 }
 
-WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module)
-{
+WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module) {
 	return wrenInterpret(this->vm.get(), module.c_str(), code.c_str());
 }
 
-void vm::Runtime::repl()
-{
+void vm::Runtime::repl() {
 	std::string input;
 	std::cout << "> ";
 	while (true) {

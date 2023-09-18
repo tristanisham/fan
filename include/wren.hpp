@@ -5,7 +5,7 @@
 // link to it from a C++ application.
 
 extern "C" {
-  #include "wren.h"
+#include "wren.h"
 }
 
 #endif

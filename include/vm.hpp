@@ -13,10 +13,10 @@ namespace vm {
 class Runtime {
 public:
 	Runtime();
-    WrenInterpretResult execute(const std::string& code, const std::string& module = "main");
-    void repl();
+	WrenInterpretResult execute(const std::string& code, const std::string& module = "main");
+	void repl();
+
 private:
 	std::shared_ptr<WrenVM> vm;
-
 };
-}
+}  // namespace vm

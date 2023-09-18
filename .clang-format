@@ -4,7 +4,6 @@
     "IndentWidth": 4,
     "TabWidth": 4,
     "UseTab": "Always",
-    "BreakBeforeBraces": "WebKit",
     "BreakConstructorInitializersBeforeComma": false,
     "ColumnLimit": 200,
     "AllowShortBlocksOnASingleLine": false,
@@ -13,5 +12,6 @@
     "AllowShortLambdasOnASingleLine": true,
     "SpacesBeforeTrailingComments": 2,
     "Standard": "c++20",
+    "BreakBeforeBraces": "Attach",
     "NamespaceIndentation": "Inner"
 }
