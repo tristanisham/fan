@@ -1,5 +1,4 @@
 #pragma once
-
 #include "wren.hpp"
 #include <functional>
 #include <memory>

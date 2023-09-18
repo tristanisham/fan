@@ -91,16 +91,19 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name)
 
 WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const char* className)
 {
-	if (strcmp(module, "std/http") == 0) {
+	auto methods = (WrenForeignClassMethods) { nullptr, nullptr };
 
-		if (strcmp(className, "Router") == 0) {
-			WrenForeignClassMethods methods;
-			// methods.allocate = vm::vm_router_alloc;
-			// methods.finalize = vm::vm_router_finalize;
+	if (strcmp(module, "std/fs") == 0) {
+
+		if (strcmp(className, "File") == 0) {
+			methods.allocate = vm_fileAlloc;
+			methods.finalize = vm_fileFinalize;
 			return methods;
 		}
 	}
-	return (WrenForeignClassMethods) { nullptr, nullptr };
+
+
+	return methods;
 }
 
 WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature)
@@ -108,10 +111,23 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (strcmp(module, "std/math") == 0) {
 		if (strcmp(className, "Math") == 0) {
 			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
-				return vm_pow;
+				return vm_math_pow;
+			}
+		}
+	} 
+	
+	if (strcmp(module, "std/fs") == 0) {
+		if (strcmp(className, "File") == 0) {
+			if (!isStatic && strcmp(signature, "write(_)") == 0) {
+				return vm_fileWrite;
+			}
+
+			if (!isStatic && strcmp(signature, "close()") == 0) {
+				return vm_fileClose;
 			}
 		}
 	}
+	
 	return nullptr;
 }
 

@@ -12,7 +12,6 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FO
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include "lib.hpp"
-#include "wren.h"
 #include <math.h>
 
 /**
@@ -22,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 * @var a base
 * @var b exponent
 */
-void vm_pow(WrenVM* vm)
+void vm_math_pow(WrenVM* vm)
 {
 	double a = wrenGetSlotDouble(vm, 1);
 	double b = wrenGetSlotDouble(vm, 2);

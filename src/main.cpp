@@ -5,6 +5,11 @@
 #include <filesystem>
 #include <fstream>
 
+/**
+ * Void is a language runtime focused on making software devlopment easy, performant, and fun.
+ * The Void command line tool features a simple REPL and the ability to execute a script, typically the last argument
+ * value on the command line if no other commands or flags are passed.
+ */
 int main(int argc, char** argv)
 {
 	vm::Runtime runtime {};
