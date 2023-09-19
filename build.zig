@@ -1,4 +1,5 @@
 const std = @import("std");
+// Examples: https://github.com/floooh/sokol-tools/blob/master/build.zig
 
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
