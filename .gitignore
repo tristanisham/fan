@@ -2,3 +2,5 @@ build/
 .cache/
 out/
 .vs/
+zig-cache/
+zig-out/

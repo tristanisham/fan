@@ -4,6 +4,7 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 /**
  * Void is a language runtime focused on making software devlopment easy,
@@ -34,7 +35,7 @@ int main(int argc, char** argv) {
 	if (std::filesystem::exists(target) && target.extension() == ".vd") {
 		std::ifstream file(target);
 		if (!file.is_open()) {
-			printf("Unable to run %s", target);
+			printf("Unable to run %s", target.c_str());
 			return 1;
 		}
 
