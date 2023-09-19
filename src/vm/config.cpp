@@ -86,7 +86,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 }
 
 WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const char* className) {
-	auto methods = (WrenForeignClassMethods) { nullptr, nullptr };
+	WrenForeignClassMethods methods { nullptr, nullptr };
 
 	if (strcmp(module, "std/fs") == 0) {
 

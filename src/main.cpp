@@ -34,7 +34,8 @@ int main(int argc, char** argv) {
 	if (std::filesystem::exists(target) && target.extension() == ".vd") {
 		std::ifstream file(target);
 		if (!file.is_open()) {
-			throw std::string { "Unable to run " }.append(target);
+			printf("Unable to run %s", target);
+			return 1;
 		}
 
 		std::stringstream buffer;

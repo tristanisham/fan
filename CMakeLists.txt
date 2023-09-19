@@ -3,6 +3,7 @@ project(void)
 
 set(CMAKE_CXX_CLANG_FORMAT "clang-format -style=clang-format.json -fallback-style=Google")
 set(CMAKE_CXX_STANDARD 20)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 include_directories(include)
@@ -31,7 +32,7 @@ add_library(voiddev STATIC ${WREN} ${LIB_FILES})
 # Executable
 add_executable(void ${SRC_FILES})
 
-target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES})
 
 # Final Build
-target_link_libraries(void voiddev)
+target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} voiddev)
+
