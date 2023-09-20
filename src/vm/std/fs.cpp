@@ -1,6 +1,8 @@
 #include "lib.hpp"
+#include <codecvt>
 #include <cstring>
 #include <filesystem>
+#include <locale>
 #include <stdio.h>
 
 static void closeFile(FILE** file) {
@@ -43,5 +45,13 @@ void lib::fs::fileClose(WrenVM* vm) {
 
 void lib::fs::cwd(WrenVM* vm) {
 	auto cwd = std::filesystem::current_path();
-	wrenSetSlotString(vm, 0, cwd.c_str());
+	// Convert std::filesystem::path to std::string
+#if defined(_WIN32) || defined(_WIN64)
+	// If on Windows platform, convert wide string to narrow string
+	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+	std::string narrowPath = converter.to_bytes(cwd.wstring());
+#else
+	std::string narrowPath = cwd.string();
+#endif
+	wrenSetSlotString(vm, 0, narrowPath.c_str());
 }
