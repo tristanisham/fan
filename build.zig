@@ -15,39 +15,39 @@ pub fn build(b: *std.Build) void {
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
+    
 
-    const wren = b.addStaticLibrary(.{
-        .name = "wren",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
-
-    });
-    wren.addIncludePath(.{.path = "include/"});
-    wren.addCSourceFile(.{.file = .{.path = "src/wren/wren.c"}, .flags = &.{}});
-
-    const lib = b.addStaticLibrary(.{
-        .name = "void",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
-    });
-    lib.addIncludePath(.{
-        .path = "include/"
-    });
-    lib.linkLibCpp();
-    lib.addCSourceFiles(&.{
-        "src/vm/config.cpp",
-        "src/vm/std/fs.cpp",
-        "src/vm/std/math.cpp",
-
-    }, &.{
+    const flags = &.{
         "-pedantic",
         "-Wall",
         "-W",
         "-Wno-missing-field-initializers",
         "--std=c++20",
+    };
+
+    const wren = b.addStaticLibrary(.{
+        .name = "wren",
+        .target = target,
+        .optimize = optimize,
+        
     });
+    wren.addIncludePath(.{ .path = "include/" });
+    wren.addCSourceFile(.{ .file = .{ .path = "src/wren/wren.c" }, .flags = &.{} });
+    wren.linkLibC();
+
+    const lib = b.addStaticLibrary(.{
+        .name = "void",
+        .target = target,
+        .optimize = optimize,
+    });
+    lib.addIncludePath(.{ .path = "include/" });
+    lib.linkLibCpp();
+    lib.addCSourceFiles(&.{
+                "src/vm/config.cpp",
+                "src/vm/std/fs.cpp",
+                "src/vm/std/math.cpp",
+            }, flags);
+
     lib.linkLibrary(wren);
 
     b.installArtifact(lib);
@@ -59,21 +59,10 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    exe.addIncludePath(.{
-        .path = "include"
-    });
+    exe.addIncludePath(.{ .path = "include" });
     exe.linkLibCpp();
     exe.linkLibrary(lib);
-    exe.addCSourceFiles(&.{
-        "src/main.cpp",
-        "src/cli/help.cpp"
-    }, &.{
-        "-pedantic",
-        "-Wall",
-        "-W",
-        "-Wno-missing-field-initializers",
-        "--std=c++20",
-    });
+    exe.addCSourceFiles(&.{ "src/main.cpp", "src/cli/help.cpp" }, flags);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
