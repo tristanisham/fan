@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
 		std::exit(0);
 	}
 
-	// I need to
 	for (int i = 0; i < argc; i++) {
 		if (strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-V") == 0) {
 			cli::print_version();
