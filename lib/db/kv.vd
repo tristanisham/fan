@@ -1,0 +1,4 @@
+// KeyValue represents a levelDB key value database.
+foreign class KeyValue {
+    
+}

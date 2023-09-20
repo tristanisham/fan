@@ -3,6 +3,7 @@
 #include <cstring>
 #include <filesystem>
 #include <locale>
+#include <new>
 #include <stdio.h>
 
 static void closeFile(FILE** file) {
@@ -18,7 +19,7 @@ static void closeFile(FILE** file) {
 void lib::fs::fileAlloc(WrenVM* vm) {
 	FILE** file = (FILE**)wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*));
 	const char* path = wrenGetSlotString(vm, 1);
-	*file = fopen(path, "w");
+	*file = fopen(path, "a+");
 }
 
 void lib::fs::fileFinalize(void* data) {
@@ -28,7 +29,7 @@ void lib::fs::fileFinalize(void* data) {
 void lib::fs::fileWrite(WrenVM* vm) {
 	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
 
-	if (*file == NULL) {
+	if (*file == nullptr) {
 		wrenSetSlotString(vm, 0, "Cannot write to a closed file.");
 		wrenAbortFiber(vm, 0);
 		return;
@@ -36,6 +37,30 @@ void lib::fs::fileWrite(WrenVM* vm) {
 
 	const char* text = wrenGetSlotString(vm, 1);
 	fwrite(text, sizeof(char), strlen(text), *file);
+}
+
+void lib::fs::fileRead(WrenVM* vm) {
+	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
+	if (*file == nullptr) {
+		wrenSetSlotString(vm, 0, "Cannot read from a closed file.");
+		wrenAbortFiber(vm, 0);
+		return;
+	}
+
+	fseek(*file, 0, SEEK_END);
+	long fsize = ftell(*file);
+	fseek(*file, 0, SEEK_SET);
+	try {
+		char* string = new char[fsize + 1];
+		fread(string, fsize, 1, *file);
+		string[fsize] = 0;
+		wrenSetSlotString(vm, 0, string);
+		delete[] string;
+	} catch (std::bad_alloc e) {
+		wrenSetSlotString(vm, 0, "Cannot allocate the required memory.");
+		wrenAbortFiber(vm, 0);
+		return;
+	}
 }
 
 void lib::fs::fileClose(WrenVM* vm) {
@@ -54,4 +79,9 @@ void lib::fs::cwd(WrenVM* vm) {
 	std::string narrowPath = cwd.string();
 #endif
 	wrenSetSlotString(vm, 0, narrowPath.c_str());
+}
+
+void lib::fs::canonical(WrenVM* vm) {
+	auto target = std::filesystem::canonical(wrenGetSlotString(vm, 1));
+	wrenSetSlotString(vm, 0, target.c_str());
 }

@@ -6,6 +6,8 @@ namespace lib {
 namespace math {
 	void pow(WrenVM* vm);
 
+	void abs(WrenVM* vm);
+
 }
 
 namespace fs {
@@ -17,8 +19,21 @@ namespace fs {
 
 	void fileWrite(WrenVM* vm);
 
+	void fileRead(WrenVM* vm);
+
 	void fileClose(WrenVM* vm);
 
 	void cwd(WrenVM* vm);
+
+	void canonical(WrenVM* vm);
 }  // namespace fs
+
+
+namespace db {
+	namespace kv {
+		
+	}
+}
 }  // namespace lib
+
+

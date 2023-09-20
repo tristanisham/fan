@@ -4,3 +4,10 @@ out/
 .vs/
 zig-cache/
 zig-out/
+vendor/boost*/*.htm*
+vendor/boost*/*.css
+vendor/boost*/*.png
+
+
+
+

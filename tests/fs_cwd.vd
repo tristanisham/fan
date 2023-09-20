@@ -1,2 +1,8 @@
-import "std/fs" for Dir
-System.print(Dir.cwd())
+import "std/fs" for Dir, File
+
+var cwd = Dir.cwd()
+var file = File.open("%(cwd)/README.md")
+
+System.print(file.read())
+
+file.close()

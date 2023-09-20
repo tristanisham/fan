@@ -1,11 +1,13 @@
-
 foreign class File {
-    construct create(path) {}
+    construct open(path) {}
 
     foreign write(text)
+    foreign read()
     foreign close()
 }
 
 class Dir {
     foreign static cwd()
+
+    foreign static canonical(path)
 }

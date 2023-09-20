@@ -106,6 +106,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
 				return lib::math::pow;
 			}
+
+			if (isStatic && strcmp(signature, "abs(_)") == 0) {
+				return lib::math::abs;
+			}
 		}
 	}
 
@@ -118,11 +122,19 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (!isStatic && strcmp(signature, "close()") == 0) {
 				return lib::fs::fileClose;
 			}
+
+			if (!isStatic && strcmp(signature, "read()") == 0) {
+				return lib::fs::fileRead;
+			}
 		}
 
 		if (strcmp(className, "Dir") == 0) {
 			if (isStatic && strcmp(signature, "cwd()") == 0) {
 				return lib::fs::cwd;
+			}
+
+			if (isStatic && strcmp(signature, "canonical(_)") == 0) {
+				return lib::fs::canonical;
 			}
 		}
 	}

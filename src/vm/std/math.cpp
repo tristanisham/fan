@@ -36,3 +36,10 @@ void lib::math::pow(WrenVM* vm) {
 
 	wrenSetSlotDouble(vm, 0, result);
 }
+
+void lib::math::abs(WrenVM *vm) {
+	double a = wrenGetSlotDouble(vm, 1);
+	double result = ::fabs(a);
+
+	wrenSetSlotDouble(vm, 0, result);
+}
