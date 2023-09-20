@@ -9,6 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories(include)
 include_directories(vendor/boost_1_83_0)
 
+set(LEVELDB_BUILD_TESTS OFF)
+set(LEVELDB_BUILD_BENCHMARKS OFF)
 add_subdirectory(vendor/leveldb)
 
 
@@ -40,6 +42,6 @@ add_executable(void ${SRC_FILES})
 
 
 # Final Build
-target_link_libraries(void-dev PRIVATE leveldb)
+target_link_libraries(void-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} leveldb)
 target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} void-dev)
 
