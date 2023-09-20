@@ -4,6 +4,10 @@ Void is a dynamically-typed programmign language based on
 [Wren](https://wren.io). Void's aim is to be _statically compilable_, portable,
 and come with batteries-included.
 
+```sh
+git clone --recurse-submodules https://github.com/tristanisham/void.git
+```
+
 Void currently supports, GCC, Clang, and targets *nix systems. Windows support
 is a work in progross. MSVC is God's punishment for man's arrogance.
 
