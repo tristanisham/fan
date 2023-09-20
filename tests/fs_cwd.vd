@@ -1,0 +1,2 @@
+import "std/fs" for Dir
+System.print(Dir.cwd())

@@ -5,3 +5,7 @@ foreign class File {
     foreign write(text)
     foreign close()
 }
+
+class Dir {
+    foreign static cwd()
+}

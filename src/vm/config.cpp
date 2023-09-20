@@ -119,6 +119,12 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::fs::fileClose;
 			}
 		}
+
+		if (strcmp(className, "Dir") == 0) {
+			if (isStatic && strcmp(signature, "cwd()") == 0) {
+				return lib::fs::cwd;
+			}
+		}
 	}
 
 	return nullptr;

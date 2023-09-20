@@ -1,5 +1,6 @@
 #include "lib.hpp"
 #include <cstring>
+#include <filesystem>
 #include <stdio.h>
 
 static void closeFile(FILE** file) {
@@ -38,4 +39,9 @@ void lib::fs::fileWrite(WrenVM* vm) {
 void lib::fs::fileClose(WrenVM* vm) {
 	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
 	closeFile(file);
+}
+
+void lib::fs::cwd(WrenVM* vm) {
+	auto cwd = std::filesystem::current_path();
+	wrenSetSlotString(vm, 0, cwd.c_str());
 }

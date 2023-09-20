@@ -18,5 +18,7 @@ namespace fs {
 	void fileWrite(WrenVM* vm);
 
 	void fileClose(WrenVM* vm);
+
+	void cwd(WrenVM* vm);
 }  // namespace fs
 }  // namespace lib
