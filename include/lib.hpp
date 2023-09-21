@@ -31,7 +31,9 @@ namespace fs {
 
 namespace db {
 	namespace kv {
-		
+		void keyValAlloc(WrenVM* vm);
+
+		void keyValFinalize(void* data);
 	}
 }
 }  // namespace lib

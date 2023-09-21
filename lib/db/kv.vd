@@ -1,4 +1,7 @@
 // KeyValue represents a levelDB key value database.
 foreign class KeyValue {
-    
+    construct new(path) {
+        _path = path
+    }
+
 }

@@ -97,6 +97,14 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
+	if (strcmp(module, "std/db/kv") == 0) {
+		if (strcmp(className, "KeyValue") == 0) {
+			methods.allocate = lib::db::kv::keyValAlloc;
+			methods.finalize = lib::db::kv::keyValFinalize;
+			return methods;
+		}
+	}
+
 	return methods;
 }
 
