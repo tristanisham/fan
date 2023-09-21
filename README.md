@@ -20,7 +20,7 @@ go in `./vendor`.
 
 ```sh
 $ cd vendor
-$ git clone --recurse-submodules https://github.com/google/leveldb.git
+$ git clone https://github.com/google/leveldb.git # --recurse-submodules for benchmark and testing
 ```
 
 2. Boost's Header-only libraries
