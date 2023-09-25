@@ -156,7 +156,7 @@ vm::Runtime::Runtime() {
 	wrenInitConfiguration(&config);
 	config.writeFn = &writeFn;
 	config.errorFn = &errorFn;
-	config.loadModuleFn = &loadModuleFn;  // t
+	config.loadModuleFn = &loadModuleFn;  // 
 	config.bindForeignClassFn = &bindForeignClassFn;
 	config.bindForeignMethodFn = &bindForeignMethodFn;
 	// Stores own copy of config. Can drop config.

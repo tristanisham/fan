@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 	vm::Runtime runtime {};
 	std::filesystem::path target { argv[argc - 1] };
 	if (std::filesystem::exists(target) && target.extension() == ".vd") {
+		runtime.setEntryPoint(target);
 		std::ifstream file(target);
 		if (!file.is_open()) {
 			printf("Unable to run %s", target.c_str());
