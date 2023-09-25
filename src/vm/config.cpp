@@ -27,6 +27,7 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, con
 	} break;
 	case WREN_ERROR_RUNTIME: {
 		printf("[Runtime Error] %s\n", msg);
+		// Need to find a way to keep track of user source to print actual file name.
 	} break;
 	}
 }
