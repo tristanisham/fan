@@ -1,7 +1,7 @@
 import "std/fs" for Dir, File
 
 var cwd = Dir.cwd()
-var file = File.open("%(cwd)/README.md")
+var file = File.open("%(cwd)/README.md", "r+")
 
 System.print(file.read())
 

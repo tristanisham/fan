@@ -1,5 +1,5 @@
 foreign class File {
-    construct open(path) {}
+    construct open(path, mode) {}
 
     foreign write(text)
     foreign read()

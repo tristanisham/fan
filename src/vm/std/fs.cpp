@@ -1,3 +1,4 @@
+#include "boost/format/format_fwd.hpp"
 #include "lib.hpp"
 #include <codecvt>
 #include <cstring>
@@ -5,6 +6,8 @@
 #include <locale>
 #include <new>
 #include <stdio.h>
+#include <unordered_set>
+#include <boost/format.hpp>
 
 static void closeFile(FILE** file) {
 	// Already closed.
@@ -16,10 +19,33 @@ static void closeFile(FILE** file) {
 	*file = NULL;
 }
 
+static bool isValidMode(const char* str) {
+    // Define an unordered_set containing all valid modes
+    static const std::unordered_set<std::string> validModes = {
+        "r", "w", "a", "r+", "w+", "a+", "rb", "wb", "ab", "rb+", "wb+", "ab+"
+    };
+
+    // Check if the input mode is in the set of valid modes
+    return validModes.find(str) != validModes.end();
+}
+
 void lib::fs::fileAlloc(WrenVM* vm) {
 	FILE** file = (FILE**)wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*));
+	auto count = wrenGetSlotCount(vm);
+	if (count < 3) {
+		std::string errorStr = (boost::format("Invalid number of paramaters. Expected 2, recieved %1%") % count).str();
+		wrenSetSlotString(vm, 0, errorStr.c_str());
+		wrenAbortFiber(vm, 0);
+	}
+
 	const char* path = wrenGetSlotString(vm, 1);
-	*file = fopen(path, "a+");
+	const char* mode = wrenGetSlotString(vm, 2);
+	if (!isValidMode(mode)) {
+		wrenSetSlotString(vm, 0, "Invalid file mode.");
+		wrenAbortFiber(vm, 0);
+	}
+
+	*file = fopen(path, mode);
 }
 
 void lib::fs::fileFinalize(void* data) {
