@@ -1,0 +1,3 @@
+class Env {
+  foreign static get(key)
+}

@@ -38,6 +38,10 @@ namespace db {
 		void keyValFinalize(void* data);
 	}
 }
+
+namespace os {
+	void getEnv(WrenVM* vm);
+}
 }  // namespace lib
 
 

@@ -1,8 +1,8 @@
-import "std/fs" for Dir, File
+import "std/os" for Env
 
-var cwd = Dir.cwd()
-var file = File.open("%(cwd)/README.md", "r+")
-
-System.print(file.read())
-
-file.close()
+var home = Env.get("ASDFJSDFKL")
+if (home != null) {
+    System.print(home)
+} else {
+    System.print("Null")
+}

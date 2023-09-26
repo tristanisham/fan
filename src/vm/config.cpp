@@ -155,9 +155,17 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
-		if (strcmp(module, "std/db/kv") == 0) { 
-			// TODO
+	if (strcmp(module, "std/db/kv") == 0) {
+		// TODO
+	}
+
+	if (strcmp(module, "std/os") == 0) {
+		if (strcmp(className, "Env") == 0) {
+			if (isStatic && strcmp(signature, "get(_)") == 0) {
+				return lib::os::getEnv;
+			}
 		}
+	}
 
 	return nullptr;
 }
