@@ -3,15 +3,17 @@
 #include <cstring>
 #include <iostream>
 
+static const char* VERSION = "v0.1.0";
+
 void cli::print_help() {
 #if NDEBUG
-	std::cout << "Void v0.0.1\n"
+	std::cout << "Void " << VERSION << "\n"
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
 			  << "\n"
 			  << "(More context coming soon...)" << std::endl;
 #else
-	std::cout << "Void DEBUG v0.0.1\n"
+	std::cout << "Void DEBUG " << VERSION << "\n"
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
 			  << "\n"
@@ -23,6 +25,6 @@ void cli::print_version() {
 #if NDEBUG
 	printf("Void v0.0.1\n");
 #else
-	printf("Void DEBUG v0.0.1\n");
+	printf("Void DEBUG %s\n", VERSION);
 #endif
 }

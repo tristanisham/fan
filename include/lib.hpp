@@ -4,13 +4,7 @@
 
 namespace lib {
 	void abort(WrenVM* vm, const std::string& msg);
-
-namespace math {
-	void pow(WrenVM* vm);
-
-	void abs(WrenVM* vm);
-
-}
+	std::string wren_type_to_string(const WrenType& type);
 
 namespace fs {
 	/// Allocator for the std/fs/File class.
@@ -32,15 +26,13 @@ namespace fs {
 
 
 namespace db {
-	namespace kv {
-		void keyValAlloc(WrenVM* vm);
 
-		void keyValFinalize(void* data);
-	}
 }
 
 namespace os {
 	void getEnv(WrenVM* vm);
+
+	void setEnv(WrenVM* vm);
 }
 }  // namespace lib
 

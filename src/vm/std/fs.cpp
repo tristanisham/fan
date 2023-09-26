@@ -1,5 +1,5 @@
-#include "boost/format/format_fwd.hpp"
 #include "lib.hpp"
+#include <boost/format.hpp>
 #include <codecvt>
 #include <cstring>
 #include <filesystem>
@@ -7,7 +7,6 @@
 #include <new>
 #include <stdio.h>
 #include <unordered_set>
-#include <boost/format.hpp>
 
 static void closeFile(FILE** file) {
 	// Already closed.
@@ -20,13 +19,11 @@ static void closeFile(FILE** file) {
 }
 
 static bool isValidMode(const char* str) {
-    // Define an unordered_set containing all valid modes
-    static const std::unordered_set<std::string> validModes = {
-        "r", "w", "a", "r+", "w+", "a+", "rb", "wb", "ab", "rb+", "wb+", "ab+"
-    };
+	// Define an unordered_set containing all valid modes
+	static const std::unordered_set<std::string> validModes = { "r", "w", "a", "r+", "w+", "a+", "rb", "wb", "ab", "rb+", "wb+", "ab+" };
 
-    // Check if the input mode is in the set of valid modes
-    return validModes.find(str) != validModes.end();
+	// Check if the input mode is in the set of valid modes
+	return validModes.find(str) != validModes.end();
 }
 
 void lib::fs::fileAlloc(WrenVM* vm) {
@@ -41,8 +38,7 @@ void lib::fs::fileAlloc(WrenVM* vm) {
 	const char* path = wrenGetSlotString(vm, 1);
 	const char* mode = wrenGetSlotString(vm, 2);
 	if (!isValidMode(mode)) {
-		wrenSetSlotString(vm, 0, "Invalid file mode.");
-		wrenAbortFiber(vm, 0);
+		lib::abort(vm, "Invalid file mode");
 	}
 
 	*file = fopen(path, mode);
@@ -57,7 +53,7 @@ void lib::fs::fileWrite(WrenVM* vm) {
 
 	if (*file == nullptr) {
 		wrenSetSlotString(vm, 0, "Cannot write to a closed file.");
-		wrenAbortFiber(vm, 0);
+		lib::abort(vm, "Cannot write to a closed file.");
 		return;
 	}
 

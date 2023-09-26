@@ -1,6 +1,10 @@
 #include "lib.hpp"
 #include "vm.hpp"
 #include "wren.h"
+#include <algorithm>
+#include <boost/format.hpp>
+#include <cstddef>
+#include <cstdio>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -18,6 +22,29 @@ void lib::abort(WrenVM* vm, const std::string& msg) {
 	wrenEnsureSlots(vm, 1);
 	wrenSetSlotString(vm, 0, msg.c_str());
 	wrenAbortFiber(vm, 0);
+}
+
+std::string lib::wren_type_to_string(const WrenType& type) {
+	switch (type) {
+	case WREN_TYPE_BOOL:
+		return "bool";
+	case WREN_TYPE_NUM:
+		return "num";
+	case WREN_TYPE_FOREIGN:
+		return "foreign";
+	case WREN_TYPE_LIST:
+		return "list";
+	case WREN_TYPE_MAP:
+		return "map";
+	case WREN_TYPE_NULL:
+		return "null";
+	case WREN_TYPE_STRING:
+		return "string";
+	case WREN_TYPE_UNKNOWN:
+		return "unknown";
+	default:
+		return "invalid";
+	}
 }
 
 static void writeFn(WrenVM* vm, const char* text) {
@@ -69,26 +96,33 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	}
 
 	searchPath.replace_extension(".vd");
-
-	std::ifstream file { searchPath, std::ifstream::binary | std::ios::ate };
-	// TODO fix module reader bug
-	if (file.is_open()) {
-		// Determine the size of the file
-		std::streamsize fileSize = file.tellg();
-		file.seekg(0, std::ios::beg);
-
-		// Resize the vector to the file size and read the file into it
-		char* buffer = new char[fileSize];
-		file.read(buffer, fileSize);
-
-		mod.source = buffer;
-		mod.onComplete = &loadModuleComplete;
-
-		file.close();
-
-	} else {
+	if (!std::filesystem::exists(searchPath)) {
+		std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
+		std::cerr << fmt << std::endl;
 		mod.source = NULL;
+		return mod;
 	}
+
+	FILE* file = fopen(searchPath.c_str(), "r");
+	if (file == nullptr) {
+		mod.source = NULL;
+		return mod;
+	}
+
+	fseek(file, 0, SEEK_END);
+	long fsize = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	char* string = new char[fsize + 1];
+	fread(string, fsize, 1, file);
+	string[fsize] = 0;
+	mod.source = string;
+	mod.onComplete = [](WrenVM* vm, const char* name, WrenLoadModuleResult result) {
+		delete[] result.source;
+		result.source = NULL;
+	};
+
+	fclose(file);
+	file = nullptr;
 
 	return mod;
 }
@@ -105,29 +139,10 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
-	if (strcmp(module, "std/db/kv") == 0) {
-		if (strcmp(className, "KeyValue") == 0) {
-			methods.allocate = lib::db::kv::keyValAlloc;
-			methods.finalize = lib::db::kv::keyValFinalize;
-			return methods;
-		}
-	}
-
 	return methods;
 }
 
 WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
-	if (strcmp(module, "std/math") == 0) {
-		if (strcmp(className, "Math") == 0) {
-			if (isStatic && strcmp(signature, "pow(_,_)") == 0) {
-				return lib::math::pow;
-			}
-
-			if (isStatic && strcmp(signature, "abs(_)") == 0) {
-				return lib::math::abs;
-			}
-		}
-	}
 
 	if (strcmp(module, "std/fs") == 0) {
 		if (strcmp(className, "File") == 0) {
@@ -155,15 +170,17 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
-	if (strcmp(module, "std/db/kv") == 0) {
-		// TODO
-	}
 
 	if (strcmp(module, "std/os") == 0) {
 		if (strcmp(className, "Env") == 0) {
 			if (isStatic && strcmp(signature, "get(_)") == 0) {
 				return lib::os::getEnv;
 			}
+
+			if (isStatic && strcmp(signature, "set(_,_)") == 0) {
+				return lib::os::setEnv;
+			}
+
 		}
 	}
 

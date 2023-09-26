@@ -13,17 +13,9 @@ is a work in progross. MSVC is God's punishment for man's arrogance.
 
 ## Setup & Dependencies
 
-Void requires some external dependencies. They're all pretty easy to install and
-go in `./vendor`.
+Void requires some external dependencies. They're all pretty easy to install and go in `./vendor`.
 
-1. Google's LevelDB
-
-```sh
-$ cd vendor
-$ git clone https://github.com/google/leveldb.git # --recurse-submodules for benchmark and testing
-```
-
-2. Boost's Header-only libraries
+1. Boost's Header-only libraries
 
 - Go to [Boost's version history](https://www.boost.org/users/history/) and
   download and extract version **1.83.0**
