@@ -71,7 +71,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	searchPath.replace_extension(".vd");
 
 	std::ifstream file { searchPath, std::ifstream::binary | std::ios::ate };
-
+	// TODO fix module reader bug
 	if (file.is_open()) {
 		// Determine the size of the file
 		std::streamsize fileSize = file.tellg();
