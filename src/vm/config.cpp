@@ -13,6 +13,13 @@
 #include <tuple>
 #include <vector>
 
+/// Aborts the current fiber and sends an error message back to the VM.
+void lib::abort(WrenVM* vm, const std::string& msg) {
+	wrenEnsureSlots(vm, 1);
+	wrenSetSlotString(vm, 0, msg.c_str());
+	wrenAbortFiber(vm, 0);
+}
+
 static void writeFn(WrenVM* vm, const char* text) {
 	printf("%s", text);
 }
@@ -148,6 +155,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
+		if (strcmp(module, "std/db/kv") == 0) { 
+			// TODO
+		}
+
 	return nullptr;
 }
 
@@ -157,7 +168,7 @@ vm::Runtime::Runtime() {
 	wrenInitConfiguration(&config);
 	config.writeFn = &writeFn;
 	config.errorFn = &errorFn;
-	config.loadModuleFn = &loadModuleFn;  // 
+	config.loadModuleFn = &loadModuleFn;  //
 	config.bindForeignClassFn = &bindForeignClassFn;
 	config.bindForeignMethodFn = &bindForeignMethodFn;
 	// Stores own copy of config. Can drop config.

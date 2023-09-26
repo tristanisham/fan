@@ -3,6 +3,8 @@
 #include "wren.h"
 
 namespace lib {
+	void abort(WrenVM* vm, const std::string& msg);
+
 namespace math {
 	void pow(WrenVM* vm);
 
