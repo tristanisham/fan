@@ -13,9 +13,10 @@ is a work in progross. MSVC is God's punishment for man's arrogance.
 
 ## Setup & Dependencies
 
-Void requires some external dependencies. They're all pretty easy to install and go in `./vendor`.
+Void requires some external dependencies. They're all pretty easy to install and
+go in `./vendor`.
 
-1. Boost's Header-only libraries
+### 1. Boost's Header-only libraries
 
 - Go to [Boost's version history](https://www.boost.org/users/history/) and
   download and extract version **1.83.0**
@@ -31,6 +32,13 @@ The master `CMakeLists.txt` should already be targeting this path.
 ```
 include_directories(vendor/boost_1_83_0)
 ```
+
+### 2. Curl
+
+If you're on Windows or MacOS, CURL should be installed with your system. If
+you're on Linux, run
+[the appropriate command](https://everything.curl.dev/get/linux) to install CURL
+for your distrobution.
 
 ## Environment Variables
 

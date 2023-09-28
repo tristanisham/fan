@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-VOID_LIB=./lib ./build/void $@
+VOID_LIB=./lang ./build/void $@

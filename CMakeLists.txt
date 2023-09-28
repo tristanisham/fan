@@ -12,6 +12,11 @@ include_directories(vendor/boost_1_83_0)
 set(LEVELDB_BUILD_TESTS OFF)
 set(LEVELDB_BUILD_BENCHMARKS OFF)
 
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+
+
+
 
 # add_dependencies(${TARGET_NAME} libcurl voiddev)
 
@@ -41,6 +46,6 @@ add_executable(void ${SRC_FILES})
 
 
 # Final Build
-target_link_libraries(void-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES}) #leveldb
+target_link_libraries(void-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES}) #leveldb
 target_link_libraries(void PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} void-dev)
 

@@ -1,0 +1,24 @@
+class Env {
+  // get returns the associated value from 'key'.
+  // If the variable is unset, get returns null.
+  // @param key: string
+  // @return string | null
+  foreign static get(key)
+
+  // set associates key=val for the running process.
+  // If val is null, set will unset 'key'
+  // If an error occurs setting or unsetting 'key', set will
+  // throw an error.
+  // @param val: string | null
+  // @throws
+  foreign static set(key, val)
+
+  static [key] {
+    return Env.get(key)
+  }
+
+  static [key]=(val) {
+    return Env.set(key, val)
+  }
+}
+

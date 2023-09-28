@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <optional>
+
 
 namespace vm {
 

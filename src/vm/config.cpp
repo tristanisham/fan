@@ -139,6 +139,12 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
+	// if (strcmp(module, "std/net/http") == 0) {
+	// 	if (strcmp(className, "Response") == 0) {
+
+	// 	}
+	// }
+
 	return methods;
 }
 
@@ -170,7 +176,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
-
 	if (strcmp(module, "std/os") == 0) {
 		if (strcmp(className, "Env") == 0) {
 			if (isStatic && strcmp(signature, "get(_)") == 0) {
@@ -180,7 +185,14 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "set(_,_)") == 0) {
 				return lib::os::setEnv;
 			}
+		}
+	}
 
+	if (strcmp(module, "std/net/http") == 0) {
+		if (strcmp(className, "Request") == 0) {
+			if (isStatic && strcmp(signature, "request(_)") == 0) {
+				return lib::net::http::request;
+			}
 		}
 	}
 
