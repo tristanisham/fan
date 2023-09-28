@@ -1,12 +1,31 @@
+#include "boost/format/format_fwd.hpp"
 #include <boost/format.hpp>
 #include <cstdio>
 #include <curl/curl.h>
 #include <iostream>
 #include <lib.hpp>
+#include <sstream>
+#include <string>
+#include <unordered_map>
 
 size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data) {
 	data->append((char*)ptr, size * nmemb);
 	return size * nmemb;
+}
+
+static std::unordered_map<std::string, std::string> splitHeaders(const std::string& header_string) {
+	std::unordered_map<std::string, std::string> output;
+	std::istringstream stream(header_string);
+	std::string line;
+
+	while (std::getline(stream, line)) {
+		auto place = line.find_first_of(':');
+		auto key = line.substr(0, place);
+		auto val = line.substr(place);
+		output.emplace(key, val);
+	}
+
+	return output;
 }
 
 void lib::net::http::request(WrenVM* vm) {
@@ -47,8 +66,24 @@ void lib::net::http::request(WrenVM* vm) {
 		curl_global_cleanup();
 		curl = NULL;
 
-        // TODO need to finish binding to Wren class
-		lib::net::http::Response response { response_code, header_string, response_string, elapsed };
+		// TODO need to finish binding to Wren class
+		std::cout << (boost::format("Slot Count: %1%\nHeaders: %2%\n Body: %3%\nElapsed %4%") % wrenGetSlotCount(vm) % header_string % response_string % elapsed) << std::endl;
+		auto offset = wrenGetSlotCount(vm)+1;
+		std::unordered_map<std::string, std::string> headers = splitHeaders(header_string);
+		// Allocate total slots
+		auto header_slots = headers.bucket_count() * 2;
+		size_t resp_count = 2;
+		size_t elapsed_count = 2;
+
+		wrenEnsureSlots(vm, offset+header_slots+resp_count+elapsed_count);
+
+		// Create the map
+		auto map_slot = 0;
+		wrenSetSlotNewMap(vm, map_slot);
+		// Save Resp Body
+		wrenSetSlotString(vm, offset, "body");
+		wrenSetMapValue(vm, map_slot, offset, offset+1);
+
 
 		// If we get here then the connection is closed gracefully
 	} catch (const std::exception& e) {

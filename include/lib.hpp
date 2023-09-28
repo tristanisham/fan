@@ -34,33 +34,6 @@ namespace net {
 	namespace http {
 		void request(WrenVM* vm);
 
-		class Response {
-		public:
-			Response() = default;
-			Response(const long& status_code, const std::string& headers, const std::string& body, const double& elapsed)
-				: status_code(status_code)
-				, elapsed_time(elapsed)
-				, headers_str(headers)
-				, body(body) {
-			}
-
-			const long& getStatusCode() const {
-				return status_code;
-			}
-			const std::string& getContentType() const {
-				return headers_str;
-			}
-			const std::string& getBody() const {
-				return body;
-			}
-
-		private:
-			long status_code;
-			std::string headers_str;
-			std::string body;
-			double elapsed_time;
-		};
-
 	}
 
 	class Url {
