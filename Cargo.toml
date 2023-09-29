@@ -1,0 +1,20 @@
+cargo-features = ["profile-rustflags"]
+
+[package]
+name = "void"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+lto = true
+
+[profile.dev]
+rustflags = ["-Z", "sanitizer=address"]
+
+[build-dependencies]
+cc = { version = "1.0", features = ["parallel"] }
+bindgen = "0.68.1"
+
+[dependencies]
+dirs = "5.0.1"
+libc = "0.2.148"

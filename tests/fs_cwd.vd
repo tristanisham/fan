@@ -1,8 +1,0 @@
-import "std/os" for Env
-
-var home = Env.get("ASDFJSDFKL")
-if (home != null) {
-    System.print(home)
-} else {
-    System.print("Null")
-}

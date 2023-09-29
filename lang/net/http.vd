@@ -1,8 +1,0 @@
-class Request {
-    foreign static request(url)
-}
-
-
-foreign class Response {
-
-}

@@ -1,3 +1,0 @@
-import "std/net/http" for Request
-
-Request.request("https://example.com/")

@@ -1,17 +1,17 @@
 // MIT License
-// 
+//
 // Copyright (c) 2013-2021 Robert Nystrom and Wren Contributors
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -103,7 +103,7 @@ struct WrenLoadModuleResult;
 // is handed back to you in this callback, so that you can free memory if appropriate.
 typedef void (*WrenLoadModuleCompleteFn)(WrenVM* vm, const char* name, struct WrenLoadModuleResult result);
 
-// The result of a loadModuleFn call. 
+// The result of a loadModuleFn call.
 // [source] is the source code for the module, or NULL if the module is not found.
 // [onComplete] an optional callback that will be called once Wren is done with the result.
 typedef struct WrenLoadModuleResult
@@ -212,7 +212,7 @@ typedef struct
   // embedder to physically locate and read the source code for a module. The
   // first time an import appears, Wren will call this and pass in the name of
   // the module being imported. The method will return a result, which contains
-  // the source code for that module. Memory for the source is owned by the 
+  // the source code for that module. Memory for the source is owned by the
   // host application, and can be freed using the onComplete callback.
   //
   // This will only be called once for any given module name. Wren caches the
@@ -520,8 +520,8 @@ WREN_API int wrenGetListCount(WrenVM* vm, int slot);
 // [elementSlot].
 WREN_API void wrenGetListElement(WrenVM* vm, int listSlot, int index, int elementSlot);
 
-// Sets the value stored at [index] in the list at [listSlot], 
-// to the value from [elementSlot]. 
+// Sets the value stored at [index] in the list at [listSlot],
+// to the value from [elementSlot].
 WREN_API void wrenSetListElement(WrenVM* vm, int listSlot, int index, int elementSlot);
 
 // Takes the value stored at [elementSlot] and inserts it into the list stored
@@ -556,8 +556,8 @@ WREN_API void wrenRemoveMapValue(WrenVM* vm, int mapSlot, int keySlot,
 WREN_API void wrenGetVariable(WrenVM* vm, const char* module, const char* name,
                      int slot);
 
-// Looks up the top level variable with [name] in resolved [module], 
-// returns false if not found. The module must be imported at the time, 
+// Looks up the top level variable with [name] in resolved [module],
+// returns false if not found. The module must be imported at the time,
 // use wrenHasModule to ensure that before calling.
 WREN_API bool wrenHasVariable(WrenVM* vm, const char* module, const char* name);
 
@@ -1191,19 +1191,19 @@ typedef struct
 typedef struct
 {
   Obj obj;
-  
+
   ByteBuffer code;
   ValueBuffer constants;
-  
+
   // The module where this function was defined.
   ObjModule* module;
 
   // The maximum number of stack slots this function may use.
   int maxSlots;
-  
+
   // The number of upvalues this function closes over.
   int numUpvalues;
-  
+
   // The number of parameters this function expects. Used to ensure that .call
   // handles a mismatch between number of parameters and arguments. This will
   // only be set for fns, and not ObjFns that represent methods or scripts.
@@ -1229,10 +1229,10 @@ typedef struct
   // Pointer to the current (really next-to-be-executed) instruction in the
   // function's bytecode.
   uint8_t* ip;
-  
+
   // The closure being executed.
   ObjClosure* closure;
-  
+
   // Pointer to the first stack slot used by this call frame. This will contain
   // the receiver, followed by the function's parameters, then local variables
   // and temporaries.
@@ -1245,11 +1245,11 @@ typedef enum
 {
   // The fiber is being run from another fiber using a call to `try()`.
   FIBER_TRY,
-  
+
   // The fiber was directly invoked by `runInterpreter()`. This means it's the
   // initial fiber used by a call to `wrenCall()` or `wrenInterpret()`.
   FIBER_ROOT,
-  
+
   // The fiber is invoked some other way. If [caller] is `NULL` then the fiber
   // was invoked using `call()`. If [numFrames] is zero, then the fiber has
   // finished running and is done. If [numFrames] is one and that frame's `ip`
@@ -1260,41 +1260,41 @@ typedef enum
 typedef struct sObjFiber
 {
   Obj obj;
-  
+
   // The stack of value slots. This is used for holding local variables and
   // temporaries while the fiber is executing. It is heap-allocated and grown
   // as needed.
   Value* stack;
-  
+
   // A pointer to one past the top-most value on the stack.
   Value* stackTop;
-  
+
   // The number of allocated slots in the stack array.
   int stackCapacity;
-  
+
   // The stack of call frames. This is a dynamic array that grows as needed but
   // never shrinks.
   CallFrame* frames;
-  
+
   // The number of frames currently in use in [frames].
   int numFrames;
-  
+
   // The number of [frames] allocated.
   int frameCapacity;
-  
+
   // Pointer to the first node in the linked list of open upvalues that are
   // pointing to values still on the stack. The head of the list will be the
   // upvalue closest to the top of the stack, and then the list works downwards.
   ObjUpvalue* openUpvalues;
-  
+
   // The fiber that ran this one. If this fiber is yielded, control will resume
   // to this one. May be `NULL`.
   struct sObjFiber* caller;
-  
+
   // If the fiber failed because of a runtime error, this will contain the
   // error object. Otherwise, it will be null.
   Value error;
-  
+
   FiberState state;
 } ObjFiber;
 
@@ -1312,7 +1312,7 @@ typedef enum
 
   // A normal user-defined method.
   METHOD_BLOCK,
-  
+
   // No method for the given symbol.
   METHOD_NONE
 } MethodType;
@@ -1354,7 +1354,7 @@ struct sObjClass
 
   // The name of the class.
   ObjString* name;
-  
+
   // The ClassAttribute for the class, if any
   Value attributes;
 };
@@ -1591,7 +1591,7 @@ static inline void wrenAppendCallFrame(WrenVM* vm, ObjFiber* fiber,
 {
   // The caller should have ensured we already have enough capacity.
   ASSERT(fiber->frameCapacity > fiber->numFrames, "No memory for call frame.");
-  
+
   CallFrame* frame = &fiber->frames[fiber->numFrames++];
   frame->stackStart = stackStart;
   frame->closure = closure;
@@ -2074,7 +2074,7 @@ OPCODE(FOREIGN_CONSTRUCT, 0)
 // the name of the class. Byte [arg] is the number of fields in the class.
 OPCODE(CLASS, -1)
 
-// Ends a class. 
+// Ends a class.
 // Atm the stack contains the class and the ClassAttributes (or null).
 OPCODE(END_CLASS, -2)
 
@@ -2156,7 +2156,7 @@ struct WrenVM
   // whose key is null) for the module's name and the value is the ObjModule
   // for the module.
   ObjMap* modules;
-  
+
   // The most recently imported module. More specifically, the module whose
   // code has most recently finished executing.
   //
@@ -2192,11 +2192,11 @@ struct WrenVM
   Obj* tempRoots[WREN_MAX_TEMP_ROOTS];
 
   int numTempRoots;
-  
+
   // Pointer to the first node in the linked list of active handles or NULL if
   // there are none.
   WrenHandle* handles;
-  
+
   // Pointer to the bottom of the range of stack slots available for use from
   // the C API. During a foreign method, this will be in the stack of the fiber
   // that is executing a method.
@@ -2207,7 +2207,7 @@ struct WrenVM
   Value* apiStack;
 
   WrenConfiguration config;
-  
+
   // Compiler and debugger data:
 
   // The compiler that is currently compiling code. This is used so that heap
@@ -2293,12 +2293,12 @@ static inline void wrenCallFunction(WrenVM* vm, ObjFiber* fiber,
         sizeof(CallFrame) * fiber->frameCapacity, sizeof(CallFrame) * max);
     fiber->frameCapacity = max;
   }
-  
+
   // Grow the stack if needed.
   int stackSize = (int)(fiber->stackTop - fiber->stack);
   int needed = stackSize + closure->fn->maxSlots;
   wrenEnsureStack(vm, fiber, needed);
-  
+
   wrenAppendCallFrame(vm, fiber, closure, fiber->stackTop - numArgs);
 }
 
@@ -2388,7 +2388,7 @@ void wrenDebugPrintStackTrace(WrenVM* vm)
 {
   // Bail if the host doesn't enable printing errors.
   if (vm->config.errorFn == NULL) return;
-  
+
   ObjFiber* fiber = vm->fiber;
   if (IS_STRING(fiber->error))
   {
@@ -2410,12 +2410,12 @@ void wrenDebugPrintStackTrace(WrenVM* vm)
 
     // Skip over stub functions for calling methods from the C API.
     if (fn->module == NULL) continue;
-    
+
     // The built-in core module has no name. We explicitly omit it from stack
     // traces since we don't want to highlight to a user the implementation
     // detail of what part of the core module is written in C and what is Wren.
     if (fn->module->name == NULL) continue;
-    
+
     // -1 because IP has advanced past the instruction that it just executed.
     int line = fn->debug->sourceLines.data[frame->ip - fn->code.data - 1];
     vm->config.errorFn(vm, WREN_ERROR_STACK_TRACE,
@@ -2669,7 +2669,7 @@ static int dumpInstruction(WrenVM* vm, ObjFn* fn, int i, int* lastLine)
 
     case CODE_CONSTRUCT:         printf("CONSTRUCT\n"); break;
     case CODE_FOREIGN_CONSTRUCT: printf("FOREIGN_CONSTRUCT\n"); break;
-      
+
     case CODE_CLASS:
     {
       int numFields = READ_BYTE();
@@ -2695,11 +2695,11 @@ static int dumpInstruction(WrenVM* vm, ObjFn* fn, int i, int* lastLine)
              vm->methodNames.data[symbol]->value);
       break;
     }
-      
+
     case CODE_END_MODULE:
       printf("END_MODULE\n");
       break;
-      
+
     case CODE_IMPORT_MODULE:
     {
       int name = READ_SHORT();
@@ -2708,7 +2708,7 @@ static int dumpInstruction(WrenVM* vm, ObjFn* fn, int i, int* lastLine)
       printf("'\n");
       break;
     }
-      
+
     case CODE_IMPORT_VARIABLE:
     {
       int variable = READ_SHORT();
@@ -2717,7 +2717,7 @@ static int dumpInstruction(WrenVM* vm, ObjFn* fn, int i, int* lastLine)
       printf("'\n");
       break;
     }
-      
+
     case CODE_END:
       printf("END\n");
       break;
@@ -2791,11 +2791,11 @@ int wrenSymbolTableAdd(WrenVM* vm, SymbolTable* symbols,
                        const char* name, size_t length)
 {
   ObjString* symbol = AS_STRING(wrenNewStringLength(vm, name, length));
-  
+
   wrenPushRoot(vm, &symbol->obj);
   wrenStringBufferWrite(vm, symbols, symbol);
   wrenPopRoot(vm);
-  
+
   return symbols->count - 1;
 }
 
@@ -2829,7 +2829,7 @@ void wrenBlackenSymbolTable(WrenVM* vm, SymbolTable* symbolTable)
   {
     wrenGrayObj(vm, &symbolTable->data[i]->obj);
   }
-  
+
   // Keep track of how much memory is still in use.
   vm->bytesAllocated += symbolTable->capacity * sizeof(*symbolTable->data);
 }
@@ -2837,7 +2837,7 @@ void wrenBlackenSymbolTable(WrenVM* vm, SymbolTable* symbolTable)
 int wrenUtf8EncodeNumBytes(int value)
 {
   ASSERT(value >= 0, "Cannot encode a negative value.");
-  
+
   if (value <= 0x7f) return 1;
   if (value <= 0x7ff) return 2;
   if (value <= 0xffff) return 3;
@@ -2942,7 +2942,7 @@ int wrenUtf8DecodeNumBytes(uint8_t byte)
   // If the byte starts with 10xxxxx, it's the middle of a UTF-8 sequence, so
   // don't count it at all.
   if ((byte & 0xc0) == 0x80) return 0;
-  
+
   // The first byte's high bits tell us how many bytes are in the UTF-8
   // sequence.
   if ((byte & 0xf8) == 0xf0) return 4;
@@ -2961,7 +2961,7 @@ int wrenPowerOf2Ceil(int n)
   n |= n >> 8;
   n |= n >> 16;
   n++;
-  
+
   return n;
 }
 
@@ -3097,13 +3097,13 @@ static uint32_t validateIndexValue(WrenVM* vm, uint32_t count, double value,
                                    const char* argName)
 {
   if (!validateIntValue(vm, value, argName)) return UINT32_MAX;
-  
+
   // Negative indices count from the end.
   if (value < 0) value = count + value;
-  
+
   // Check bounds.
   if (value >= 0 && value < count) return (uint32_t)value;
-  
+
   vm->fiber->error = wrenStringFormat(vm, "$ out of bounds.", argName);
   return UINT32_MAX;
 }
@@ -3778,7 +3778,7 @@ DEF_PRIMITIVE(fiber_new)
   {
     RETURN_ERROR("Function cannot take more than one parameter.");
   }
-  
+
   RETURN_OBJ(wrenNewFiber(vm, closure));
 }
 
@@ -3815,7 +3815,7 @@ static bool runFiber(WrenVM* vm, ObjFiber* fiber, Value* args, bool isCall,
     if (fiber->caller != NULL) RETURN_ERROR("Fiber has already been called.");
 
     if (fiber->state == FIBER_ROOT) RETURN_ERROR("Cannot call root fiber.");
-    
+
     // Remember who ran it.
     fiber->caller = vm->fiber;
   }
@@ -3905,7 +3905,7 @@ DEF_PRIMITIVE(fiber_transferError)
 DEF_PRIMITIVE(fiber_try)
 {
   runFiber(vm, AS_FIBER(args[0]), args, true, false, "try");
-  
+
   // If we're switching to a valid fiber to try, remember that we're trying it.
   if (!wrenHasError(vm->fiber)) vm->fiber->state = FIBER_TRY;
   return false;
@@ -3914,7 +3914,7 @@ DEF_PRIMITIVE(fiber_try)
 DEF_PRIMITIVE(fiber_try1)
 {
   runFiber(vm, AS_FIBER(args[0]), args, true, true, "try");
-  
+
   // If we're switching to a valid fiber to try, remember that we're trying it.
   if (!wrenHasError(vm->fiber)) vm->fiber->state = FIBER_TRY;
   return false;
@@ -4014,17 +4014,17 @@ DEF_PRIMITIVE(fn_toString)
 // Creates a new list of size args[1], with all elements initialized to args[2].
 DEF_PRIMITIVE(list_filled)
 {
-  if (!validateInt(vm, args[1], "Size")) return false;  
+  if (!validateInt(vm, args[1], "Size")) return false;
   if (AS_NUM(args[1]) < 0) RETURN_ERROR("Size cannot be negative.");
-  
+
   uint32_t size = (uint32_t)AS_NUM(args[1]);
   ObjList* list = wrenNewList(vm, size);
-  
+
   for (uint32_t i = 0; i < size; i++)
   {
     list->elements.data[i] = args[2];
   }
-  
+
   RETURN_OBJ(list);
 }
 
@@ -4045,7 +4045,7 @@ DEF_PRIMITIVE(list_add)
 DEF_PRIMITIVE(list_addCore)
 {
   wrenValueBufferWrite(vm, &AS_LIST(args[0])->elements, args[1]);
-  
+
   // Return the list.
   RETURN_VAL(args[0]);
 }
@@ -4214,9 +4214,9 @@ DEF_PRIMITIVE(map_subscriptSetter)
 DEF_PRIMITIVE(map_addCore)
 {
   if (!validateKey(vm, args[1])) return false;
-  
+
   wrenMapSet(vm, AS_MAP(args[0]), args[1], args[2]);
-  
+
   // Return the map itself.
   RETURN_VAL(args[0]);
 }
@@ -4799,7 +4799,7 @@ DEF_PRIMITIVE(string_indexOf2)
   ObjString* search = AS_STRING(args[1]);
   uint32_t start = validateIndex(vm, args[2], string->length, "Start");
   if (start == UINT32_MAX) return false;
-  
+
   uint32_t index = wrenStringFind(string, search, start);
   RETURN_NUM(index == UINT32_MAX ? -1 : (int)index);
 }
@@ -4950,7 +4950,7 @@ void wrenInitializeCore(WrenVM* vm)
 {
   ObjModule* coreModule = wrenNewModule(vm, NULL);
   wrenPushRoot(vm, (Obj*)coreModule);
-  
+
   // The core module's key is null in the module map.
   wrenMapSet(vm, vm->modules, NULL_VAL, OBJ_VAL(coreModule));
   wrenPopRoot(vm); // coreModule.
@@ -5055,7 +5055,7 @@ void wrenInitializeCore(WrenVM* vm)
   FUNCTION_CALL(vm->fnClass, "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_)", fn_call14);
   FUNCTION_CALL(vm->fnClass, "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)", fn_call15);
   FUNCTION_CALL(vm->fnClass, "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)", fn_call16);
-  
+
   PRIMITIVE(vm->fnClass, "toString", fn_toString);
 
   vm->nullClass = AS_CLASS(wrenFindVariable(vm, coreModule, "Null"));
@@ -5312,11 +5312,11 @@ typedef enum
   TOKEN_STATIC_FIELD,
   TOKEN_NAME,
   TOKEN_NUMBER,
-  
+
   // A string literal without any interpolation, or the last section of a
   // string following the last interpolated expression.
   TOKEN_STRING,
-  
+
   // A portion of a string literal preceding an interpolated expression. This
   // string:
   //
@@ -5349,7 +5349,7 @@ typedef struct
 
   // The 1-based line where the token appears.
   int line;
-  
+
   // The parsed value if the token is a literal.
   Value value;
 } Token;
@@ -5381,7 +5381,7 @@ typedef struct
 
   // The most recently consumed/advanced token.
   Token previous;
-  
+
   // Tracks the lexing state when tokenizing interpolated strings.
   //
   // Interpolated strings make the lexer not strictly regular: we don't know
@@ -5460,19 +5460,19 @@ typedef enum
   // A name followed by a (possibly empty) parenthesized parameter list. Also
   // used for binary operators.
   SIG_METHOD,
-  
+
   // Just a name. Also used for unary operators.
   SIG_GETTER,
-  
+
   // A name followed by "=".
   SIG_SETTER,
-  
+
   // A square bracketed parameter list.
   SIG_SUBSCRIPT,
-  
+
   // A square bracketed parameter list followed by "=".
   SIG_SUBSCRIPT_SETTER,
-  
+
   // A constructor initializer function. This has a distinct signature to
   // prevent it from being invoked directly outside of the constructor on the
   // metaclass.
@@ -5492,7 +5492,7 @@ typedef struct
 {
   // The name of the class.
   ObjString* name;
-  
+
   // Attributes for the class itself
   ObjMap* classAttributes;
   // Attributes for methods in this class
@@ -5508,7 +5508,7 @@ typedef struct
 
   // True if the class being compiled is a foreign class.
   bool isForeign;
-  
+
   // True if the current method being compiled is static.
   bool inStatic;
 
@@ -5538,7 +5538,7 @@ struct sCompiler
   // here means top-level code is being compiled and there is no block scope
   // in effect at all. Any variables declared will be module-level.
   int scopeDepth;
-  
+
   // The current number of slots (locals and temporaries) in use.
   //
   // We use this and maxSlots to track the maximum number of additional slots
@@ -5559,7 +5559,7 @@ struct sCompiler
 
   // The function being compiled.
   ObjFn* fn;
-  
+
   // The constants for the function being compiled.
   ObjMap* constants;
 
@@ -5581,10 +5581,10 @@ typedef enum
 {
   // A local variable in the current function.
   SCOPE_LOCAL,
-  
+
   // A local variable declared in an enclosing function.
   SCOPE_UPVALUE,
-  
+
   // A top-level module variable.
   SCOPE_MODULE
 } Scope;
@@ -5595,7 +5595,7 @@ typedef struct
 {
   // The stack slot, upvalue slot, or module symbol defining the variable.
   int index;
-  
+
   // Where the variable is declared.
   Scope scope;
 } Variable;
@@ -5605,7 +5605,7 @@ static void disallowAttributes(Compiler* compiler);
 static void addToAttributeGroup(Compiler* compiler, Value group, Value key, Value value);
 static void emitClassAttributes(Compiler* compiler, ClassInfo* classInfo);
 static void copyAttributes(Compiler* compiler, ObjMap* into);
-static void copyMethodAttributes(Compiler* compiler, bool isForeign, 
+static void copyMethodAttributes(Compiler* compiler, bool isForeign,
             bool isStatic, const char* fullSignature, int32_t length);
 
 // The stack effect of each opcode. The index in the array is the opcode, and
@@ -5784,7 +5784,7 @@ OPCODE(FOREIGN_CONSTRUCT, 0)
 // the name of the class. Byte [arg] is the number of fields in the class.
 OPCODE(CLASS, -1)
 
-// Ends a class. 
+// Ends a class.
 // Atm the stack contains the class and the ClassAttributes (or null).
 OPCODE(END_CLASS, -2)
 
@@ -5880,7 +5880,7 @@ static void error(Compiler* compiler, const char* format, ...)
   // If the parse error was caused by an error token, the lexer has already
   // reported it.
   if (token->type == TOKEN_ERROR) return;
-  
+
   va_list args;
   va_start(args, format);
   if (token->type == TOKEN_LINE)
@@ -5913,14 +5913,14 @@ static void error(Compiler* compiler, const char* format, ...)
 static int addConstant(Compiler* compiler, Value constant)
 {
   if (compiler->parser->hasError) return -1;
-  
+
   // See if we already have a constant for the value. If so, reuse it.
   if (compiler->constants != NULL)
   {
     Value existing = wrenMapGet(compiler->constants, constant);
     if (IS_NUM(existing)) return (int)AS_NUM(existing);
   }
-  
+
   // It's a new constant.
   if (compiler->fn->constants.count < MAX_CONSTANTS)
   {
@@ -5928,7 +5928,7 @@ static int addConstant(Compiler* compiler, Value constant)
     wrenValueBufferWrite(compiler->parser->vm, &compiler->fn->constants,
                          constant);
     if (IS_OBJ(constant)) wrenPopRoot(compiler->parser->vm);
-    
+
     if (compiler->constants == NULL)
     {
       compiler->constants = wrenNewMap(compiler->parser->vm);
@@ -5954,7 +5954,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
   compiler->loop = NULL;
   compiler->enclosingClass = NULL;
   compiler->isInitializer = false;
-  
+
   // Initialize these to NULL before allocating in case a GC gets triggered in
   // the middle of initializing the compiler.
   compiler->fn = NULL;
@@ -5983,7 +5983,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
     compiler->locals[0].name = NULL;
     compiler->locals[0].length = 0;
   }
-  
+
   compiler->locals[0].depth = -1;
   compiler->locals[0].isUpvalue = false;
 
@@ -5997,7 +5997,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
     // The initial scope for functions and methods is local scope.
     compiler->scopeDepth = 0;
   }
-  
+
   compiler->numAttributes = 0;
   compiler->attributes = wrenNewMap(parser->vm);
   compiler->fn = wrenNewFunction(parser->vm, parser->module,
@@ -6091,7 +6091,7 @@ static void makeToken(Parser* parser, TokenType type)
   parser->next.start = parser->tokenStart;
   parser->next.length = (int)(parser->currentChar - parser->tokenStart);
   parser->next.line = parser->currentLine;
-  
+
   // Make line tokens appear on the line containing the "\n".
   if (type == TOKEN_LINE) parser->next.line--;
 }
@@ -6173,13 +6173,13 @@ static void makeNumber(Parser* parser, bool isHex)
   {
     parser->next.value = NUM_VAL(strtod(parser->tokenStart, NULL));
   }
-  
+
   if (errno == ERANGE)
   {
     lexError(parser, "Number literal was too large (%d).", sizeof(long int));
     parser->next.value = NUM_VAL(0);
   }
-  
+
   // We don't check that the entire token is consumed after calling strtoll()
   // or strtod() because we've already scanned it ourselves and know it's valid.
 
@@ -6255,7 +6255,7 @@ static void readName(Parser* parser, TokenType type, char firstChar)
       break;
     }
   }
-  
+
   parser->next.value = wrenNewStringLength(parser->vm,
                                             (char*)string.data, string.count);
 
@@ -6337,17 +6337,17 @@ static void readRawString(Parser* parser)
     }
 
     if (c == '"' && c1 == '"' && c2 == '"') break;
-    
+
     bool isWhitespace = c == ' ' || c == '\t';
     skipEnd = c == '\n' || isWhitespace ? skipEnd : -1;
 
-    // If we haven't seen a newline or other character yet, 
-    // and still seeing whitespace, count the characters 
+    // If we haven't seen a newline or other character yet,
+    // and still seeing whitespace, count the characters
     // as skippable till we know otherwise
     bool skippable = skipStart != -1 && isWhitespace && firstNewline == -1;
     skipStart = skippable ? string.count + 1 : skipStart;
-    
-    // We've counted leading whitespace till we hit something else, 
+
+    // We've counted leading whitespace till we hit something else,
     // but it's not a newline, so we reset skipStart since we need these characters
     if (firstNewline == -1 && !isWhitespace && c != '\n') skipStart = -1;
 
@@ -6360,7 +6360,7 @@ static void readRawString(Parser* parser)
       parser->currentChar--;
       break;
     }
- 
+
     wrenByteBufferWrite(parser->vm, &string, c);
   }
 
@@ -6376,9 +6376,9 @@ static void readRawString(Parser* parser)
 
   count -= (offset > count) ? count : offset;
 
-  parser->next.value = wrenNewStringLength(parser->vm, 
+  parser->next.value = wrenNewStringLength(parser->vm,
                          ((char*)string.data) + offset, count);
-  
+
   wrenByteBufferClear(parser->vm, &string);
   makeToken(parser, type);
 }
@@ -6389,7 +6389,7 @@ static void readString(Parser* parser)
   ByteBuffer string;
   TokenType type = TOKEN_STRING;
   wrenByteBufferInit(&string);
-  
+
   for (;;)
   {
     char c = nextChar(parser);
@@ -6412,7 +6412,7 @@ static void readString(Parser* parser)
       {
         // TODO: Allow format string.
         if (nextChar(parser) != '(') lexError(parser, "Expect '(' after '%%'.");
-        
+
         parser->parens[parser->numParens++] = 1;
         type = TOKEN_INTERPOLATION;
         break;
@@ -6421,7 +6421,7 @@ static void readString(Parser* parser)
       lexError(parser, "Interpolation may only nest %d levels deep.",
                MAX_INTERPOLATION_NESTING);
     }
-    
+
     if (c == '\\')
     {
       switch (nextChar(parser))
@@ -6459,7 +6459,7 @@ static void readString(Parser* parser)
 
   parser->next.value = wrenNewStringLength(parser->vm,
                                               (char*)string.data, string.count);
-  
+
   wrenByteBufferClear(parser->vm, &string);
   makeToken(parser, type);
 }
@@ -6475,7 +6475,7 @@ static void nextToken(Parser* parser)
   // will still work.
   if (parser->next.type == TOKEN_EOF) return;
   if (parser->current.type == TOKEN_EOF) return;
-  
+
   while (peekChar(parser) != '\0')
   {
     parser->tokenStart = parser->currentChar;
@@ -6488,7 +6488,7 @@ static void nextToken(Parser* parser)
         if (parser->numParens > 0) parser->parens[parser->numParens - 1]++;
         makeToken(parser, TOKEN_LEFT_PAREN);
         return;
-        
+
       case ')':
         // If we are inside an interpolated expression, count the ")".
         if (parser->numParens > 0 &&
@@ -6500,10 +6500,10 @@ static void nextToken(Parser* parser)
           readString(parser);
           return;
         }
-        
+
         makeToken(parser, TOKEN_RIGHT_PAREN);
         return;
-        
+
       case '[': makeToken(parser, TOKEN_LEFT_BRACKET); return;
       case ']': makeToken(parser, TOKEN_RIGHT_BRACKET); return;
       case '{': makeToken(parser, TOKEN_LEFT_BRACE); return;
@@ -6520,7 +6520,7 @@ static void nextToken(Parser* parser)
           break;
         }
         // Otherwise we treat it as a token
-        makeToken(parser, TOKEN_HASH); 
+        makeToken(parser, TOKEN_HASH);
         return;
       }
       case '^': makeToken(parser, TOKEN_CARET); return;
@@ -6528,22 +6528,22 @@ static void nextToken(Parser* parser)
       case '-': makeToken(parser, TOKEN_MINUS); return;
       case '~': makeToken(parser, TOKEN_TILDE); return;
       case '?': makeToken(parser, TOKEN_QUESTION); return;
-        
+
       case '|': twoCharToken(parser, '|', TOKEN_PIPEPIPE, TOKEN_PIPE); return;
       case '&': twoCharToken(parser, '&', TOKEN_AMPAMP, TOKEN_AMP); return;
       case '=': twoCharToken(parser, '=', TOKEN_EQEQ, TOKEN_EQ); return;
       case '!': twoCharToken(parser, '=', TOKEN_BANGEQ, TOKEN_BANG); return;
-        
+
       case '.':
         if (matchChar(parser, '.'))
         {
           twoCharToken(parser, '.', TOKEN_DOTDOTDOT, TOKEN_DOTDOT);
           return;
         }
-        
+
         makeToken(parser, TOKEN_DOT);
         return;
-        
+
       case '/':
         if (matchChar(parser, '/'))
         {
@@ -6729,11 +6729,11 @@ static void allowLineBeforeDot(Compiler* compiler) {
 static int emitByte(Compiler* compiler, int byte)
 {
   wrenByteBufferWrite(compiler->parser->vm, &compiler->fn->code, (uint8_t)byte);
-  
+
   // Assume the instruction is associated with the most recently consumed token.
   wrenIntBufferWrite(compiler->parser->vm, &compiler->fn->debug->sourceLines,
                      compiler->parser->previous.line);
-  
+
   return compiler->fn->code.count - 1;
 }
 
@@ -6741,7 +6741,7 @@ static int emitByte(Compiler* compiler, int byte)
 static void emitOp(Compiler* compiler, Code instruction)
 {
   emitByte(compiler, instruction);
-  
+
   // Keep track of the stack's high water mark.
   compiler->numSlots += stackEffects[instruction];
   if (compiler->numSlots > compiler->fn->maxSlots)
@@ -6788,7 +6788,7 @@ static int emitJump(Compiler* compiler, Code instruction)
 static void emitConstant(Compiler* compiler, Value value)
 {
   int constant = addConstant(compiler, value);
-  
+
   // Compile the code to load the constant.
   emitShortArg(compiler, CODE_CONSTANT, constant);
 }
@@ -6925,7 +6925,7 @@ static int discardLocals(Compiler* compiler, int depth)
     {
       emitByte(compiler, CODE_POP);
     }
-    
+
 
     local--;
   }
@@ -6995,11 +6995,11 @@ static int findUpvalue(Compiler* compiler, const char* name, int length)
 {
   // If we are at the top level, we didn't find it.
   if (compiler->parent == NULL) return -1;
-  
+
   // If we hit the method boundary (and the name isn't a static field), then
   // stop looking for it. We'll instead treat it as a self send.
   if (name[0] != '_' && compiler->parent->enclosingClass != NULL) return -1;
-  
+
   // See if it's a local variable in the immediately enclosing function.
   int local = resolveLocal(compiler->parent, name, length);
   if (local != -1)
@@ -7091,7 +7091,7 @@ static ObjFn* endCompiler(Compiler* compiler,
 
   wrenFunctionBindName(compiler->parser->vm, compiler->fn,
                        debugName, debugNameLength);
-  
+
   // In the function that contains this one, load the resulting function object.
   if (compiler->parent != NULL)
   {
@@ -7115,7 +7115,7 @@ static ObjFn* endCompiler(Compiler* compiler,
 
   // Pop this compiler off the stack.
   compiler->parser->vm->compiler = compiler->parent;
-  
+
   #if WREN_DEBUG_DUMP_COMPILED_CODE
     wrenDumpCode(compiler->parser->vm, compiler->fn);
   #endif
@@ -7208,7 +7208,7 @@ static bool finishBlock(Compiler* compiler)
     consumeLine(compiler, "Expect newline after statement.");
   }
   while (peek(compiler) != TOKEN_RIGHT_BRACE && peek(compiler) != TOKEN_EOF);
-  
+
   consume(compiler, TOKEN_RIGHT_BRACE, "Expect '}' at end of block.");
   return false;
 }
@@ -7326,7 +7326,7 @@ static void signatureToString(Signature* signature,
       name[(*length)++] = '=';
       signatureParameterList(name, length, 1, '(', ')');
       break;
-      
+
     case SIG_INITIALIZER:
       memcpy(name, "init ", 5);
       memcpy(name + 5, signature->name, signature->length);
@@ -7353,7 +7353,7 @@ static int signatureSymbol(Compiler* compiler, Signature* signature)
 static Signature signatureFromToken(Compiler* compiler, SignatureType type)
 {
   Signature signature;
-  
+
   // Get the token for the method name.
   Token* token = &compiler->parser->previous;
   signature.name = token->start;
@@ -7367,7 +7367,7 @@ static Signature signatureFromToken(Compiler* compiler, SignatureType type)
           MAX_METHOD_NAME);
     signature.length = MAX_METHOD_NAME;
   }
-  
+
   return signature;
 }
 
@@ -7484,10 +7484,10 @@ static void methodCall(Compiler* compiler, Code instruction,
     {
       error(compiler, "A superclass constructor must have an argument list.");
     }
-    
+
     called.type = SIG_INITIALIZER;
   }
-  
+
   callSignature(compiler, instruction, &called);
 }
 
@@ -7565,7 +7565,7 @@ static void list(Compiler* compiler, bool canAssign)
   // Instantiate a new list.
   loadCoreVariable(compiler, "List");
   callMethod(compiler, 0, "new()", 5);
-  
+
   // Compile the list elements. Each one compiles to a ".add()" call.
   do
   {
@@ -7825,7 +7825,7 @@ static void name(Compiler* compiler, bool canAssign)
       error(compiler, "Too many module variables defined.");
     }
   }
-  
+
   bareName(compiler, canAssign, variable);
 }
 
@@ -7855,26 +7855,26 @@ static void stringInterpolation(Compiler* compiler, bool canAssign)
   // Instantiate a new list.
   loadCoreVariable(compiler, "List");
   callMethod(compiler, 0, "new()", 5);
-  
+
   do
   {
     // The opening string part.
     literal(compiler, false);
     callMethod(compiler, 1, "addCore_(_)", 11);
-    
+
     // The interpolated expression.
     ignoreNewlines(compiler);
     expression(compiler);
     callMethod(compiler, 1, "addCore_(_)", 11);
-    
+
     ignoreNewlines(compiler);
   } while (match(compiler, TOKEN_INTERPOLATION));
-  
+
   // The trailing string part.
   consume(compiler, TOKEN_STRING, "Expect end of string interpolation.");
   literal(compiler, false);
   callMethod(compiler, 1, "addCore_(_)", 11);
-  
+
   // The list of interpolated parts.
   callMethod(compiler, 0, "join()", 6);
 }
@@ -8101,9 +8101,9 @@ static void parameterList(Compiler* compiler, Signature* signature)
 {
   // The parameter list is optional.
   if (!match(compiler, TOKEN_LEFT_PAREN)) return;
-  
+
   signature->type = SIG_METHOD;
-  
+
   // Allow new line before an empty argument list
   ignoreNewlines(compiler);
 
@@ -8118,7 +8118,7 @@ static void parameterList(Compiler* compiler, Signature* signature)
 void namedSignature(Compiler* compiler, Signature* signature)
 {
   signature->type = SIG_GETTER;
-  
+
   // If it's a setter, it can't also have a parameter list.
   if (maybeSetter(compiler, signature)) return;
 
@@ -8130,10 +8130,10 @@ void namedSignature(Compiler* compiler, Signature* signature)
 void constructorSignature(Compiler* compiler, Signature* signature)
 {
   consume(compiler, TOKEN_NAME, "Expect constructor name after 'construct'.");
-  
+
   // Capture the name.
   *signature = signatureFromToken(compiler, SIG_INITIALIZER);
-  
+
   if (match(compiler, TOKEN_EQ))
   {
     error(compiler, "A constructor cannot be a setter.");
@@ -8144,10 +8144,10 @@ void constructorSignature(Compiler* compiler, Signature* signature)
     error(compiler, "A constructor cannot be a getter.");
     return;
   }
-  
+
   // Allow an empty parameter list.
   if (match(compiler, TOKEN_RIGHT_PAREN)) return;
-  
+
   finishParameterList(compiler, signature);
   consume(compiler, TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
 }
@@ -8274,7 +8274,7 @@ void expression(Compiler* compiler)
   parsePrecedence(compiler, PREC_LOWEST);
 }
 
-// Returns the number of bytes for the arguments to the instruction 
+// Returns the number of bytes for the arguments to the instruction
 // at [ip] in [fn]'s bytecode.
 static int getByteCountForArguments(const uint8_t* bytecode,
                             const Value* constants, int ip)
@@ -8543,22 +8543,22 @@ static void ifStatement(Compiler* compiler)
   consume(compiler, TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
   expression(compiler);
   consume(compiler, TOKEN_RIGHT_PAREN, "Expect ')' after if condition.");
-  
+
   // Jump to the else branch if the condition is false.
   int ifJump = emitJump(compiler, CODE_JUMP_IF);
-  
+
   // Compile the then branch.
   statement(compiler);
-  
+
   // Compile the else branch if there is one.
   if (match(compiler, TOKEN_ELSE))
   {
     // Jump over the else branch when the if branch is taken.
     int elseJump = emitJump(compiler, CODE_JUMP);
     patchJump(compiler, ifJump);
-    
+
     statement(compiler);
-    
+
     // Patch the jump over the else.
     patchJump(compiler, elseJump);
   }
@@ -8639,7 +8639,7 @@ void statement(Compiler* compiler)
     // Compile the return value.
     if (peek(compiler) == TOKEN_LINE)
     {
-      // If there's no expression after return, initializers should 
+      // If there's no expression after return, initializers should
       // return 'this' and regular methods should return null
       Code result = compiler->isInitializer ? CODE_LOAD_LOCAL_0 : CODE_NULL;
       emitOp(compiler, result);
@@ -8698,18 +8698,18 @@ static void createConstructor(Compiler* compiler, Signature* signature,
 {
   Compiler methodCompiler;
   initCompiler(&methodCompiler, compiler->parser, compiler, true);
-  
+
   // Allocate the instance.
   emitOp(&methodCompiler, compiler->enclosingClass->isForeign
        ? CODE_FOREIGN_CONSTRUCT : CODE_CONSTRUCT);
-  
+
   // Run its initializer.
   emitShortArg(&methodCompiler, (Code)(CODE_CALL_0 + signature->arity),
                initializerSymbol);
-  
+
   // Return the instance.
   emitOp(&methodCompiler, CODE_RETURN);
-  
+
   endCompiler(&methodCompiler, "", 0);
 }
 
@@ -8738,7 +8738,7 @@ static int declareMethod(Compiler* compiler, Signature* signature,
                          const char* name, int length)
 {
   int symbol = signatureSymbol(compiler, signature);
-  
+
   // See if the class has already declared method with this signature.
   ClassInfo* classInfo = compiler->enclosingClass;
   IntBuffer* methods = classInfo->inStatic
@@ -8753,12 +8753,12 @@ static int declareMethod(Compiler* compiler, Signature* signature,
       break;
     }
   }
-  
+
   wrenIntBufferWrite(compiler->parser->vm, methods, symbol);
   return symbol;
 }
 
-static Value consumeLiteral(Compiler* compiler, const char* message) 
+static Value consumeLiteral(Compiler* compiler, const char* message)
 {
   if(match(compiler, TOKEN_FALSE))  return FALSE_VAL;
   if(match(compiler, TOKEN_TRUE))   return TRUE_VAL;
@@ -8773,11 +8773,11 @@ static Value consumeLiteral(Compiler* compiler, const char* message)
 
 static bool matchAttribute(Compiler* compiler) {
 
-  if(match(compiler, TOKEN_HASH)) 
+  if(match(compiler, TOKEN_HASH))
   {
     compiler->numAttributes++;
     bool runtimeAccess = match(compiler, TOKEN_BANG);
-    if(match(compiler, TOKEN_NAME)) 
+    if(match(compiler, TOKEN_NAME))
     {
       Value group = compiler->parser->previous.value;
       TokenType ahead = peek(compiler);
@@ -8785,7 +8785,7 @@ static bool matchAttribute(Compiler* compiler) {
       {
         Value key = group;
         Value value = NULL_VAL;
-        if(match(compiler, TOKEN_EQ)) 
+        if(match(compiler, TOKEN_EQ))
         {
           value = consumeLiteral(compiler, "Expect a Bool, Num, String or Identifier literal for an attribute value.");
         }
@@ -8797,8 +8797,8 @@ static bool matchAttribute(Compiler* compiler) {
         if(match(compiler, TOKEN_RIGHT_PAREN))
         {
           error(compiler, "Expected attributes in group, group cannot be empty.");
-        } 
-        else 
+        }
+        else
         {
           while(peek(compiler) != TOKEN_RIGHT_PAREN)
           {
@@ -8816,7 +8816,7 @@ static bool matchAttribute(Compiler* compiler) {
           }
 
           ignoreNewlines(compiler);
-          consume(compiler, TOKEN_RIGHT_PAREN, 
+          consume(compiler, TOKEN_RIGHT_PAREN,
             "Expected ')' after grouped attributes.");
         }
       }
@@ -8825,7 +8825,7 @@ static bool matchAttribute(Compiler* compiler) {
         error(compiler, "Expect an equal, newline or grouping after an attribute key.");
       }
     }
-    else 
+    else
     {
       error(compiler, "Expect an attribute definition after #.");
     }
@@ -8852,16 +8852,16 @@ static bool method(Compiler* compiler, Variable classVariable)
   bool isForeign = match(compiler, TOKEN_FOREIGN);
   bool isStatic = match(compiler, TOKEN_STATIC);
   compiler->enclosingClass->inStatic = isStatic;
-    
+
   SignatureFn signatureFn = rules[compiler->parser->current.type].method;
   nextToken(compiler->parser);
-  
+
   if (signatureFn == NULL)
   {
     error(compiler, "Expect method definition.");
     return false;
   }
-  
+
   // Build the method signature.
   Signature signature = signatureFromToken(compiler, SIG_GETTER);
   compiler->enclosingClass->signature = &signature;
@@ -8873,25 +8873,25 @@ static bool method(Compiler* compiler, Variable classVariable)
   signatureFn(&methodCompiler, &signature);
 
   methodCompiler.isInitializer = signature.type == SIG_INITIALIZER;
-  
+
   if (isStatic && signature.type == SIG_INITIALIZER)
   {
     error(compiler, "A constructor cannot be static.");
   }
-  
+
   // Include the full signature in debug messages in stack traces.
   char fullSignature[MAX_METHOD_SIGNATURE];
   int length;
   signatureToString(&signature, fullSignature, &length);
 
-  // Copy any attributes the compiler collected into the enclosing class 
+  // Copy any attributes the compiler collected into the enclosing class
   copyMethodAttributes(compiler, isForeign, isStatic, fullSignature, length);
 
   // Check for duplicate methods. Doesn't matter that it's already been
   // defined, error will discard bytecode anyway.
   // Check if the method table already contains this symbol
   int methodSymbol = declareMethod(compiler, &signature, fullSignature, length);
-  
+
   if (isForeign)
   {
     // Define a constant for the signature.
@@ -8908,7 +8908,7 @@ static bool method(Compiler* compiler, Variable classVariable)
     finishBody(&methodCompiler);
     endCompiler(&methodCompiler, fullSignature, length);
   }
-  
+
   // Define the method. For a constructor, this defines the instance
   // initializer method.
   defineMethod(compiler, classVariable, isStatic, methodSymbol);
@@ -8918,7 +8918,7 @@ static bool method(Compiler* compiler, Variable classVariable)
     // Also define a matching constructor method on the metaclass.
     signature.type = SIG_METHOD;
     int constructorSymbol = signatureSymbol(compiler, &signature);
-    
+
     createConstructor(compiler, &signature, methodSymbol);
     defineMethod(compiler, classVariable, true, constructorSymbol);
   }
@@ -8934,14 +8934,14 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   Variable classVariable;
   classVariable.scope = compiler->scopeDepth == -1 ? SCOPE_MODULE : SCOPE_LOCAL;
   classVariable.index = declareNamedVariable(compiler);
-  
+
   // Create shared class name value
   Value classNameString = wrenNewStringLength(compiler->parser->vm,
       compiler->parser->previous.start, compiler->parser->previous.length);
-  
+
   // Create class name string to track method duplicates
   ObjString* className = AS_STRING(classNameString);
-  
+
   // Make a string constant for the name.
   emitConstant(compiler, classNameString);
 
@@ -8980,10 +8980,10 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   classInfo.isForeign = isForeign;
   classInfo.name = className;
 
-  // Allocate attribute maps if necessary. 
+  // Allocate attribute maps if necessary.
   // A method will allocate the methods one if needed
-  classInfo.classAttributes = compiler->attributes->count > 0 
-        ? wrenNewMap(compiler->parser->vm) 
+  classInfo.classAttributes = compiler->attributes->count > 0
+        ? wrenNewMap(compiler->parser->vm)
         : NULL;
   classInfo.methodAttributes = NULL;
   // Copy any existing attributes into the class
@@ -8994,7 +8994,7 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   // bytecode will be adjusted by [wrenBindMethod] to take inherited fields
   // into account.
   wrenSymbolTableInit(&classInfo.fields);
-  
+
   // Set up symbol buffers to track duplicate static and instance methods.
   wrenIntBufferInit(&classInfo.methods);
   wrenIntBufferInit(&classInfo.staticMethods);
@@ -9007,17 +9007,17 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   while (!match(compiler, TOKEN_RIGHT_BRACE))
   {
     if (!method(compiler, classVariable)) break;
-    
+
     // Don't require a newline after the last definition.
     if (match(compiler, TOKEN_RIGHT_BRACE)) break;
 
     consumeLine(compiler, "Expect newline after definition in class.");
   }
-  
-  // If any attributes are present, 
+
+  // If any attributes are present,
   // instantiate a ClassAttributes instance for the class
   // and send it over to CODE_END_CLASS
-  bool hasAttr = classInfo.classAttributes != NULL || 
+  bool hasAttr = classInfo.classAttributes != NULL ||
                  classInfo.methodAttributes != NULL;
   if(hasAttr) {
     emitClassAttributes(compiler, &classInfo);
@@ -9034,7 +9034,7 @@ static void classDefinition(Compiler* compiler, bool isForeign)
     compiler->fn->code.data[numFieldsInstruction] =
         (uint8_t)classInfo.fields.count;
   }
-  
+
   // Clear symbol tables for tracking field and method names.
   wrenSymbolTableClear(compiler->parser->vm, &classInfo.fields);
   wrenIntBufferClear(compiler->parser->vm, &classInfo.methods);
@@ -9068,7 +9068,7 @@ static void import(Compiler* compiler)
 
   // Discard the unused result value from calling the module body's closure.
   emitOp(compiler, CODE_POP);
-  
+
   // The for clause is optional.
   if (!match(compiler, TOKEN_FOR)) return;
 
@@ -9076,10 +9076,10 @@ static void import(Compiler* compiler)
   do
   {
     ignoreNewlines(compiler);
-    
+
     consume(compiler, TOKEN_NAME, "Expect variable name.");
-    
-    // We need to hold onto the source variable, 
+
+    // We need to hold onto the source variable,
     // in order to reference it in the import later
     Token sourceVariableToken = compiler->parser->previous;
 
@@ -9181,7 +9181,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
 {
   // Skip the UTF-8 BOM if there is one.
   if (strncmp(source, "\xEF\xBB\xBF", 3) == 0) source += 3;
-  
+
   Parser parser;
   parser.vm = vm;
   parser.module = module;
@@ -9224,7 +9224,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
     while (!match(&compiler, TOKEN_EOF))
     {
       definition(&compiler);
-      
+
       // If there is no newline, it must be the end of file on the same line.
       if (!matchLine(&compiler))
       {
@@ -9232,10 +9232,10 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
         break;
       }
     }
-    
+
     emitOp(&compiler, CODE_END_MODULE);
   }
-  
+
   emitOp(&compiler, CODE_RETURN);
 
   // See if there are any implicitly declared module-level variables that never
@@ -9253,7 +9253,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
       error(&compiler, "Variable is used but not defined.");
     }
   }
-  
+
   return endCompiler(&compiler, "(script)", 8);
 }
 
@@ -9331,21 +9331,21 @@ void wrenMarkCompiler(WrenVM* vm, Compiler* compiler)
     wrenGrayObj(vm, (Obj*)compiler->fn);
     wrenGrayObj(vm, (Obj*)compiler->constants);
     wrenGrayObj(vm, (Obj*)compiler->attributes);
-    
+
     if (compiler->enclosingClass != NULL)
     {
       wrenBlackenSymbolTable(vm, &compiler->enclosingClass->fields);
 
-      if(compiler->enclosingClass->methodAttributes != NULL) 
+      if(compiler->enclosingClass->methodAttributes != NULL)
       {
         wrenGrayObj(vm, (Obj*)compiler->enclosingClass->methodAttributes);
       }
-      if(compiler->enclosingClass->classAttributes != NULL) 
+      if(compiler->enclosingClass->classAttributes != NULL)
       {
         wrenGrayObj(vm, (Obj*)compiler->enclosingClass->classAttributes);
       }
     }
-    
+
     compiler = compiler->parent;
   }
   while (compiler != NULL);
@@ -9353,7 +9353,7 @@ void wrenMarkCompiler(WrenVM* vm, Compiler* compiler)
 
 // Helpers for Attributes
 
-// Throw an error if any attributes were found preceding, 
+// Throw an error if any attributes were found preceding,
 // and clear the attributes so the error doesn't keep happening.
 static void disallowAttributes(Compiler* compiler)
 {
@@ -9366,8 +9366,8 @@ static void disallowAttributes(Compiler* compiler)
 }
 
 // Add an attribute to a given group in the compiler attribues map
-static void addToAttributeGroup(Compiler* compiler, 
-                                Value group, Value key, Value value) 
+static void addToAttributeGroup(Compiler* compiler,
+                                Value group, Value key, Value value)
 {
   WrenVM* vm = compiler->parser->vm;
 
@@ -9376,20 +9376,20 @@ static void addToAttributeGroup(Compiler* compiler,
   if(IS_OBJ(value)) wrenPushRoot(vm, AS_OBJ(value));
 
   Value groupMapValue = wrenMapGet(compiler->attributes, group);
-  if(IS_UNDEFINED(groupMapValue)) 
+  if(IS_UNDEFINED(groupMapValue))
   {
     groupMapValue = OBJ_VAL(wrenNewMap(vm));
     wrenMapSet(vm, compiler->attributes, group, groupMapValue);
   }
 
-  //we store them as a map per so we can maintain duplicate keys 
+  //we store them as a map per so we can maintain duplicate keys
   //group = { key:[value, ...], }
   ObjMap* groupMap = AS_MAP(groupMapValue);
 
   //var keyItems = group[key]
-  //if(!keyItems) keyItems = group[key] = [] 
+  //if(!keyItems) keyItems = group[key] = []
   Value keyItemsValue = wrenMapGet(groupMap, key);
-  if(IS_UNDEFINED(keyItemsValue)) 
+  if(IS_UNDEFINED(keyItemsValue))
   {
     keyItemsValue = OBJ_VAL(wrenNewList(vm, 0));
     wrenMapSet(vm, groupMap, key, keyItemsValue);
@@ -9406,7 +9406,7 @@ static void addToAttributeGroup(Compiler* compiler,
 
 
 // Emit the attributes in the give map onto the stack
-static void emitAttributes(Compiler* compiler, ObjMap* attributes) 
+static void emitAttributes(Compiler* compiler, ObjMap* attributes)
 {
   // Instantiate a new map for the attributes
   loadCoreVariable(compiler, "Map");
@@ -9452,7 +9452,7 @@ static void emitAttributes(Compiler* compiler, ObjMap* attributes)
 
 }
 
-// Methods are stored as method <-> attributes, so we have to have 
+// Methods are stored as method <-> attributes, so we have to have
 // an indirection to resolve for methods
 static void emitAttributeMethods(Compiler* compiler, ObjMap* attributes)
 {
@@ -9477,12 +9477,12 @@ static void emitClassAttributes(Compiler* compiler, ClassInfo* classInfo)
 {
   loadCoreVariable(compiler, "ClassAttributes");
 
-  classInfo->classAttributes 
-    ? emitAttributes(compiler, classInfo->classAttributes) 
+  classInfo->classAttributes
+    ? emitAttributes(compiler, classInfo->classAttributes)
     : null(compiler, false);
 
-  classInfo->methodAttributes 
-    ? emitAttributeMethods(compiler, classInfo->methodAttributes) 
+  classInfo->methodAttributes
+    ? emitAttributeMethods(compiler, classInfo->methodAttributes)
     : null(compiler, false);
 
   callMethod(compiler, 2, "new(_,_)", 8);
@@ -9498,8 +9498,8 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
   if(into == NULL) return;
 
   WrenVM* vm = compiler->parser->vm;
-  
-  // Note we copy the actual values as is since we'll take ownership 
+
+  // Note we copy the actual values as is since we'll take ownership
   // and clear the original map
   for(uint32_t attrIdx = 0; attrIdx < compiler->attributes->capacity; attrIdx++)
   {
@@ -9507,7 +9507,7 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
     if(IS_UNDEFINED(attrEntry->key)) continue;
     wrenMapSet(vm, into, attrEntry->key, attrEntry->value);
   }
-  
+
   wrenMapClear(vm, compiler->attributes);
 }
 
@@ -9515,14 +9515,14 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
 // attributes for the current enclosingClass.
 // This also resets the counter, since the intent is to consume the attributes
 static void copyMethodAttributes(Compiler* compiler, bool isForeign,
-            bool isStatic, const char* fullSignature, int32_t length) 
+            bool isStatic, const char* fullSignature, int32_t length)
 {
   compiler->numAttributes = 0;
 
   if(compiler->attributes->count == 0) return;
 
   WrenVM* vm = compiler->parser->vm;
-  
+
   // Make a map for this method to copy into
   ObjMap* methodAttr = wrenNewMap(vm);
   wrenPushRoot(vm, (Obj*)methodAttr);
@@ -9535,14 +9535,14 @@ static void copyMethodAttributes(Compiler* compiler, bool isForeign,
   char fullSignatureWithPrefix[MAX_METHOD_SIGNATURE + 8 + 7];
   const char* foreignPrefix = isForeign ? "foreign " : "";
   const char* staticPrefix = isStatic ? "static " : "";
-  sprintf(fullSignatureWithPrefix, "%s%s%.*s", foreignPrefix, staticPrefix, 
+  sprintf(fullSignatureWithPrefix, "%s%s%.*s", foreignPrefix, staticPrefix,
                                                length, fullSignature);
   fullSignatureWithPrefix[fullLength] = '\0';
 
   if(compiler->enclosingClass->methodAttributes == NULL) {
     compiler->enclosingClass->methodAttributes = wrenNewMap(vm);
   }
-  
+
   // Store the method attributes in the class map
   Value key = wrenNewStringLength(vm, fullSignatureWithPrefix, fullLength);
   wrenMapSet(vm, compiler->enclosingClass->methodAttributes, key, OBJ_VAL(methodAttr));
@@ -9699,14 +9699,14 @@ ObjFiber* wrenNewFiber(WrenVM* vm, ObjClosure* closure)
 {
   // Allocate the arrays before the fiber in case it triggers a GC.
   CallFrame* frames = ALLOCATE_ARRAY(vm, CallFrame, INITIAL_CALL_FRAMES);
-  
+
   // Add one slot for the unused implicit receiver slot that the compiler
   // assumes all functions have.
   int stackCapacity = closure == NULL
       ? 1
       : wrenPowerOf2Ceil(closure->fn->maxSlots + 1);
   Value* stack = ALLOCATE_ARRAY(vm, Value, stackCapacity);
-  
+
   ObjFiber* fiber = ALLOCATE(vm, ObjFiber);
   initObj(vm, &fiber->obj, OBJ_FIBER, vm->fiberClass);
 
@@ -9722,7 +9722,7 @@ ObjFiber* wrenNewFiber(WrenVM* vm, ObjClosure* closure)
   fiber->caller = NULL;
   fiber->error = NULL_VAL;
   fiber->state = FIBER_OTHER;
-  
+
   if (closure != NULL)
   {
     // Initialize the first call frame.
@@ -9732,22 +9732,22 @@ ObjFiber* wrenNewFiber(WrenVM* vm, ObjClosure* closure)
     fiber->stackTop[0] = OBJ_VAL(closure);
     fiber->stackTop++;
   }
-  
+
   return fiber;
 }
 
 void wrenEnsureStack(WrenVM* vm, ObjFiber* fiber, int needed)
 {
   if (fiber->stackCapacity >= needed) return;
-  
+
   int capacity = wrenPowerOf2Ceil(needed);
-  
+
   Value* oldStack = fiber->stack;
   fiber->stack = (Value*)wrenReallocate(vm, fiber->stack,
                                         sizeof(Value) * fiber->stackCapacity,
                                         sizeof(Value) * capacity);
   fiber->stackCapacity = capacity;
-  
+
   // If the reallocation moves the stack, then we need to recalculate every
   // pointer that points into the old stack to into the same relative distance
   // in the new stack. We have to be a little careful about how these are
@@ -9760,14 +9760,14 @@ void wrenEnsureStack(WrenVM* vm, ObjFiber* fiber, int needed)
     {
       vm->apiStack = fiber->stack + (vm->apiStack - oldStack);
     }
-    
+
     // Stack pointer for each call frame.
     for (int i = 0; i < fiber->numFrames; i++)
     {
       CallFrame* frame = &fiber->frames[i];
       frame->stackStart = fiber->stack + (frame->stackStart - oldStack);
     }
-    
+
     // Open upvalues.
     for (ObjUpvalue* upvalue = fiber->openUpvalues;
          upvalue != NULL;
@@ -9775,7 +9775,7 @@ void wrenEnsureStack(WrenVM* vm, ObjFiber* fiber, int needed)
     {
       upvalue->value = fiber->stack + (upvalue->value - oldStack);
     }
-    
+
     fiber->stackTop = fiber->stack + (fiber->stackTop - oldStack);
   }
 }
@@ -9798,7 +9798,7 @@ ObjFn* wrenNewFunction(WrenVM* vm, ObjModule* module, int maxSlots)
 
   ObjFn* fn = ALLOCATE(vm, ObjFn);
   initObj(vm, &fn->obj, OBJ_FN, vm->fnClass);
-  
+
   wrenValueBufferInit(&fn->constants);
   wrenByteBufferInit(&fn->code);
   fn->module = module;
@@ -9806,7 +9806,7 @@ ObjFn* wrenNewFunction(WrenVM* vm, ObjModule* module, int maxSlots)
   fn->numUpvalues = 0;
   fn->arity = 0;
   fn->debug = debug;
-  
+
   return fn;
 }
 
@@ -9948,7 +9948,7 @@ static uint32_t hashObject(Obj* object)
     case OBJ_CLASS:
       // Classes just use their name.
       return hashObject((Obj*)((ObjClass*)object)->name);
-      
+
       // Allow bare (non-closure) functions so that we can use a map to find
       // existing constants in a function's constant table. This is only used
       // internally. Since user code never sees a non-closure function, they
@@ -9995,7 +9995,7 @@ static uint32_t hashValue(Value value)
     case VAL_OBJ:   return hashObject(AS_OBJ(value));
     default:        UNREACHABLE();
   }
-  
+
   return 0;
 #endif
 }
@@ -10010,21 +10010,21 @@ static bool findEntry(MapEntry* entries, uint32_t capacity, Value key,
 {
   // If there is no entry array (an empty map), we definitely won't find it.
   if (capacity == 0) return false;
-  
+
   // Figure out where to insert it in the table. Use open addressing and
   // basic linear probing.
   uint32_t startIndex = hashValue(key) % capacity;
   uint32_t index = startIndex;
-  
+
   // If we pass a tombstone and don't end up finding the key, its entry will
   // be re-used for the insert.
   MapEntry* tombstone = NULL;
-  
+
   // Walk the probe sequence until we've tried every slot.
   do
   {
     MapEntry* entry = &entries[index];
-    
+
     if (IS_UNDEFINED(entry->key))
     {
       // If we found an empty slot, the key is not in the table. If we found a
@@ -10052,12 +10052,12 @@ static bool findEntry(MapEntry* entries, uint32_t capacity, Value key,
       *result = entry;
       return true;
     }
-    
+
     // Try the next slot.
     index = (index + 1) % capacity;
   }
   while (index != startIndex);
-  
+
   // If we get here, the table is full of tombstones. Return the first one we
   // found.
   ASSERT(tombstone != NULL, "Map should have tombstones or empty entries.");
@@ -10073,7 +10073,7 @@ static bool insertEntry(MapEntry* entries, uint32_t capacity,
                         Value key, Value value)
 {
   ASSERT(entries != NULL, "Should ensure capacity before inserting.");
-  
+
   MapEntry* entry;
   if (findEntry(entries, capacity, key, &entry))
   {
@@ -10106,7 +10106,7 @@ static void resizeMap(WrenVM* vm, ObjMap* map, uint32_t capacity)
     for (uint32_t i = 0; i < map->capacity; i++)
     {
       MapEntry* entry = &map->entries[i];
-      
+
       // Don't copy empty entries or tombstones.
       if (IS_UNDEFINED(entry->key)) continue;
 
@@ -10263,12 +10263,12 @@ Value wrenNewStringLength(WrenVM* vm, const char* text, size_t length)
   // Allow NULL if the string is empty since byte buffers don't allocate any
   // characters for a zero-length string.
   ASSERT(length == 0 || text != NULL, "Unexpected NULL string.");
-  
+
   ObjString* string = allocateString(vm, length);
-  
+
   // Copy the string (if given one).
   if (length > 0 && text != NULL) memcpy(string->value, text, length);
-  
+
   hashString(string);
   return OBJ_VAL(string);
 }
@@ -10642,7 +10642,7 @@ static void blackenFn(WrenVM* vm, ObjFn* fn)
   vm->bytesAllocated += sizeof(ObjFn);
   vm->bytesAllocated += sizeof(uint8_t) * fn->code.capacity;
   vm->bytesAllocated += sizeof(Value) * fn->constants.capacity;
-  
+
   // The debug line number buffer.
   vm->bytesAllocated += sizeof(int) * fn->code.capacity;
   // TODO: What about the function name?
@@ -10793,7 +10793,7 @@ void wrenFreeObj(WrenVM* vm, Obj* obj)
       DEALLOCATE(vm, fiber->stack);
       break;
     }
-      
+
     case OBJ_FN:
     {
       ObjFn* fn = (ObjFn*)obj;
@@ -10946,8 +10946,8 @@ static void* defaultReallocate(void* ptr, size_t newSize, void* _)
   return realloc(ptr, newSize);
 }
 
-int wrenGetVersionNumber() 
-{ 
+int wrenGetVersionNumber()
+{
   return WREN_VERSION_NUMBER;
 }
 
@@ -10974,7 +10974,7 @@ WrenVM* wrenNewVM(WrenConfiguration* config)
     userData = config->userData;
     reallocate = config->reallocateFn ? config->reallocateFn : defaultReallocate;
   }
-  
+
   WrenVM* vm = (WrenVM*)reallocate(NULL, sizeof(*vm), userData);
   memset(vm, 0, sizeof(WrenVM));
 
@@ -10983,7 +10983,7 @@ WrenVM* wrenNewVM(WrenConfiguration* config)
   {
     memcpy(&vm->config, config, sizeof(WrenConfiguration));
 
-    // We choose to set this after copying, 
+    // We choose to set this after copying,
     // rather than modifying the user config pointer
     vm->config.reallocateFn = reallocate;
   }
@@ -11009,7 +11009,7 @@ WrenVM* wrenNewVM(WrenConfiguration* config)
 void wrenFreeVM(WrenVM* vm)
 {
   ASSERT(vm->methodNames.count > 0, "VM appears to have already been freed.");
-  
+
   // Free all of the GC objects.
   Obj* obj = vm->first;
   while (obj != NULL)
@@ -11221,13 +11221,13 @@ static WrenForeignMethodFn findForeignMethod(WrenVM* vm,
                                              const char* signature)
 {
   WrenForeignMethodFn method = NULL;
-  
+
   if (vm->config.bindForeignMethodFn != NULL)
   {
     method = vm->config.bindForeignMethodFn(vm, moduleName, className, isStatic,
                                             signature);
   }
-  
+
   // If the host didn't provide it, see if it's an optional one.
   if (method == NULL)
   {
@@ -11316,7 +11316,7 @@ static void runtimeError(WrenVM* vm)
 
   ObjFiber* current = vm->fiber;
   Value error = current->error;
-  
+
   while (current != NULL)
   {
     // Every fiber along the call chain gets aborted with the same error.
@@ -11330,7 +11330,7 @@ static void runtimeError(WrenVM* vm)
       vm->fiber = current->caller;
       return;
     }
-    
+
     // Otherwise, unhook the caller since we will never resume and return to it.
     ObjFiber* caller = current->caller;
     current->caller = NULL;
@@ -11474,9 +11474,9 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   WrenForeignClassMethods methods;
   methods.allocate = NULL;
   methods.finalize = NULL;
-  
+
   // Check the optional built-in module first so the host can override it.
-  
+
   if (vm->config.bindForeignClassFn != NULL)
   {
     methods = vm->config.bindForeignClassFn(vm, module->name->value,
@@ -11494,7 +11494,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
     }
 #endif
   }
-  
+
   Method method;
   method.type = METHOD_FOREIGN;
 
@@ -11506,7 +11506,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
     method.as.foreign = methods.allocate;
     wrenBindMethod(vm, classObj, symbol, method);
   }
-  
+
   // Add the symbol even if there is no finalizer so we can ensure that the
   // symbol itself is always in the symbol table.
   symbol = wrenSymbolTableEnsure(vm, &vm->methodNames, "<finalize>", 10);
@@ -11519,13 +11519,13 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
 
 // Completes the process for creating a new class.
 //
-// The class attributes instance and the class itself should be on the 
-// top of the fiber's stack. 
+// The class attributes instance and the class itself should be on the
+// top of the fiber's stack.
 //
 // This process handles moving the attribute data for a class from
 // compile time to runtime, since it now has all the attributes associated
 // with a class, including for methods.
-static void endClass(WrenVM* vm) 
+static void endClass(WrenVM* vm)
 {
   // Pull the attributes and class off the stack
   Value attributes = vm->fiber->stackTop[-2];
@@ -11618,7 +11618,7 @@ static Value resolveModule(WrenVM* vm, Value name)
   ObjFiber* fiber = vm->fiber;
   ObjFn* fn = fiber->frames[fiber->numFrames - 1].closure->fn;
   ObjString* importer = fn->module->name;
-  
+
   const char* resolved = vm->config.resolveModuleFn(vm, importer->value,
                                                     AS_CSTRING(name));
   if (resolved == NULL)
@@ -11628,7 +11628,7 @@ static Value resolveModule(WrenVM* vm, Value name)
         name, OBJ_VAL(importer));
     return NULL_VAL;
   }
-  
+
   // If they resolved to the exact same string, we don't need to copy it.
   if (resolved == AS_CSTRING(name)) return name;
 
@@ -11641,7 +11641,7 @@ static Value resolveModule(WrenVM* vm, Value name)
 static Value importModule(WrenVM* vm, Value name)
 {
   name = resolveModule(vm, name);
-  
+
   // If the module is already loaded, we don't need to do anything.
   Value existing = wrenMapGet(vm->modules, name);
   if (!IS_UNDEFINED(existing)) return existing;
@@ -11650,13 +11650,13 @@ static Value importModule(WrenVM* vm, Value name)
 
   WrenLoadModuleResult result = {0};
   const char* source = NULL;
-  
+
   // Let the host try to provide the module.
   if (vm->config.loadModuleFn != NULL)
   {
     result = vm->config.loadModuleFn(vm, AS_CSTRING(name));
   }
-  
+
   // If the host didn't provide it, see if it's a built in optional module.
   if (result.source == NULL)
   {
@@ -11669,19 +11669,19 @@ static Value importModule(WrenVM* vm, Value name)
     if (strcmp(nameString->value, "random") == 0) result.source = wrenRandomSource();
 #endif
   }
-  
+
   if (result.source == NULL)
   {
     vm->fiber->error = wrenStringFormat(vm, "Could not load module '@'.", name);
     wrenPopRoot(vm); // name.
     return NULL_VAL;
   }
-  
+
   ObjClosure* moduleClosure = compileInModule(vm, name, result.source, false, true);
-  
+
   // Now that we're done, give the result back in case there's cleanup to do.
   if(result.onComplete) result.onComplete(vm, AS_CSTRING(name), result);
-  
+
   if (moduleClosure == NULL)
   {
     vm->fiber->error = wrenStringFormat(vm,
@@ -11703,13 +11703,13 @@ static Value getModuleVariable(WrenVM* vm, ObjModule* module,
   uint32_t variableEntry = wrenSymbolTableFind(&module->variableNames,
                                                variable->value,
                                                variable->length);
-  
+
   // It's a runtime error if the imported variable does not exist.
   if (variableEntry != UINT32_MAX)
   {
     return module->variables.data[variableEntry];
   }
-  
+
   vm->fiber->error = wrenStringFormat(vm,
       "Could not find a variable named '@' in module '@'.",
       variableName, OBJ_VAL(module->name));
@@ -11973,7 +11973,7 @@ OPCODE(FOREIGN_CONSTRUCT, 0)
 // the name of the class. Byte [arg] is the number of fields in the class.
 OPCODE(CLASS, -1)
 
-// Ends a class. 
+// Ends a class.
 // Atm the stack contains the class and the ClassAttributes (or null).
 OPCODE(END_CLASS, -2)
 
@@ -12190,7 +12190,7 @@ OPCODE(END, 0)
           }
           break;
 
-        case METHOD_FUNCTION_CALL: 
+        case METHOD_FUNCTION_CALL:
           if (!checkArity(vm, args[0], numArgs)) {
             RUNTIME_ERROR();
             break;
@@ -12360,12 +12360,12 @@ OPCODE(END, 0)
           fiber->stackTop = fiber->stack + 1;
           return WREN_RESULT_SUCCESS;
         }
-        
+
         ObjFiber* resumingFiber = fiber->caller;
         fiber->caller = NULL;
         fiber = resumingFiber;
         vm->fiber = resumingFiber;
-        
+
         // Store the result in the resuming fiber.
         fiber->stackTop[-1] = result;
       }
@@ -12379,7 +12379,7 @@ OPCODE(END, 0)
         // result).
         fiber->stackTop = frame->stackStart + 1;
       }
-      
+
       LOAD_FRAME();
       DISPATCH();
     }
@@ -12456,14 +12456,14 @@ OPCODE(END, 0)
       DROP();
       DISPATCH();
     }
-    
+
     CASE_CODE(END_MODULE):
     {
       vm->lastModule = fn->module;
       PUSH(NULL_VAL);
       DISPATCH();
     }
-    
+
     CASE_CODE(IMPORT_MODULE):
     {
       // Make a slot on the stack for the module's fiber to place the return
@@ -12472,7 +12472,7 @@ OPCODE(END, 0)
       // invoking the closure.
       PUSH(importModule(vm, fn->constants.data[READ_SHORT()]));
       if (wrenHasError(fiber)) RUNTIME_ERROR();
-      
+
       // If we get a closure, call it to execute the module body.
       if (IS_CLOSURE(PEEK()))
       {
@@ -12490,7 +12490,7 @@ OPCODE(END, 0)
 
       DISPATCH();
     }
-    
+
     CASE_CODE(IMPORT_VARIABLE):
     {
       Value variable = fn->constants.data[READ_SHORT()];
@@ -12520,10 +12520,10 @@ OPCODE(END, 0)
 WrenHandle* wrenMakeCallHandle(WrenVM* vm, const char* signature)
 {
   ASSERT(signature != NULL, "Signature cannot be NULL.");
-  
+
   int signatureLength = (int)strlen(signature);
   ASSERT(signatureLength > 0, "Signature cannot be empty.");
-  
+
   // Count the number parameters the method expects.
   int numParams = 0;
   if (signature[signatureLength - 1] == ')')
@@ -12533,7 +12533,7 @@ WrenHandle* wrenMakeCallHandle(WrenVM* vm, const char* signature)
       if (signature[i] == '_') numParams++;
     }
   }
-  
+
   // Count subscript arguments.
   if (signature[0] == '[')
   {
@@ -12542,20 +12542,20 @@ WrenHandle* wrenMakeCallHandle(WrenVM* vm, const char* signature)
       if (signature[i] == '_') numParams++;
     }
   }
-  
+
   // Add the signatue to the method table.
   int method =  wrenSymbolTableEnsure(vm, &vm->methodNames,
                                       signature, signatureLength);
-  
+
   // Create a little stub function that assumes the arguments are on the stack
   // and calls the method.
   ObjFn* fn = wrenNewFunction(vm, NULL, numParams + 1);
-  
+
   // Wrap the function in a closure and then in a handle. Do this here so it
   // doesn't get collected as we fill it in.
   WrenHandle* value = wrenMakeHandle(vm, OBJ_VAL(fn));
   value->value = OBJ_VAL(wrenNewClosure(vm, fn));
-  
+
   wrenByteBufferWrite(vm, &fn->code, (uint8_t)(CODE_CALL_0 + numParams));
   wrenByteBufferWrite(vm, &fn->code, (method >> 8) & 0xff);
   wrenByteBufferWrite(vm, &fn->code, method & 0xff);
@@ -12574,12 +12574,12 @@ WrenInterpretResult wrenCall(WrenVM* vm, WrenHandle* method)
   ASSERT(vm->fiber != NULL, "Must set up arguments for call first.");
   ASSERT(vm->apiStack != NULL, "Must set up arguments for call first.");
   ASSERT(vm->fiber->numFrames == 0, "Can not call from a foreign method.");
-  
+
   ObjClosure* closure = AS_CLOSURE(method->value);
-  
+
   ASSERT(vm->fiber->stackTop - vm->fiber->stack >= closure->fn->arity,
          "Stack must have enough arguments for method.");
-  
+
   // Clear the API stack. Now that wrenCall() has control, we no longer need
   // it. We use this being non-null to tell if re-entrant calls to foreign
   // methods are happening, so it's important to clear it out now so that you
@@ -12589,21 +12589,21 @@ WrenInterpretResult wrenCall(WrenVM* vm, WrenHandle* method)
   // Discard any extra temporary slots. We take for granted that the stub
   // function has exactly one slot for each argument.
   vm->fiber->stackTop = &vm->fiber->stack[closure->fn->maxSlots];
-  
+
   wrenCallFunction(vm, vm->fiber, closure, 0);
   WrenInterpretResult result = runInterpreter(vm, vm->fiber);
-  
+
   // If the call didn't abort, then set up the API stack to point to the
   // beginning of the stack so the host can access the call's return value.
   if (vm->fiber != NULL) vm->apiStack = vm->fiber->stack;
-  
+
   return result;
 }
 
 WrenHandle* wrenMakeHandle(WrenVM* vm, Value value)
 {
   if (IS_OBJ(value)) wrenPushRoot(vm, AS_OBJ(value));
-  
+
   // Make a handle for it.
   WrenHandle* handle = ALLOCATE(vm, WrenHandle);
   handle->value = value;
@@ -12615,7 +12615,7 @@ WrenHandle* wrenMakeHandle(WrenVM* vm, Value value)
   handle->prev = NULL;
   handle->next = vm->handles;
   vm->handles = handle;
-  
+
   return handle;
 }
 
@@ -12643,7 +12643,7 @@ WrenInterpretResult wrenInterpret(WrenVM* vm, const char* module,
 {
   ObjClosure* closure = wrenCompileSource(vm, module, source, false, true);
   if (closure == NULL) return WREN_RESULT_COMPILE_ERROR;
-  
+
   wrenPushRoot(vm, (Obj*)closure);
   ObjFiber* fiber = wrenNewFiber(vm, closure);
   wrenPopRoot(vm); // closure.
@@ -12661,7 +12661,7 @@ ObjClosure* wrenCompileSource(WrenVM* vm, const char* module, const char* source
     nameValue = wrenNewString(vm, module);
     wrenPushRoot(vm, AS_OBJ(nameValue));
   }
-  
+
   ObjClosure* closure = compileInModule(vm, nameValue, source,
                                         isExpression, printErrors);
 
@@ -12678,7 +12678,7 @@ Value wrenGetModuleVariable(WrenVM* vm, Value moduleName, Value variableName)
                                         moduleName);
     return NULL_VAL;
   }
-  
+
   return getModuleVariable(vm, module, variableName);
 }
 
@@ -12723,7 +12723,7 @@ int wrenDefineVariable(WrenVM* vm, ObjModule* module, const char* name,
     if(line) *line = (int)AS_NUM(module->variables.data[symbol]);
     module->variables.data[symbol] = value;
 
-	// If this was a localname we want to error if it was 
+	// If this was a localname we want to error if it was
 	// referenced before this definition.
 	if (wrenIsLocalName(name)) symbol = -3;
   }
@@ -12756,7 +12756,7 @@ void wrenPopRoot(WrenVM* vm)
 int wrenGetSlotCount(WrenVM* vm)
 {
   if (vm->apiStack == NULL) return 0;
-  
+
   return (int)(vm->fiber->stackTop - vm->apiStack);
 }
 
@@ -12768,14 +12768,14 @@ void wrenEnsureSlots(WrenVM* vm, int numSlots)
     vm->fiber = wrenNewFiber(vm, NULL);
     vm->apiStack = vm->fiber->stack;
   }
-  
+
   int currentSize = (int)(vm->fiber->stackTop - vm->apiStack);
   if (currentSize >= numSlots) return;
-  
+
   // Grow the stack if needed.
   int needed = (int)(vm->apiStack - vm->fiber->stack) + numSlots;
   wrenEnsureStack(vm, vm->fiber, needed);
-  
+
   vm->fiber->stackTop = vm->apiStack + numSlots;
 }
 
@@ -12797,7 +12797,7 @@ WrenType wrenGetSlotType(WrenVM* vm, int slot)
   if (IS_MAP(vm->apiStack[slot])) return WREN_TYPE_MAP;
   if (IS_NULL(vm->apiStack[slot])) return WREN_TYPE_NULL;
   if (IS_STRING(vm->apiStack[slot])) return WREN_TYPE_STRING;
-  
+
   return WREN_TYPE_UNKNOWN;
 }
 
@@ -12813,7 +12813,7 @@ const char* wrenGetSlotBytes(WrenVM* vm, int slot, int* length)
 {
   validateApiSlot(vm, slot);
   ASSERT(IS_STRING(vm->apiStack[slot]), "Slot must hold a string.");
-  
+
   ObjString* string = AS_STRING(vm->apiStack[slot]);
   *length = string->length;
   return string->value;
@@ -12878,13 +12878,13 @@ void* wrenSetSlotNewForeign(WrenVM* vm, int slot, int classSlot, size_t size)
   validateApiSlot(vm, slot);
   validateApiSlot(vm, classSlot);
   ASSERT(IS_CLASS(vm->apiStack[classSlot]), "Slot must hold a class.");
-  
+
   ObjClass* classObj = AS_CLASS(vm->apiStack[classSlot]);
   ASSERT(classObj->numFields == -1, "Class must be a foreign class.");
-  
+
   ObjForeign* foreign = wrenNewForeign(vm, classObj, size);
   vm->apiStack[slot] = OBJ_VAL(foreign);
-  
+
   return (void*)foreign->data;
 }
 
@@ -12906,7 +12906,7 @@ void wrenSetSlotNull(WrenVM* vm, int slot)
 void wrenSetSlotString(WrenVM* vm, int slot, const char* text)
 {
   ASSERT(text != NULL, "String cannot be NULL.");
-  
+
   setSlot(vm, slot, wrenNewString(vm, text));
 }
 
@@ -12921,7 +12921,7 @@ int wrenGetListCount(WrenVM* vm, int slot)
 {
   validateApiSlot(vm, slot);
   ASSERT(IS_LIST(vm->apiStack[slot]), "Slot must hold a list.");
-  
+
   ValueBuffer elements = AS_LIST(vm->apiStack[slot])->elements;
   return elements.count;
 }
@@ -12950,7 +12950,7 @@ void wrenSetListElement(WrenVM* vm, int listSlot, int index, int elementSlot)
 
   uint32_t usedIndex = wrenValidateIndex(list->elements.count, index);
   ASSERT(usedIndex != UINT32_MAX, "Index out of bounds.");
-  
+
   list->elements.data[usedIndex] = vm->apiStack[elementSlot];
 }
 
@@ -12959,15 +12959,15 @@ void wrenInsertInList(WrenVM* vm, int listSlot, int index, int elementSlot)
   validateApiSlot(vm, listSlot);
   validateApiSlot(vm, elementSlot);
   ASSERT(IS_LIST(vm->apiStack[listSlot]), "Must insert into a list.");
-  
+
   ObjList* list = AS_LIST(vm->apiStack[listSlot]);
-  
-  // Negative indices count from the end. 
+
+  // Negative indices count from the end.
   // We don't use wrenValidateIndex here because insert allows 1 past the end.
   if (index < 0) index = list->elements.count + 1 + index;
-  
+
   ASSERT(index <= list->elements.count, "Index out of bounds.");
-  
+
   wrenListInsert(vm, list, vm->apiStack[elementSlot], index);
 }
 
@@ -13018,7 +13018,7 @@ void wrenSetMapValue(WrenVM* vm, int mapSlot, int keySlot, int valueSlot)
   validateApiSlot(vm, keySlot);
   validateApiSlot(vm, valueSlot);
   ASSERT(IS_MAP(vm->apiStack[mapSlot]), "Must insert into a map.");
-  
+
   Value key = vm->apiStack[keySlot];
   ASSERT(wrenMapIsValidKey(key), "Key must be a value type");
 
@@ -13028,11 +13028,11 @@ void wrenSetMapValue(WrenVM* vm, int mapSlot, int keySlot, int valueSlot)
 
   Value value = vm->apiStack[valueSlot];
   ObjMap* map = AS_MAP(vm->apiStack[mapSlot]);
-  
+
   wrenMapSet(vm, map, key, value);
 }
 
-void wrenRemoveMapValue(WrenVM* vm, int mapSlot, int keySlot, 
+void wrenRemoveMapValue(WrenVM* vm, int mapSlot, int keySlot,
                         int removedValueSlot)
 {
   validateApiSlot(vm, mapSlot);
@@ -13053,20 +13053,20 @@ void wrenGetVariable(WrenVM* vm, const char* module, const char* name,
                      int slot)
 {
   ASSERT(module != NULL, "Module cannot be NULL.");
-  ASSERT(name != NULL, "Variable name cannot be NULL.");  
+  ASSERT(name != NULL, "Variable name cannot be NULL.");
 
   Value moduleName = wrenStringFormat(vm, "$", module);
   wrenPushRoot(vm, AS_OBJ(moduleName));
-  
+
   ObjModule* moduleObj = getModule(vm, moduleName);
   ASSERT(moduleObj != NULL, "Could not find module.");
-  
+
   wrenPopRoot(vm); // moduleName.
 
   int variableSlot = wrenSymbolTableFind(&moduleObj->variableNames,
                                          name, strlen(name));
   ASSERT(variableSlot != -1, "Could not find variable.");
-  
+
   setSlot(vm, slot, moduleObj->variables.data[variableSlot]);
 }
 
@@ -13093,12 +13093,12 @@ bool wrenHasVariable(WrenVM* vm, const char* module, const char* name)
 bool wrenHasModule(WrenVM* vm, const char* module)
 {
   ASSERT(module != NULL, "Module cannot be NULL.");
-  
+
   Value moduleName = wrenStringFormat(vm, "$", module);
   wrenPushRoot(vm, AS_OBJ(moduleName));
 
   ObjModule* moduleObj = getModule(vm, moduleName);
-  
+
   wrenPopRoot(vm); // moduleName.
 
   return moduleObj != NULL;
@@ -13342,19 +13342,19 @@ WrenForeignMethodFn wrenRandomBindForeignMethod(WrenVM* vm,
                                                 const char* signature)
 {
   ASSERT(strcmp(className, "Random") == 0, "Should be in Random class.");
-  
+
   if (strcmp(signature, "<allocate>") == 0) return randomAllocate;
   if (strcmp(signature, "seed_()") == 0) return randomSeed0;
   if (strcmp(signature, "seed_(_)") == 0) return randomSeed1;
-  
+
   if (strcmp(signature, "seed_(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)") == 0)
   {
     return randomSeed16;
   }
-  
+
   if (strcmp(signature, "float()") == 0) return randomFloat;
   if (strcmp(signature, "int()") == 0) return randomInt0;
-  
+
   ASSERT(false, "Unknown method.");
   return NULL;
 }
@@ -13421,7 +13421,7 @@ void metaCompile(WrenVM* vm)
 
   ObjClosure* closure = wrenCompileSource(vm, module->value, source,
                                           isExpression, printErrors);
-  
+
   // Return the result. We can't use the public API for this since we have a
   // bare ObjClosure*.
   if (closure == NULL)
@@ -13437,14 +13437,14 @@ void metaCompile(WrenVM* vm)
 void metaGetModuleVariables(WrenVM* vm)
 {
   wrenEnsureSlots(vm, 3);
-  
+
   Value moduleValue = wrenMapGet(vm->modules, vm->apiStack[1]);
   if (IS_UNDEFINED(moduleValue))
   {
     vm->apiStack[0] = NULL_VAL;
     return;
   }
-    
+
   ObjModule* module = AS_MODULE(moduleValue);
   ObjList* names = wrenNewList(vm, module->variableNames.count);
   vm->apiStack[0] = OBJ_VAL(names);
@@ -13455,7 +13455,7 @@ void metaGetModuleVariables(WrenVM* vm)
   {
     names->elements.data[i] = NULL_VAL;
   }
-  
+
   for (int i = 0; i < names->elements.count; i++)
   {
     names->elements.data[i] = OBJ_VAL(module->variableNames.data[i]);
@@ -13475,17 +13475,17 @@ WrenForeignMethodFn wrenMetaBindForeignMethod(WrenVM* vm,
   // There is only one foreign method in the meta module.
   ASSERT(strcmp(className, "Meta") == 0, "Should be in Meta class.");
   ASSERT(isStatic, "Should be static.");
-  
+
   if (strcmp(signature, "compile_(_,_,_)") == 0)
   {
     return metaCompile;
   }
-  
+
   if (strcmp(signature, "getModuleVariables_(_)") == 0)
   {
     return metaGetModuleVariables;
   }
-  
+
   ASSERT(false, "Unknown method.");
   return NULL;
 }

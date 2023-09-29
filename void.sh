@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-VOID_LIB=./lang ./build/void $@
+VOID_LIB=./lang cargo r -- $@

@@ -1,0 +1,5 @@
+import "std/fs" for File
+
+var file = File.open("void.sh")
+file.close()
+
