@@ -1,7 +1,5 @@
 foreign class File {
     construct open(path, mode) {
-        _path = path
-        _mode = mode
     }
 
     foreign write(text)

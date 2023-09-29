@@ -1,8 +1,5 @@
-import "std/os" for Env
+import "std/fs" for File
 
-var home = Env.get("ASDFJSDFKL")
-if (home != null) {
-    System.print(home)
-} else {
-    System.print("Null")
-}
+var file = File.open("void.sh", "r+")
+System.print(file.read())
+file.close()
