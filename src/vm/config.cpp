@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <exception>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -13,6 +14,7 @@
 #include <memory>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -45,6 +47,34 @@ std::string lib::wren_type_to_string(const WrenType& type) {
 	default:
 		return "invalid";
 	}
+}
+
+/**
+ * createVmMap initializes a map in Wren
+ * @param vm The Wren virtual machine
+ * @param slot The target slot to write your map to. CreateVmMap will dynamically allocate new slots for your data.
+ * @param entries The entries you'd like to add to your map
+ */
+size_t vm::createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std::string, std::string>& entries) {
+	auto slotCount = wrenGetSlotCount(vm);
+	size_t requiredSlotes = entries.size() * 2;
+	if (slot > slotCount) {
+		throw std::logic_error { "slot greater than available slot count. You cannot assign a map to a dynamically allocated slot" };
+	}
+	wrenEnsureSlots(vm, requiredSlotes);
+	wrenSetSlotNewMap(vm, slot);
+	auto key_slot = slotCount + 1;
+	auto val_slot = slotCount + 2;
+
+	for (const auto& [key, val] : entries) {
+		wrenSetSlotString(vm, key_slot, key.c_str());
+		wrenSetSlotString(vm, val_slot, val.c_str());
+		wrenSetMapValue(vm, slot, key_slot, val_slot);
+		key_slot += 2;
+		val_slot += 2;
+	}
+
+	return val_slot - 1;
 }
 
 static void writeFn(WrenVM* vm, const char* text) {
@@ -165,7 +195,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			}
 		}
 
-		if (strcmp(className, "Dir") == 0) {
+		if (strcmp(className, "Path") == 0) {
 			if (isStatic && strcmp(signature, "cwd()") == 0) {
 				return lib::fs::cwd;
 			}

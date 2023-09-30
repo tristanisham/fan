@@ -1,3 +1,4 @@
 import "std/net/http" for Request
 
-Request.request("https://example.com/")
+var resp = Request.request("https://example.com/")
+System.print("%(resp)")

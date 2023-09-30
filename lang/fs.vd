@@ -7,7 +7,7 @@ foreign class File {
     foreign close()
 }
 
-class Dir {
+class Path {
     foreign static cwd()
 
     foreign static canonical(path)
