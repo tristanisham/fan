@@ -24,8 +24,8 @@ file(GLOB_RECURSE WREN src/wren/*.c)
 file(GLOB_RECURSE LIB_FILES  src/vm/*.cpp src/vm/*.c)
 file(GLOB_RECURSE SRC_FILES src/main.cpp src/cli/*.cpp)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
-set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=leak -fanalyzer -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
+set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fanalyzer -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
 
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
