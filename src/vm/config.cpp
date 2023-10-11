@@ -220,8 +220,8 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 	if (strcmp(module, "std/net/http") == 0) {
 		if (strcmp(className, "Request") == 0) {
-			if (isStatic && strcmp(signature, "request(_)") == 0) {
-				return lib::net::http::request;
+			if (isStatic && strcmp(signature, "fetch(_,_)") == 0) {
+				return lib::net::http::fetch;
 			}
 		}
 	}

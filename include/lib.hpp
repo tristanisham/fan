@@ -32,7 +32,7 @@ namespace os {
 
 namespace net {
 	namespace http {
-		void request(WrenVM* vm);
+		void fetch(WrenVM* vm);
 
 	}
 

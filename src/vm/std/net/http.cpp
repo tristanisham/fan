@@ -1,4 +1,5 @@
 #include "vm.hpp"
+#include "wren.h"
 #include <boost/format.hpp>
 #include <cstdio>
 #include <curl/curl.h>
@@ -45,11 +46,21 @@ static std::unordered_map<std::string, std::string> splitHeaders(const std::stri
 	return output;
 }
 
-void lib::net::http::request(WrenVM* vm) {
+void lib::net::http::fetch(WrenVM* vm) {
 	try {
 		const char* raw_url = wrenGetSlotString(vm, 1);
 		if (raw_url == nullptr) {
 			lib::abort(vm, "Invalid memory slot for function");
+		}
+
+		auto optionalMap = wrenGetSlotType(vm, 2);
+		if (optionalMap != WREN_TYPE_NULL) {
+			if (optionalMap != WREN_TYPE_MAP) {
+				lib::abort(vm, "This paramater must be null or a map");
+			}
+
+			// Handle a map
+
 		}
 
 		/* In windows, this will init the winsock stuff */
@@ -106,32 +117,7 @@ void lib::net::http::request(WrenVM* vm) {
 			lib::abort(vm, "RUNTIME ERROR: Unable to generate correctly sized map with your succsessful result");
 			return;
 		}
-		// auto slot_count = wrenGetSlotCount(vm);
-		// std::vector<std::pair<std::string, std::string>> headers = splitHeaders(header_string);
-		// // Allocate total slots
-		// wrenEnsureSlots(vm, slot_count + 4 + headers.size());
-		// size_t mapSlot = 0;
-		// wrenSetSlotNewMap(vm, 0);
-		// wrenSetSlotString(vm, 3, "body");
-		// wrenSetSlotString(vm, 4, response_string.c_str());
-		// wrenSetSlotString(vm, 5, "elapsed");
-		// wrenSetSlotDouble(vm, 6, elapsed);
-		// size_t keySlot = 7;
-		// size_t valueSlot = 8;
-
-		// for (const auto& header : headers) {
-		// 	wrenSetSlotString(vm, keySlot, header.first.c_str());
-		// 	wrenSetSlotString(vm, valueSlot, header.second.c_str());
-
-		// 	wrenSetMapValue(vm, mapSlot, keySlot, valueSlot);
-
-		// 	keySlot += 2;
-		// 	valueSlot += 2;
-		// }
-
-		// Create the map
-
-		// Save Resp Body
+		
 
 		// If we get here then the connection is closed gracefully
 	} catch (const std::exception& e) {
