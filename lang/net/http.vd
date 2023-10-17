@@ -1,4 +1,4 @@
 class Request {
-    foreign static request(url)
+    foreign static fetch(url)
 }
 

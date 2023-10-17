@@ -11,4 +11,8 @@ class Path {
     foreign static cwd()
 
     foreign static canonical(path)
+
+    foreign static exists(path)
+
+    foreign static seperator()
 }

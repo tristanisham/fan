@@ -203,6 +203,14 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "canonical(_)") == 0) {
 				return lib::fs::canonical;
 			}
+
+			if (isStatic && strcmp(signature, "exists(_)") == 0) {
+				return lib::fs::exists;
+			}
+
+			if (isStatic && strcmp(signature, "seperator()") == 0) {
+				return lib::fs::seperator;
+			}
 		}
 	}
 

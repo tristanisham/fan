@@ -1,3 +1,5 @@
+import "std/fs" for File, Path
+
 class Env {
   // get returns the associated value from 'key'.
   // If the variable is unset, get returns null.
@@ -19,6 +21,41 @@ class Env {
 
   static [key]=(val) {
     return Env.set(key, val)
+  }
+
+  static loadDotEnv(path) {
+    if (path == null) {
+      var cwd = Path.cwd()
+      var path = "%(cwd)%(Path.seperator()).env"
+     
+      if (!Path.exists(path)) {
+        return
+      }
+    
+      var dotenv = File.open(path, "r")
+      var envFile = dotenv.read()
+      var lines = envFile.split("\n")
+      for (line in lines) {
+        if (line.contains("=")) {
+          var halves = line.split("=")
+
+          this.set(halves[0], halves[1])
+        }
+      }
+      dotenv.close()
+    } else {
+        var dotenv = File.open(path, "r")
+        var envFile = dotenv.read()
+        var lines = envFile.split("\n")
+        for (line in lines) {
+          if (line.contains("=")) {
+            var halves = line.split("=")
+
+            this.set(halves[0], halves[1])
+          }
+        }
+      dotenv.close()
+    }
   }
 }
 

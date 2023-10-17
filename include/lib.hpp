@@ -22,6 +22,10 @@ namespace fs {
 	void cwd(WrenVM* vm);
 
 	void canonical(WrenVM* vm);
+
+	void exists(WrenVM* vm);
+
+	void seperator(WrenVM* vm);
 }  // namespace fs
 
 namespace os {

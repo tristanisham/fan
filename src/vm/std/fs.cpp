@@ -41,7 +41,17 @@ void lib::fs::fileAlloc(WrenVM* vm) {
 		lib::abort(vm, "Invalid file mode");
 	}
 
-	*file = fopen(path, mode);
+	std::filesystem::path newPath(path);
+	try {
+		auto fullPath = std::filesystem::canonical(newPath);
+		if (!std::filesystem::exists(fullPath)) {
+			lib::abort(vm, (boost::format("File %1% doesn't exist") % fullPath).str());
+		}
+
+		*file = fopen(fullPath.c_str(), mode);
+	} catch (std::filesystem::filesystem_error const& e) {
+		lib::abort(vm, (boost::format("Unable to canonicalize %1%") % path).str());
+	}
 }
 
 void lib::fs::fileFinalize(void* data) {
@@ -106,4 +116,18 @@ void lib::fs::cwd(WrenVM* vm) {
 void lib::fs::canonical(WrenVM* vm) {
 	auto target = std::filesystem::canonical(wrenGetSlotString(vm, 1));
 	wrenSetSlotString(vm, 0, target.c_str());
+}
+
+void lib::fs::seperator(WrenVM* vm) {
+	wrenEnsureSlots(vm, 1);
+	const char separator[2] = { std::filesystem::path::preferred_separator, '\0' };
+	wrenSetSlotString(vm, 0, separator);
+}
+
+void lib::fs::exists(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	const char* input = wrenGetSlotString(vm, 1);
+	auto exists = std::filesystem::exists(input);
+
+	wrenSetSlotBool(vm, 0, exists);
 }
