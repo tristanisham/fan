@@ -109,7 +109,7 @@ void lib::os::ppid(WrenVM* vm) {
 	wrenSetSlotDouble(vm, 0, dPpid);
 }
 
-std::optional<std::string> vm::getOperatingSystem() {
+constexpr std::string_view vm::getOperatingSystem() {
 #if defined(_WIN32) || defined(_WIN64)
 	return "windows";
 #elif defined(__APPLE__) || defined(__MACH__)
@@ -121,11 +121,11 @@ std::optional<std::string> vm::getOperatingSystem() {
 #elif defined(_POSIX_VERSION)
 	return "posix";
 #else
-	return std::nullopt;
+	return "unknown";
 #endif
 }
 
-std::optional<std::string> vm::getPlatformArchitecture() {
+constexpr std::string_view vm::getPlatformArchitecture() {
 #if defined(__i386__) || defined(_M_IX86)
 	return "386";
 #elif defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
@@ -141,15 +141,15 @@ std::optional<std::string> vm::getPlatformArchitecture() {
 #elif defined(__s390x__)
 	return "s390x";
 #else
-	return std::nullopt;
+	return "unknown";
 #endif
 }
 
 void lib::os::runtimeOS(WrenVM* vm) {
 	wrenEnsureSlots(vm, 1);
 	auto os = vm::getOperatingSystem();
-	if (os) {
-		wrenSetSlotString(vm, 0, os.value().c_str());
+	if (os != "uknown") {
+		wrenSetSlotString(vm, 0, os.data());
 	} else {
 		wrenSetSlotNull(vm, 0);
 	}
@@ -158,8 +158,8 @@ void lib::os::runtimeOS(WrenVM* vm) {
 void lib::os::runtimeArch(WrenVM* vm) {
 	wrenEnsureSlots(vm, 1);
 	auto arch = vm::getPlatformArchitecture();
-	if (arch) {
-		wrenSetSlotString(vm, 0, arch.value().c_str());
+	if (arch != "unknown") {
+		wrenSetSlotString(vm, 0, arch.data());
 	} else {
 		wrenSetSlotNull(vm, 0);
 	}

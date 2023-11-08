@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <variant>
 #include <vector>
+#include <string_view>
 
 namespace vm {
 
@@ -17,8 +18,9 @@ size_t createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std:
 
 
 
-std::optional<std::string> getOperatingSystem();
-std::optional<std::string> getPlatformArchitecture();
+constexpr std::string_view getOperatingSystem();
+constexpr std::string_view getPlatformArchitecture();
+
 class Runtime {
 public:
 	Runtime();
