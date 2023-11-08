@@ -19,6 +19,28 @@
 #include <tuple>
 #include <vector>
 
+int programArgCount;
+std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
+std::unique_ptr<char[]> sourceFile;
+
+void vm::Runtime::setProgramArgs(int argc, char** argv) {
+	// Initialize the ArgHolder with command line arguments
+	programArgsHolder = std::make_unique<lib::os::ArgHolder>(argc, argv);
+}
+
+void lib::os::processArguments(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	wrenSetSlotNewList(vm, 0);
+	if (programArgsHolder) {
+		for (size_t i = 0; i < programArgsHolder->argCount; ++i) {
+			// Set the string in slot 1
+			wrenSetSlotString(vm, 1, programArgsHolder->args[i]);
+			// Add the string in slot 1 to the list in slot 0
+			wrenInsertInList(vm, 0, -1, 1);
+		}
+	}
+}
+
 /// Aborts the current fiber and sends an error message back to the VM.
 void lib::abort(WrenVM* vm, const std::string& msg) {
 	wrenEnsureSlots(vm, 1);
@@ -82,12 +104,13 @@ static void writeFn(WrenVM* vm, const char* text) {
 }
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
+	const char* moduleDisplay = (std::strcmp(module, "main") == 0) ? sourceFile.get() : module;
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
-		printf("[%s line %d] [Error] %s\n", module, line, msg);
+		printf("[%s:%d] [Error] %s\n", moduleDisplay, line, msg);
 	} break;
 	case WREN_ERROR_STACK_TRACE: {
-		printf("[%s line %d] in %s\n", module, line, msg);
+		printf("[%s:%d] in %s\n", moduleDisplay, line, msg);
 	} break;
 	case WREN_ERROR_RUNTIME: {
 		printf("[Runtime Error] %s\n", msg);
@@ -224,6 +247,35 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::os::setEnv;
 			}
 		}
+
+		if (strcmp(className, "Process") == 0) {
+			if (isStatic && strcmp(signature, "allArguments") == 0) {
+				return lib::os::processArguments;
+			}
+
+			if (isStatic && strcmp(signature, "cwd") == 0) {
+				return lib::os::cwd;
+			}
+
+			if (isStatic && strcmp(signature, "pid") == 0) {
+				return lib::os::pid;
+			}
+
+			if (isStatic && strcmp(signature, "ppid") == 0) {
+				return lib::os::ppid;
+			}
+		}
+
+		if (strcmp(className, "Runtime") == 0) {
+
+			if (isStatic && strcmp(signature, "os") == 0) {
+				return lib::os::runtimeOS;
+			}
+
+			if (isStatic && strcmp(signature, "arch") == 0) {
+				return lib::os::runtimeArch;
+			}
+		}
 	}
 
 	if (strcmp(module, "std/net/http") == 0) {
@@ -236,6 +288,17 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 	return nullptr;
 }
+
+void vm::Runtime::setEntryPoint(const std::filesystem::path& target) {
+	this->entryPoint = target;
+	auto relStr = target.relative_path().c_str();
+
+	// Allocate memory for sourceFile using a smart pointer
+	sourceFile = std::make_unique<char[]>(std::strlen(relStr) + 1);
+
+	// Copy the string
+	std::strcpy(sourceFile.get(), relStr);
+};
 
 vm::Runtime::Runtime() {
 

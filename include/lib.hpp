@@ -1,6 +1,7 @@
 #pragma once
 #include "vm.hpp"
 #include "wren.h"
+#include <cstring>
 
 namespace lib {
 void abort(WrenVM* vm, const std::string& msg);
@@ -32,6 +33,34 @@ namespace os {
 	void getEnv(WrenVM* vm);
 
 	void setEnv(WrenVM* vm);
+
+	struct ArgHolder {
+        int argCount;
+        std::vector<std::unique_ptr<char[]>> argsStorage;
+        std::unique_ptr<char*[]> args;
+
+        ArgHolder(int argc, char** argv) : argCount(argc), args(new char*[argc]) {
+            argsStorage.reserve(argc);
+            for (int i = 0; i < argc; ++i) {
+                size_t length = std::strlen(argv[i]) + 1; // +1 for null terminator
+                argsStorage.push_back(std::make_unique<char[]>(length));
+                std::strcpy(argsStorage.back().get(), argv[i]);
+                args[i] = argsStorage.back().get();
+            }
+        }
+    };
+
+	void processArguments(WrenVM* vm);
+
+	void cwd(WrenVM* vm);
+
+	void pid(WrenVM* vm);
+
+	void ppid(WrenVM* vm);
+
+	void runtimeOS(WrenVM* vm);
+
+	void runtimeArch(WrenVM* vm);
 }
 
 namespace net {

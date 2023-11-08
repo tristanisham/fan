@@ -56,6 +56,22 @@ class Env {
         }
       dotenv.close()
     }
+
   }
+
 }
 
+class Process {
+  // TODO: This will need to be smarter when wren supports CLI options.
+  static args { allArguments.count >= 3 ? allArguments[3..-1] : [] }
+
+  foreign static allArguments
+  foreign static cwd
+  foreign static pid
+  foreign static ppid
+}
+
+class Runtime {
+  foreign static os
+  foreign static arch
+}
