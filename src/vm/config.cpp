@@ -169,10 +169,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	fread(string, fsize, 1, file);
 	string[fsize] = 0;
 	mod.source = string;
-	mod.onComplete = [](WrenVM* vm, const char* name, WrenLoadModuleResult result) {
-		delete[] result.source;
-		result.source = NULL;
-	};
+	mod.onComplete = &loadModuleComplete;
 
 	fclose(file);
 	file = nullptr;
