@@ -27,11 +27,11 @@ class Env {
     if (path == null) {
       var cwd = Path.cwd()
       var path = "%(cwd)%(Path.seperator()).env"
-     
+
       if (!Path.exists(path)) {
         return
       }
-    
+
       var dotenv = File.open(path, "r")
       var envFile = dotenv.read()
       var lines = envFile.split("\n")
@@ -69,6 +69,7 @@ class Process {
   foreign static cwd
   foreign static pid
   foreign static ppid
+  foreign static exec(target, args)
 }
 
 class Runtime {

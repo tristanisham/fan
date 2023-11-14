@@ -11,13 +11,25 @@ void cli::print_help() {
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
 			  << "\n"
-			  << "(More context coming soon...)" << std::endl;
+			  << "run <script.vd>"
+			  << "\n"
+			  << "version"
+			  << "\n"
+			  << "help"
+			  << "\n"
+			  << std::endl;
 #else
 	std::cout << "Void DEBUG " << VERSION << "\n"
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
 			  << "\n"
-			  << "(More context coming soon...)" << std::endl;
+			  << "run <script.vd>"
+			  << "\n"
+			  << "version"
+			  << "\n"
+			  << "help"
+			  << "\n"
+			  << std::endl;
 #endif
 }
 

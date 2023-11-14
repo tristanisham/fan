@@ -61,6 +61,8 @@ namespace os {
 	void runtimeOS(WrenVM* vm);
 
 	void runtimeArch(WrenVM* vm);
+
+	void processExec(WrenVM* vm);
 }
 
 namespace net {

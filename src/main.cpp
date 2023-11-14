@@ -10,28 +10,6 @@
 #include <sstream>
 #include <vector>
 
-// int global_argc;
-// char** global_argv;
-
-// void allocate_global_args(std::vector<std::string> const& args, char*** output) {
-// 	*output = new char*[args.size() + 1];
-// 	for (size_t i = 0; i < args.size(); ++i) {
-// 		(*output)[i] = new char[args[i].size() + 1];
-// 		std::strcpy((*output)[i], args[i].c_str());
-// 	}
-// 	// The last element is a nullptr to mark the end
-// 	(*output)[args.size()] = nullptr;
-// }
-
-// void deallocate_global_args(char*** output, size_t len) {
-// 	// Cleanup
-// 	for (size_t i = 0; i < len; ++i) {
-// 		delete[] (*output)[i];
-// 	}
-// 	delete[] *output;  // Free the array of pointers
-// 	*output = nullptr;
-// }
-
 /**
  * Void is a language runtime focused on making software devlopment easy,
  * performant, and fun. The Void command line tool features a simple REPL and
@@ -40,9 +18,7 @@
  */
 int main(int argc, char* argv[]) {
 	if (argc <= 1) {
-		vm::Runtime runtime {};
-		runtime.repl();
-		std::exit(0);
+		cli::print_help();
 	}
 
 	for (int i = 0; i < argc; ++i) {
@@ -78,6 +54,10 @@ int main(int argc, char* argv[]) {
 			std::stringstream buffer;
 			buffer << file.rdbuf();
 			runtime.execute(buffer.str());
+		} else if (std::strcmp("repl", argv[i]) == 0) {
+			vm::Runtime runtime {};
+			runtime.repl();
+			std::exit(0);
 		}
 	}
 

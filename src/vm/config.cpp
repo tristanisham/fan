@@ -261,6 +261,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "ppid") == 0) {
 				return lib::os::ppid;
 			}
+
+			if (isStatic && strcmp(signature, "exec(_,_)") == 0) {
+				return lib::os::processExec;
+			}
 		}
 
 		if (strcmp(className, "Runtime") == 0) {
@@ -324,7 +328,7 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 
 void vm::Runtime::repl() {
 	std::string input;
-	std::cout << "> ";
+	std::cout << "%> ";
 	while (true) {
 		std::getline(std::cin, input);
 
@@ -334,6 +338,6 @@ void vm::Runtime::repl() {
 
 		this->execute(input);
 
-		std::cout << "> ";
+		std::cout << "%> ";
 	}
 }

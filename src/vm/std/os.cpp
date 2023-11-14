@@ -1,10 +1,17 @@
+#include "boost/algorithm/string.hpp"
+#include "boost/algorithm/string/join.hpp"
 #include "boost/format.hpp"
+#include "boost/format/format_fwd.hpp"
 #include "vm.hpp"
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <errno.h>
 #include <filesystem>
+#include <iostream>
 #include <lib.hpp>
+#include <memory>
+#include <stdexcept>
 #include <stdlib.h>
 
 #ifdef _WIN32
@@ -163,4 +170,47 @@ void lib::os::runtimeArch(WrenVM* vm) {
 	} else {
 		wrenSetSlotNull(vm, 0);
 	}
+}
+
+void lib::os::processExec(WrenVM* vm) {
+	wrenEnsureSlots(vm, 4);
+	auto target = wrenGetSlotString(vm, 1);
+
+	// std::cout << "Debug (target): " << target << std::endl;
+	// Args
+	auto argsLen = wrenGetListCount(vm, 2);
+	std::vector<std::string> args = { target };
+	for (int i = 0; i < argsLen; i++) {
+		wrenGetListElement(vm, 2, i, 4);
+		auto arg = wrenGetSlotString(vm, 4);
+		args.push_back(arg);
+	}
+
+	std::string parsedArgs = boost::algorithm::join(args, " ");
+	// std::cout << "Debug: " << parsedArgs << std::endl;
+	try {
+		auto result = vm::exec(parsedArgs.c_str());
+		wrenSetSlotString(vm, 0, result.c_str());
+	} catch (std::runtime_error e) {
+		lib::abort(vm, e.what());
+	}
+}
+
+/**
+* @throws std::runtime_error for failed process starts
+*/
+std::string vm::exec(const char* cmd) {
+	std::array<char, 256> buffer;
+	std::string result;
+	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+	if (!pipe) {
+		std::string emsg = boost::str(boost::format("%1 failed to popen() proc") % cmd);
+		throw std::runtime_error(emsg);
+	}
+
+	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+		result += buffer.data();
+	}
+
+	return result;
 }

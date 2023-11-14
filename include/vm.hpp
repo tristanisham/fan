@@ -16,7 +16,7 @@ namespace vm {
 
 size_t createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std::string, std::string>& entries);
 
-
+std::string exec(const char* cmd);
 
 constexpr std::string_view getOperatingSystem();
 constexpr std::string_view getPlatformArchitecture();
