@@ -27,6 +27,12 @@ namespace fs {
 	void exists(WrenVM* vm);
 
 	void seperator(WrenVM* vm);
+
+	void removeFile(WrenVM* vm);
+
+	void listAll(WrenVM* vm);
+
+	void isDirectory(WrenVM* vm);
 }  // namespace fs
 
 namespace os {
@@ -35,20 +41,22 @@ namespace os {
 	void setEnv(WrenVM* vm);
 
 	struct ArgHolder {
-        int argCount;
-        std::vector<std::unique_ptr<char[]>> argsStorage;
-        std::unique_ptr<char*[]> args;
+		int argCount;
+		std::vector<std::unique_ptr<char[]>> argsStorage;
+		std::unique_ptr<char*[]> args;
 
-        ArgHolder(int argc, char** argv) : argCount(argc), args(new char*[argc]) {
-            argsStorage.reserve(argc);
-            for (int i = 0; i < argc; ++i) {
-                size_t length = std::strlen(argv[i]) + 1; // +1 for null terminator
-                argsStorage.push_back(std::make_unique<char[]>(length));
-                std::strcpy(argsStorage.back().get(), argv[i]);
-                args[i] = argsStorage.back().get();
-            }
-        }
-    };
+		ArgHolder(int argc, char** argv)
+			: argCount(argc)
+			, args(new char*[argc]) {
+			argsStorage.reserve(argc);
+			for (int i = 0; i < argc; ++i) {
+				size_t length = std::strlen(argv[i]) + 1;  // +1 for null terminator
+				argsStorage.push_back(std::make_unique<char[]>(length));
+				std::strcpy(argsStorage.back().get(), argv[i]);
+				args[i] = argsStorage.back().get();
+			}
+		}
+	};
 
 	void processArguments(WrenVM* vm);
 
@@ -65,17 +73,12 @@ namespace os {
 	void processExec(WrenVM* vm);
 }
 
-namespace net {
-	namespace http {
-		void fetch(WrenVM* vm);
+namespace net::http {
+	void requestAlloc(WrenVM* vm);
+	void requestDealloc(void* data);
 
-	}
+	void method(WrenVM* vm);
 
-	class Url {
-	public:
-		std::optional<std::string> scheme, authority, path, query, fragment;
-		Url(const std::string& url);
-	};
 }
 
 }  // namespace lib

@@ -1,4 +1,4 @@
-# Void
+# Fan
 
 Void is a dynamically-typed programmign language based on
 [Wren](https://wren.io). Void's aim is to be _statically compilable_, portable,
@@ -60,7 +60,7 @@ Please adhere to this project's `code of conduct`.
 ### Project Structure
 
 - `include`: All project header files
-- `lib`: Void's standard library written in .vd
+- `lib`: Void's standard library written in .fan
 - `src`: CPP/C files
 - `tests`: Standard Library tests
 - `vendor`: third-party dependencies larger than a single header file. Namely,

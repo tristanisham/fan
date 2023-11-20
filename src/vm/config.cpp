@@ -134,7 +134,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	int i = 0;
 	for (const auto& seg : p) {
 		if (i == 0 && seg == "std") {
-			auto void_install = std::getenv("VOID_LIB");
+			auto void_install = std::getenv("FAN_LIB");
 			if (void_install != NULL) {
 				searchPath.append(void_install);
 			} else {
@@ -148,7 +148,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 		i++;
 	}
 
-	searchPath.replace_extension(".vd");
+	searchPath.replace_extension(".fan");
 	if (!std::filesystem::exists(searchPath)) {
 		std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
 		std::cerr << fmt << std::endl;
@@ -189,11 +189,13 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
-	// if (strcmp(module, "std/net/http") == 0) {
-	// 	if (strcmp(className, "Response") == 0) {
-
-	// 	}
-	// }
+	if (strcmp(module, "std/net/http") == 0) {
+		if (strcmp(className, "Request") == 0) {
+			methods.allocate = lib::net::http::requestAlloc;
+			methods.finalize = lib::net::http::requestDealloc;
+			return methods;
+		}
+	}
 
 	return methods;
 }
@@ -216,9 +218,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 
 		if (strcmp(className, "Path") == 0) {
-			if (isStatic && strcmp(signature, "cwd()") == 0) {
-				return lib::fs::cwd;
-			}
 
 			if (isStatic && strcmp(signature, "canonical(_)") == 0) {
 				return lib::fs::canonical;
@@ -230,6 +229,24 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 			if (isStatic && strcmp(signature, "seperator()") == 0) {
 				return lib::fs::seperator;
+			}
+		}
+
+		if (std::strcmp(className, "Fs") == 0) {
+			if (isStatic && strcmp(signature, "cwd()") == 0) {
+				return lib::fs::cwd;
+			}
+
+			if (isStatic && std::strcmp(signature, "remove(_)") == 0) {
+				return lib::fs::removeFile;
+			}
+
+			if (isStatic && std::strcmp(signature, "listAll(_)") == 0) {
+				return lib::fs::listAll;
+			}
+
+			if (isStatic && std::strcmp(signature, "isDirectory(_)") == 0) {
+				return lib::fs::isDirectory;
 			}
 		}
 	}
@@ -281,8 +298,8 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 	if (strcmp(module, "std/net/http") == 0) {
 		if (strcmp(className, "Request") == 0) {
-			if (isStatic && strcmp(signature, "fetch(_,_)") == 0) {
-				return lib::net::http::fetch;
+			if (!isStatic && strcmp(signature, "method(_)")) {
+				return lib::net::http::method;
 			}
 		}
 	}
