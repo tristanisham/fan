@@ -1,3 +1,8 @@
+<p align="center">
+<!-- ![fan-logo](https://github.com/tristanisham/fan/assets/23124818/09902251-a57d-4cb5-a79b-2fc7d425cb8c) -->
+  <image src="https://github.com/tristanisham/fan/assets/23124818/09902251-a57d-4cb5-a79b-2fc7d425cb8c" alt="Project logo">
+</p>
+
 # Fan
 
 Fan is a dynamically-typed programmign language based on
