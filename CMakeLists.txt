@@ -9,8 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories(include)
 include_directories(vendor/boost_1_83_0)
 
-set(LEVELDB_BUILD_TESTS OFF)
-set(LEVELDB_BUILD_BENCHMARKS OFF)
+# set(LEVELDB_BUILD_TESTS OFF)
+# set(LEVELDB_BUILD_BENCHMARKS OFF)
 
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
@@ -29,7 +29,7 @@ set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -Xanal
 
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -flto -funroll-loops -fanalyzer")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -flto -funroll-loops -Xanalyzer")
     # -static -static-libgcc -static-libstdc++
 elseif(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Ox /GL")

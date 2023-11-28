@@ -1,7 +1,5 @@
 #include "cli.hpp"
-#include "fan.hpp"
 #include "vm.hpp"
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -9,7 +7,6 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <vector>
 
 /**
  * Fan is a language runtime focused on making software devlopment easy,

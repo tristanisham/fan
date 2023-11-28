@@ -1,13 +1,11 @@
 #include "boost/format/format_fwd.hpp"
 #include "lib.hpp"
+#include <vm.hpp>
 #include "wren.h"
 #include <boost/format.hpp>
-#include <codecvt>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
-#include <iostream>
-#include <locale>
 #include <new>
 #include <stdio.h>
 #include <system_error>

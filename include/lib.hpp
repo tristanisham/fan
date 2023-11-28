@@ -1,7 +1,9 @@
 #pragma once
-#include "wren.h"
 #include <cstring>
-#include <vm.hpp>
+#include <memory>
+#include <string>
+#include <vector>
+#include <wren.hpp>
 
 namespace lib {
 void abort(WrenVM* vm, const std::string& msg);

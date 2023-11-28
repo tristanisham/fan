@@ -1,16 +1,9 @@
 #pragma once
-#include "wren.hpp"
-#include <exception>
+#include <wren.hpp>
 #include <filesystem>
-#include <functional>
-#include <memory>
-#include <optional>
 #include <string>
-#include <typeinfo>
-#include <unordered_map>
-#include <variant>
-#include <vector>
 #include <string_view>
+#include <unordered_map>
 
 namespace vm {
 
@@ -28,6 +21,7 @@ public:
 	void repl();
 	void setEntryPoint(const std::filesystem::path& target);
 	static void setProgramArgs(int argc, char** argv);
+
 private:
 	std::shared_ptr<WrenVM> vm;
 	std::filesystem::path entryPoint;
