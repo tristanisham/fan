@@ -1,65 +1,48 @@
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
 #include <lib.hpp>
-#include <unordered_map>
+#include <sstream>
+#include <string>
 
 const static std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 										"abcdefghijklmnopqrstuvwxyz"
 										"0123456789+/";
 
+static inline bool is_base64(unsigned char c) {
+	return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
 void lib::encoding::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 
 	std::string data { wrenGetSlotString(vm, 1) };
-	std::string output;
 
-	int val = 0;
-	int bits_count = 0;
-	const unsigned int b63 = 0x3F;
-
-	for (char c : data) {
-		val = (val << 8) + static_cast<unsigned char>(c);
-		bits_count += 8;
-		while (bits_count >= 6) {
-			output.push_back(base64_chars[(val >> (bits_count - 6)) & b63]);
-			bits_count -= 6;
-		}
+	using namespace boost::archive::iterators;
+	using Base64EncodeIterator = base64_from_binary<transform_width<std::string::const_iterator, 6, 8>>;
+	std::stringstream result;
+	std::copy(Base64EncodeIterator(data.begin()), Base64EncodeIterator(data.end()), std::ostream_iterator<char>(result));
+	size_t equal_count = (3 - data.length() % 3) % 3;
+	for (size_t i = 0; i < equal_count; i++) {
+		result.put('=');
 	}
 
-	if (bits_count > 0) {
-		val <<= (6 - bits_count);
-		output.push_back(base64_chars[val & b63]);
-	}
-
-	while (output.size() % 4) {
-		output.push_back('=');
-	}
-
-	wrenSetSlotString(vm, 0, output.c_str());
+	wrenSetSlotString(vm, 0, result.str().c_str());
 }
 
 void lib::encoding::base64_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string data { wrenGetSlotString(vm, 1) };
-	std::unordered_map<char, int> base64_map;
-	for (int i = 0; i < base64_chars.size(); ++i) {
-		base64_map[base64_chars[i]] = i;
+	data.erase(std::remove(data.begin(), data.end(), '='), data.end());
+
+	using namespace boost::archive::iterators;
+	using Base64DecodeIterator = transform_width<binary_from_base64<std::string::const_iterator>, 8, 6>;
+	std::stringstream result;
+	try {
+		std::copy(Base64DecodeIterator(data.begin()), Base64DecodeIterator(data.end()), std::ostream_iterator<char>(result));
+	} catch (std::exception const& e) {
+		lib::abort(vm, e.what());
 	}
 
-	std::string output;
-	int val = 0;
-	int bits_count = 0;
-
-	for (char c : data) {
-		if (c == '=') {
-			break;
-		}
-
-		val = (val << 6) + base64_map[c];
-		bits_count += 6;
-		if (bits_count >= 8) {
-			output.push_back(static_cast<char>((val >> (bits_count - 8)) & 0xFF));
-			bits_count -= 8;
-		}
-	}
-
-	wrenSetSlotString(vm, 0, output.c_str());
+	wrenSetSlotString(vm, 0, result.str().c_str());
 }
