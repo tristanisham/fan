@@ -1,23 +1,16 @@
 #include "lib.hpp"
 #include "vm.hpp"
 #include "wren.h"
-#include <algorithm>
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
-#include <exception>
 #include <filesystem>
-#include <fstream>
 #include <iostream>
-#include <iterator>
 #include <memory>
-#include <optional>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
-#include <vector>
 
 int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
@@ -300,6 +293,16 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		if (strcmp(className, "Request") == 0) {
 			if (!isStatic && strcmp(signature, "method(_)")) {
 				return lib::net::http::method;
+			}
+		}
+	}
+
+	if (std::strcmp(module, "std/encoding") == 0) {
+		if (std::strcmp(className, "Base64") == 0) {
+			if (isStatic && std::strcmp(signature, "encode")) {
+				return lib::encoding::base64_encode;
+			} else if (isStatic && std::strcmp(signature, "decode")) {
+				return lib::encoding::base64_decode;
 			}
 		}
 	}

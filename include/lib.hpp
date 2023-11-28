@@ -1,7 +1,7 @@
 #pragma once
-#include "vm.hpp"
 #include "wren.h"
 #include <cstring>
+#include <vm.hpp>
 
 namespace lib {
 void abort(WrenVM* vm, const std::string& msg);
@@ -79,6 +79,12 @@ namespace net::http {
 
 	void method(WrenVM* vm);
 
+}
+
+namespace encoding {
+	void base64_encode(WrenVM* vm);
+
+	void base64_decode(WrenVM* vm);
 }
 
 }  // namespace lib
