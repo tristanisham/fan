@@ -84,9 +84,9 @@ namespace net::http {
 }
 
 namespace encoding {
-	// void base64_encode(WrenVM* vm);
+	void base64_encode(WrenVM* vm);
 
-	// void base64_decode(WrenVM* vm);
+	void base64_decode(WrenVM* vm);
 }
 
 }  // namespace lib

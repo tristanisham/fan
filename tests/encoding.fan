@@ -1,4 +1,5 @@
 import "std/encoding" for Base64
+
 var value = Base64.encode("abcdefg")
 System.print("Encode %(value)")
 
