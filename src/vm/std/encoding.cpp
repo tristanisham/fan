@@ -1,4 +1,3 @@
-#include "wren.h"
 #include <basen.hpp>
 #include <iterator>
 #include <lib.hpp>
@@ -64,4 +63,3 @@ void lib::encoding::base16_decode(WrenVM* vm) {
 }
 
 using json = nlohmann::json;
-

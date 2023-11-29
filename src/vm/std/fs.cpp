@@ -1,7 +1,5 @@
 #include "boost/format/format_fwd.hpp"
 #include "lib.hpp"
-#include <vm.hpp>
-#include "wren.h"
 #include <boost/format.hpp>
 #include <cstdio>
 #include <cstring>
@@ -10,6 +8,7 @@
 #include <stdio.h>
 #include <system_error>
 #include <unordered_set>
+#include <vm.hpp>
 
 static void closeFile(FILE** file) {
 	// Already closed.
