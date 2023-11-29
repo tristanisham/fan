@@ -1,7 +1,7 @@
 #include "cli.hpp"
 #include <cstdio>
-#include <cstring>
 #include <iostream>
+#include <stdio.h>
 
 static const char* VERSION = "v0.3.0";
 
@@ -35,7 +35,7 @@ void cli::print_help() {
 
 void cli::print_version() {
 #if NDEBUG
-	printf("Fan v0.0.1\n");
+	printf("Fan %s\n", VERSION);
 #else
 	printf("Fan DEBUG %s\n", VERSION);
 #endif
