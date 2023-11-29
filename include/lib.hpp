@@ -1,4 +1,5 @@
 #pragma once
+#include "wren.h"
 #include <cstring>
 #include <memory>
 #include <string>
@@ -87,6 +88,15 @@ namespace encoding {
 	void base64_encode(WrenVM* vm);
 
 	void base64_decode(WrenVM* vm);
+
+	void base32_encode(WrenVM* vm);
+
+	void base32_decode(WrenVM* vm);
+
+	void base16_encode(WrenVM* vm);
+
+	void base16_decode(WrenVM* vm);
+
 }
 
 }  // namespace lib

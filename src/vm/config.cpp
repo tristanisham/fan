@@ -305,6 +305,23 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::base64_decode;
 			}
 		}
+
+		if (std::strcmp(className, "Base32") == 0) {
+			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
+				return lib::encoding::base64_encode;
+			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
+				return lib::encoding::base64_decode;
+			}
+		}
+
+		if (std::strcmp(className, "Base16") == 0) {
+			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
+				return lib::encoding::base64_encode;
+			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
+				return lib::encoding::base64_decode;
+			}
+		}
+
 	}
 
 	return nullptr;
