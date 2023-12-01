@@ -159,7 +159,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	char* string = new char[fsize + 1];
-	fread(string, fsize, 1, file);
+	auto read_size = fread(string, fsize, 1, file);
 	string[fsize] = 0;
 	mod.source = string;
 	mod.onComplete = &loadModuleComplete;
@@ -274,6 +274,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 			if (isStatic && strcmp(signature, "exec(_,_)") == 0) {
 				return lib::os::processExec;
+			}
+
+			if (isStatic && std::strcmp(signature, "exit(_)") == 0) {
+				return lib::os::processExit;
 			}
 		}
 

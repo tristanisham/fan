@@ -1,14 +1,12 @@
-#include "boost/algorithm/string.hpp"
 #include "boost/algorithm/string/join.hpp"
 #include "boost/format.hpp"
-#include "boost/format/format_fwd.hpp"
 #include "vm.hpp"
+#include "wren.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <errno.h>
 #include <filesystem>
-#include <iostream>
 #include <lib.hpp>
 #include <memory>
 #include <stdexcept>
@@ -213,4 +211,19 @@ std::string vm::exec(const char* cmd) {
 	}
 
 	return result;
+}
+
+void lib::os::processExit(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	auto type = wrenGetSlotType(vm, 1);
+	double exitCode = 1;
+	switch (type) {
+	case WREN_TYPE_NUM:
+		exitCode = wrenGetSlotDouble(vm, 1);
+		break;
+	default:
+		lib::abort(vm, "Process.exit(_) requires a NUMBER paramater");
+	}
+
+	std::exit(exitCode);
 }

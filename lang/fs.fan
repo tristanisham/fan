@@ -60,11 +60,31 @@ class Path {
         return Path.exists(_filepath)
     }
 
-
+    /// Returns a bool indicating if the Path is to a directory or not.
     isDirectory() {
         return Fs.isDirectory(_filepath)
     }
 
+    toString() {
+        return _filepath
+    }
+
+    /// join concatonates the entries (String or List of String) to the existing path
+    /// with the system's PATH_SEPERATOR. Returns the complete string on success or null on failure.
+    join(entries) {
+        if (entries is String) {
+            _filepath = %(_filepath) + this.seperator() + entries
+        } else if (entries is List) {
+            for (entry in entries) {
+                _filepath = %(_filepath) + this.seperator() + entry
+            }
+        } else {
+            return null
+        }
+
+        return _filepath
+
+    }
 
     foreign static canonical(path)
 

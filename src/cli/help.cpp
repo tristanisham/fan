@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 
-static const char* VERSION = "v0.3.0";
+static const char* VERSION = "v0.4.0";
 
 void cli::print_help() {
 #if NDEBUG

@@ -35,6 +35,7 @@ namespace fs {
 	void listAll(WrenVM* vm);
 
 	void isDirectory(WrenVM* vm);
+
 }  // namespace fs
 
 namespace os {
@@ -73,6 +74,8 @@ namespace os {
 	void runtimeArch(WrenVM* vm);
 
 	void processExec(WrenVM* vm);
+
+	void processExit(WrenVM* vm);
 }
 
 namespace net::http {

@@ -70,6 +70,7 @@ class Process {
   foreign static pid
   foreign static ppid
   foreign static exec(target, args)
+  foreign static exit(code)
 }
 
 class Runtime {
