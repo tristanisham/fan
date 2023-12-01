@@ -14,7 +14,7 @@
 
 int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
-std::unique_ptr<char[]> sourceFile;
+static std::unique_ptr<char[]> sourceFile;
 
 void vm::Runtime::setProgramArgs(int argc, char** argv) {
 	// Initialize the ArgHolder with command line arguments

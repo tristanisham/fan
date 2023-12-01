@@ -1,65 +1,79 @@
-#include <basen.hpp>
-#include <iterator>
+// #include <basen.hpp>
+// #include <iterator>
+#include <bindings.h>
 #include <lib.hpp>
-#include <nlohmann/json.hpp>
-#include <sstream>
-#include <string>
 
 void lib::encoding::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::string encoded;
 
-	bn::encode_b64(input.begin(), input.end(), std::back_inserter(encoded));
+	auto data = fan_base64_encode(input.c_str());
+
+	std::string encoded { data };
+
 
 	wrenSetSlotString(vm, 0, encoded.c_str());
+	fan_str_free(data);
+
 }
 
 void lib::encoding::base64_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::stringstream decoded;
 
-	bn::decode_b64(input.begin(), input.end(), std::ostream_iterator<char>(decoded, ""));
-	wrenSetSlotString(vm, 0, decoded.str().c_str());
+	auto data = fan_base64_decode(input.c_str());
+	std::string decoded { data };
+	wrenSetSlotString(vm, 0, decoded.c_str());
+	fan_str_free(data);
+
 }
 
 void lib::encoding::base32_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::string encoded;
+	auto data = fan_base32_encode(input.c_str());
 
-	bn::encode_b32(input.begin(), input.end(), std::back_inserter(encoded));
+	std::string encoded { data };
+
 
 	wrenSetSlotString(vm, 0, encoded.c_str());
+	fan_str_free(data);
+
 }
 
 void lib::encoding::base32_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::stringstream decoded;
 
-	bn::decode_b32(input.begin(), input.end(), std::ostream_iterator<char>(decoded, ""));
-	wrenSetSlotString(vm, 0, decoded.str().c_str());
+	auto data = fan_base32_decode(input.c_str());
+	std::string decoded { data };
+	wrenSetSlotString(vm, 0, decoded.c_str());
+	fan_str_free(data);
+
 }
 
 void lib::encoding::base16_encode(WrenVM* vm) {
-	wrenEnsureSlots(vm, 2);
+	wrenEnsureSlots(vm, 3);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::string encoded;
+	bool upper = wrenGetSlotBool(vm, 2);
 
-	bn::encode_b32(input.begin(), input.end(), std::back_inserter(encoded));
+	auto data = fan_base16_encode(input.c_str(), upper);
+
+	std::string encoded { data };
+
 
 	wrenSetSlotString(vm, 0, encoded.c_str());
+	fan_str_free(data);
+
 }
 
 void lib::encoding::base16_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
-	std::stringstream decoded;
+	auto data = fan_base16_decode(input.c_str());
+	std::string decoded { data };
 
-	bn::decode_b16(input.begin(), input.end(), std::ostream_iterator<char>(decoded, ""));
-	wrenSetSlotString(vm, 0, decoded.str().c_str());
+	wrenSetSlotString(vm, 0, decoded.c_str());
+	fan_str_free(data);
+
 }
-
-using json = nlohmann::json;

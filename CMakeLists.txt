@@ -36,9 +36,17 @@ elseif(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG")
 endif()
 
+
+
+
 # Static Lib
 add_library(fan-dev STATIC ${WREN} ${LIB_FILES})
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(fan-dev PRIVATE "${CMAKE_SOURCE_DIR}/target/debug/libfan.a"  ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} dl)
+else()
+    target_link_libraries(fan-dev PRIVATE "${CMAKE_SOURCE_DIR}/target/release/libfan.a" ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} dl)
+endif()
 
 
 # Executable
@@ -46,6 +54,6 @@ add_executable(fan ${SRC_FILES})
 
 
 # Final Build
-target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES}) #leveldb
+# target_link_libraries(fan-dev ) #leveldb
 target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
 
