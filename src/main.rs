@@ -12,10 +12,11 @@ fn main() {
                     eprintln!("Path {target} doesn't exist");
                     std::process::exit(1);
                 }
-                
+
                 let content =
                     fs::read_to_string(buff).expect(&format!("Unable to open file {target}"));
-                let runtime = fan::Runtime::default();
+                let mut runtime = fan::Runtime::default();
+                runtime.set_target(target);
                 runtime.execute(&content).unwrap();
             }
         }

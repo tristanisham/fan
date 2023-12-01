@@ -8,6 +8,7 @@ use crate::{
 
 pub extern "C" fn get_env(vm: *mut WrenVM) {
     unsafe {
+        wren::wrenEnsureSlots(vm, 2);
         let key_ptr = wren::wrenGetSlotString(vm, 1);
         let key = cstr_to_string(key_ptr);
         wren::wrenEnsureSlots(vm, 1);
@@ -24,6 +25,7 @@ pub extern "C" fn get_env(vm: *mut WrenVM) {
 
 pub extern "C" fn set_env(vm: *mut WrenVM) {
     unsafe {
+        wren::wrenEnsureSlots(vm, 3);
         let key_ptr = wren::wrenGetSlotString(vm, 1);
         let val_type = FanSlotType::from_slot(vm, 2);
         let val_ptr = wren::wrenGetSlotString(vm, 2);

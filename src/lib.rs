@@ -7,13 +7,12 @@ mod wren;
 use dirs;
 use std::{
     env,
-    ffi::{c_char, c_void, CString, CStr},
+    ffi::{c_char, c_void, CStr, CString},
     fs,
     path::PathBuf,
     ptr,
 };
 use wren::WrenVM;
-
 
 fn abort(vm: *mut WrenVM, msg: &str) {
     unsafe {
@@ -78,13 +77,14 @@ pub enum FanInterpretError {
 #[derive(Debug)]
 pub struct Runtime {
     vm: Box<WrenVM>,
+    target: String,
 }
 
 impl Runtime {
     pub fn execute(mut self, code: &str) -> Result<(), FanInterpretError> {
         unsafe {
             let vm_ptr: *mut WrenVM = &mut *self.vm;
-            let module = CString::new("main").expect("Unable to construct 'module' as CString");
+            let module = CString::new(self.target).expect("Unable to construct 'module' as CString");
             let c_code = CString::new(code).expect("Unable to encode source");
             let result = wren::wrenInterpret(vm_ptr, module.as_ptr(), c_code.as_ptr());
             if result == 1 {
@@ -95,6 +95,10 @@ impl Runtime {
 
             Ok(())
         }
+    }
+
+    pub fn set_target(&mut self, target: &str) {
+        self.target = String::from(target);
     }
 }
 
@@ -111,6 +115,7 @@ impl Default for Runtime {
             let vm = wren::wrenNewVM(config.as_mut_ptr());
             return Self {
                 vm: Box::from_raw(vm),
+                target: String::from("main"),
             };
         };
     }
@@ -172,8 +177,8 @@ extern "C" fn load_modules(vm: *mut WrenVM, name: *const i8) -> wren::WrenLoadMo
     };
 
     let home = dirs::home_dir().unwrap_or(PathBuf::from("~/"));
-    let default_stdlib = home.join(".void").join("lib");
-    let stdlib_str = env::var("VOID_LIB").unwrap_or(default_stdlib.to_string_lossy().to_string());
+    let default_stdlib = home.join(".fan").join("lib");
+    let stdlib_str = env::var("FAN_LIB").unwrap_or(default_stdlib.to_string_lossy().to_string());
     let r_name = unsafe { CStr::from_ptr(name) };
     let stdlib = PathBuf::from(stdlib_str);
     let user_mod_path = r_name.to_string_lossy().to_string();
@@ -246,13 +251,14 @@ unsafe extern "C" fn bind_foreign_methods(
             b"Base64" => {
                 if is_static {
                     match r_signature.to_bytes() {
-                        b"encode(_)" => return Some(crate::lang::encoding::base64_encode)
+                        b"encode(_)" => return Some(crate::lang::encoding::base64_encode),
+                        b"decode(_)" => return Some(crate::lang::encoding::base64_decode),
                         _ => {}
                     }
                 }
-            },
+            }
             _ => {}
-        }
+        },
         _ => {}
     }
 
