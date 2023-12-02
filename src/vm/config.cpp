@@ -127,9 +127,9 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	int i = 0;
 	for (const auto& seg : p) {
 		if (i == 0 && seg == "std") {
-			auto void_install = std::getenv("FAN_LIB");
-			if (void_install != NULL) {
-				searchPath.append(void_install);
+			auto fan_install = std::getenv("FAN_LIB");
+			if (fan_install != NULL) {
+				searchPath.append(fan_install);
 			} else {
 				searchPath = (std::filesystem::current_path());
 			}
