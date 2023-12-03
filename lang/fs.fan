@@ -28,6 +28,24 @@ class Fs {
         return null
     }
 
+    /// Returns String or null
+    static read(path) {
+        if (path is String) {
+            var target = Path.from(path)
+            if (!target.exists()) {
+                return null
+            }
+
+            var file = File.open(path, "r")
+            var body = file.read()
+            file.close()
+
+            return body
+        }
+
+        return null
+    }
+
     /**
     * Removes file at given path. Will not delete directories
     */
