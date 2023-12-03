@@ -91,10 +91,10 @@ class Path {
     /// with the system's PATH_SEPERATOR. Returns the complete string on success or null on failure.
     join(entries) {
         if (entries is String) {
-            _filepath = %(_filepath) + this.seperator() + entries
+            _filepath = _filepath + this.seperator() + entries
         } else if (entries is List) {
             for (entry in entries) {
-                _filepath = %(_filepath) + this.seperator() + entry
+                _filepath = _filepath + this.seperator() + entry
             }
         } else {
             return null
