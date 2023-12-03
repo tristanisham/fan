@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 				vm::Runtime::setProgramArgs(argc, argv);
 
 				vm::Runtime runtime {};	 // Move the vector to the runtime instead of copying
-				runtime.setEntryPoint(target);
+				runtime.setEntryPoint(target.c_str());
 
 				std::ifstream file(target);
 				if (!file.is_open()) {

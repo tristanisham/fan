@@ -7,6 +7,7 @@
 #include <cstring>
 #include <filesystem>
 #include <iostream>
+#include <linux/limits.h>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -14,7 +15,7 @@
 
 int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
-std::unique_ptr<char[]> sourceFile;
+char sourceFile[PATH_MAX];
 
 void vm::Runtime::setProgramArgs(int argc, char** argv) {
 	// Initialize the ArgHolder with command line arguments
@@ -97,7 +98,7 @@ static void writeFn(WrenVM* vm, const char* text) {
 }
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
-	const char* moduleDisplay = (std::strcmp(module, "main") == 0) ? sourceFile.get() : module;
+	const char* moduleDisplay = (std::strcmp(module, "main") == 0) ? sourceFile : module;
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
 		printf("[%s:%d] [Error] %s\n", moduleDisplay, line, msg);
@@ -331,15 +332,12 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	return nullptr;
 }
 
-void vm::Runtime::setEntryPoint(const std::filesystem::path& target) {
-	this->entryPoint = target;
-	auto relStr = target.relative_path().c_str();
-
-	// Allocate memory for sourceFile using a smart pointer
-	sourceFile = std::make_unique<char[]>(std::strlen(relStr) + 1);
+void vm::Runtime::setEntryPoint(const std::string_view target) {
+	this->entryPoint = std::filesystem::path(target);
+	auto relStr = this->entryPoint.relative_path().c_str();
 
 	// Copy the string
-	std::strcpy(sourceFile.get(), relStr);
+	std::strcpy(sourceFile, relStr);
 };
 
 vm::Runtime::Runtime() {
