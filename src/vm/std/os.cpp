@@ -1,7 +1,7 @@
 #include "boost/algorithm/string/join.hpp"
+//@clang-ignore
 #include "boost/format.hpp"
 #include "vm.hpp"
-#include "wren.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -11,6 +11,7 @@
 #include <memory>
 #include <stdexcept>
 #include <stdlib.h>
+#include <wren.hpp>
 
 #ifdef _WIN32
 #include <tlhelp32.h>
