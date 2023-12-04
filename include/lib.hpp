@@ -76,6 +76,8 @@ namespace os {
 	void processExec(WrenVM* vm);
 
 	void processExit(WrenVM* vm);
+
+	void typeOf(WrenVM* vm);
 }
 
 namespace net::http {

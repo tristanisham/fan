@@ -15,7 +15,7 @@
 
 int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
-char sourceFile[PATH_MAX];
+// char sourceFile[PATH_MAX];
 
 void vm::Runtime::setProgramArgs(int argc, char** argv) {
 	// Initialize the ArgHolder with command line arguments
@@ -98,13 +98,14 @@ static void writeFn(WrenVM* vm, const char* text) {
 }
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
-	const char* moduleDisplay = (std::strcmp(module, "main") == 0) ? sourceFile : module;
+
+
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
-		printf("[%s:%d] [Error] %s\n", moduleDisplay, line, msg);
+		printf("[%s:%d] [Error] %s\n", module, line, msg);
 	} break;
 	case WREN_ERROR_STACK_TRACE: {
-		printf("[%s:%d] in %s\n", moduleDisplay, line, msg);
+		printf("[%s:%d] in %s\n", module, line, msg);
 	} break;
 	case WREN_ERROR_RUNTIME: {
 		printf("[Runtime Error] %s\n", msg);
@@ -132,6 +133,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 			if (fan_install != NULL) {
 				searchPath.append(fan_install);
 			} else {
+				// lib::abort(vm, "standard library not found. Please set the environment variable: 'FAN_LIB'");
 				searchPath = (std::filesystem::current_path());
 			}
 			continue;
@@ -291,7 +293,13 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "arch") == 0) {
 				return lib::os::runtimeArch;
 			}
+
+			if (isStatic && std::strcmp(signature, "typeOf(_)") == 0) {
+				return lib::os::typeOf;
+			}
 		}
+
+
 	}
 
 	if (strcmp(module, "std/net/http") == 0) {
@@ -326,18 +334,17 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::base64_decode;
 			}
 		}
-
 	}
 
 	return nullptr;
 }
 
-void vm::Runtime::setEntryPoint(const std::string_view target) {
+void vm::Runtime::setEntryPoint(const std::string& target) {
 	this->entryPoint = std::filesystem::path(target);
-	auto relStr = this->entryPoint.relative_path().c_str();
+	auto relPath = this->entryPoint.relative_path();
 
+	auto relStr = relPath.c_str();
 	// Copy the string
-	std::strcpy(sourceFile, relStr);
 };
 
 vm::Runtime::Runtime() {

@@ -76,4 +76,5 @@ class Process {
 class Runtime {
   foreign static os
   foreign static arch
+  foreign static typeOf(data)
 }

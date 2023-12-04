@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 				std::stringstream buffer;
 				buffer << file.rdbuf();
-				runtime.execute(buffer.str());
+				runtime.execute(buffer.str(), target.c_str());
 			} else if (std::strcmp("repl", argv[i]) == 0) {
 				vm::Runtime runtime {};
 				runtime.repl();

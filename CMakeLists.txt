@@ -26,7 +26,7 @@ file(GLOB_RECURSE SRC_FILES src/main.cpp src/cli/*.cpp)
 
 # Static Analyzer: https://gcc.gnu.org/onlinedocs/gcc-10.1.0/gcc/Static-Analyzer-Options.html
 # Linker Options: https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fasynchronous-unwind-tables -Werror=format-security -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE  -ggdb -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fasynchronous-unwind-tables -g -Werror=format-security -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE  -ggdb -fno-omit-frame-pointer")
 set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
 
 

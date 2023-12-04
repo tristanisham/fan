@@ -227,3 +227,10 @@ void lib::os::processExit(WrenVM* vm) {
 
 	std::exit(exitCode);
 }
+
+void lib::os::typeOf(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	auto valType = wrenGetSlotType(vm, 1);
+	auto valStr = lib::wren_type_to_string(valType);
+	wrenSetSlotString(vm, 0, valStr.c_str());
+}

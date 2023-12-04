@@ -19,7 +19,7 @@ public:
 	Runtime();
 	WrenInterpretResult execute(const std::string& code, const std::string& module = "main");
 	void repl();
-	void setEntryPoint(const std::string_view target);
+	void setEntryPoint(const std::string& target);
 	static void setProgramArgs(int argc, char** argv);
 
 private:
