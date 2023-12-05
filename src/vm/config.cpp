@@ -363,14 +363,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
-	// if (std::strcmp(module, "std/fmt") == 0) {
-	// 	if (std::strcmp(className, "Fmt") == 0) {
-	// 		if (isStatic && std::strcmp(signature, "reverse(_)") == 0) {
-	// 			return lib::fmt::join;
-	// 		}
-	// 	}
-	// }
-
 	return nullptr;
 }
 
