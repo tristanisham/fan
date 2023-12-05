@@ -5,6 +5,8 @@
 #include <vector>
 #include <wren.hpp>
 
+
+
 namespace lib {
 void abort(WrenVM* vm, const std::string& msg);
 std::string wren_type_to_string(const WrenType& type);
@@ -104,7 +106,7 @@ namespace encoding {
 }
 
 namespace fmt {
-	void join(WrenVM* vm);
+	// void join(WrenVM* vm);
 }
 
 }  // namespace lib
