@@ -9,6 +9,8 @@ namespace vm {
 
 size_t createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std::string, std::string>& entries);
 
+// std::vector<std::variant<double, std::string, bool>> getList(WrenVM* vm, int listSlot, int itemSlot);
+
 std::string exec(const char* cmd);
 
 constexpr std::string_view getOperatingSystem();

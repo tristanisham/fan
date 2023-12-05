@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
+#include <wren.hpp>
 
 void lib::encoding::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);

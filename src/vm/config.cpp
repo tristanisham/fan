@@ -1,6 +1,7 @@
 #include "lib.hpp"
 #include "vm.hpp"
 #include "wren.h"
+#include <wren.hpp>
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -16,6 +17,32 @@
 int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
 // char sourceFile[PATH_MAX];
+
+// /**
+// * @param itemSlot is the number of slots ensured in the VM. It is the caller's responsibility to use this efficiently.
+// */
+// std::vector<std::variant<double, std::string, bool>> vm::getList(WrenVM* vm, int listSlot, int itemSlot) {
+// 	wrenEnsureSlots(vm, itemSlot);
+//     auto count = wrenGetListCount(vm, listSlot);
+//     std::vector<std::variant<double, std::string, bool>> buffer;
+
+//     for (int i = 0; i < count; i++) {
+//         wrenGetListElement(vm, listSlot, 0, itemSlot);
+// 		auto slotType = wrenGetSlotType(vm, itemSlot);
+//         if (slotType == WREN_TYPE_NUM) {
+// 			auto item = wrenGetSlotDouble(vm, itemSlot);
+// 			buffer.push_back(item);
+// 		} else if (slotType == WREN_TYPE_STRING) {
+// 			auto item = wrenGetSlotString(vm, itemSlot);
+// 			buffer.push_back(std::string{item});
+// 		} else if (slotType == wrenGetSlotBool(vm, itemSlot)) {
+// 			auto item = wrenGetSlotBool(vm, itemSlot);
+// 			buffer.push_back(item);
+// 		}
+//     }
+
+// 	return buffer;
+// }
 
 void vm::Runtime::setProgramArgs(int argc, char** argv) {
 	// Initialize the ArgHolder with command line arguments
@@ -47,17 +74,17 @@ std::string lib::wren_type_to_string(const WrenType& type) {
 	case WREN_TYPE_BOOL:
 		return "bool";
 	case WREN_TYPE_NUM:
-		return "num";
+		return "Num";
 	case WREN_TYPE_FOREIGN:
-		return "foreign";
+		return "Foreign";
 	case WREN_TYPE_LIST:
-		return "list";
+		return "List";
 	case WREN_TYPE_MAP:
-		return "map";
+		return "Map";
 	case WREN_TYPE_NULL:
 		return "null";
 	case WREN_TYPE_STRING:
-		return "string";
+		return "String";
 	case WREN_TYPE_UNKNOWN:
 		return "unknown";
 	default:
@@ -332,6 +359,14 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::base64_encode;
 			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
 				return lib::encoding::base64_decode;
+			}
+		}
+	}
+
+	if (std::strcmp(module, "std/fmt") == 0) {
+		if (std::strcmp(className, "Fmt") == 0) {
+			if (isStatic && std::strcmp(signature, "join(_,_)") == 0) {
+				return lib::fmt::join;
 			}
 		}
 	}

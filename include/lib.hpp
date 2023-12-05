@@ -103,4 +103,8 @@ namespace encoding {
 
 }
 
+namespace fmt {
+	void join(WrenVM* vm);
+}
+
 }  // namespace lib
