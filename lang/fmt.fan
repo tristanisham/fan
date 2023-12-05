@@ -10,7 +10,6 @@ class Fmt {
         var out = ""
         while (size != 0) {
             out = out + str[size-1]
-            System.print(out)
             size = size-1
         }
 
