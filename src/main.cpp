@@ -27,8 +27,7 @@ int main(int argc, char* argv[]) {
 			cli::print_help();
 			std::exit(0);
 		} else {
-			/* In windows, this will init the winsock stuff */
-			curl_global_init(CURL_GLOBAL_ALL);
+
 
 			if (std::strcmp("run", argv[i]) == 0 || std::strcmp("r", argv[i]) == 0) {
 
@@ -50,7 +49,6 @@ int main(int argc, char* argv[]) {
 				std::ifstream file(target);
 				if (!file.is_open()) {
 					printf("Unable to run %s", target.c_str());
-					curl_global_cleanup();
 					return 1;
 				}
 
@@ -60,7 +58,6 @@ int main(int argc, char* argv[]) {
 			} else if (std::strcmp("repl", argv[i]) == 0) {
 				vm::Runtime runtime {};
 				runtime.repl();
-				curl_global_cleanup();
 				std::exit(0);
 			}
 		}

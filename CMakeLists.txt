@@ -26,13 +26,23 @@ file(GLOB_RECURSE SRC_FILES src/main.cpp src/cli/*.cpp)
 
 # Static Analyzer: https://gcc.gnu.org/onlinedocs/gcc-10.1.0/gcc/Static-Analyzer-Options.html
 # Linker Options: https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fasynchronous-unwind-tables -g -Wformat -Werror=format-security -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE  -ggdb -fno-omit-frame-pointer")
-set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -fPIE -pie  -ggdb -fno-omit-frame-pointer")
+
 
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpie  -D_FORTIFY_SOURCE=2 -fexceptions -Werror=format-security -O2 -flto -funroll-loops ")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS_RELEASE} -pie -s")
+    ########################
+    # DEBUG              #
+    ########################
+
+    # Add back: fsanitize=leak
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fasynchronous-unwind-tables -ggdb3 -Wall  -fsanitize=leak -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -no-pie -Wall -fno-omit-frame-pointer")
+
+    ########################
+    # RELEASE              #
+    ########################
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIE -D_FORTIFY_SOURCE=2 -fexceptions -Wall -O2 -flto -funroll-loops")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS_RELEASE} -fPIE  -s")
     # -static -static-libgcc -static-libstdc++
 elseif(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Ox /GL")
