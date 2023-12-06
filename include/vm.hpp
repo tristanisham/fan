@@ -19,6 +19,7 @@ constexpr std::string_view getPlatformArchitecture();
 class Runtime {
 public:
 	Runtime();
+	~Runtime();
 	WrenInterpretResult execute(const std::string& code, const std::string& module = "main");
 	void repl();
 	void setEntryPoint(const std::string& target);

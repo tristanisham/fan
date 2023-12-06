@@ -4,13 +4,10 @@
 #include <cstdio>
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <iostream>
 #include <lib.hpp>
-#include <sstream>
-#include <stdexcept>
+// #include <sstream>
 #include <string>
-#include <unordered_map>
-#include <variant>
+// #include <unordered_map>
 
 std::string trim(const std::string& s) {
 	auto start = s.find_first_not_of(" \t\n\r");
@@ -26,26 +23,26 @@ size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data) {
 	return size * nmemb;
 }
 
-static std::unordered_map<std::string, std::string> splitHeaders(const std::string& header_string) {
-	std::istringstream stream(header_string);
-	std::unordered_map<std::string, std::string> output;
-	std::string line;
+// static std::unordered_map<std::string, std::string> splitHeaders(const std::string& header_string) {
+// 	std::istringstream stream(header_string);
+// 	std::unordered_map<std::string, std::string> output;
+// 	std::string line;
 
-	while (std::getline(stream, line)) {
-		auto place = line.find_first_of(':');
-		if (place == std::string::npos) {
-			continue;
-		}
-		auto key = line.substr(0, place);
-		// Increment 'place' by 2 to skip over the ':' and the space after it
-		auto val = (place + 1 < line.length() ? line.substr(place + 2) : "");
-		key = trim(key);
-		val = trim(val);
-		output.emplace(key, val);
-	}
+// 	while (std::getline(stream, line)) {
+// 		auto place = line.find_first_of(':');
+// 		if (place == std::string::npos) {
+// 			continue;
+// 		}
+// 		auto key = line.substr(0, place);
+// 		// Increment 'place' by 2 to skip over the ':' and the space after it
+// 		auto val = (place + 1 < line.length() ? line.substr(place + 2) : "");
+// 		key = trim(key);
+// 		val = trim(val);
+// 		output.emplace(key, val);
+// 	}
 
-	return output;
-}
+// 	return output;
+// }
 
 void lib::net::http::requestAlloc(WrenVM* vm) {
 	try {
