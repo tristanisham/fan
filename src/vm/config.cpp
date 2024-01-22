@@ -15,9 +15,17 @@
 #include <tuple>
 #include <wren.hpp>
 
-int programArgCount;
+// int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
-// char sourceFile[PATH_MAX];
+
+std::string vm::trim(const std::string& s) {
+	auto start = s.find_first_not_of(" \t\n\r");
+	auto end = s.find_last_not_of(" \t\n\r");
+	if (start == std::string::npos || end == std::string::npos) {
+		return "";
+	}
+	return s.substr(start, end - start + 1);
+}
 
 // /**
 // * @param itemSlot is the number of slots ensured in the VM. It is the caller's responsibility to use this efficiently.
@@ -189,7 +197,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	char* string = new char[fsize + 1];
-	fread(string, fsize, 1, file);
+	(void)fread(string, fsize, 1, file);
 	string[fsize] = 0;
 	mod.source = string;
 	mod.onComplete = &loadModuleComplete;

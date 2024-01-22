@@ -1,22 +1,15 @@
-#include "vm.hpp"
-#include "wren.h"
 #include <boost/format.hpp>
 #include <cstdio>
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <lib.hpp>
+#include <vm.hpp>
+#include <wren.hpp>
 // #include <sstream>
 #include <string>
 // #include <unordered_map>
 
-std::string trim(const std::string& s) {
-	auto start = s.find_first_not_of(" \t\n\r");
-	auto end = s.find_last_not_of(" \t\n\r");
-	if (start == std::string::npos || end == std::string::npos) {
-		return "";
-	}
-	return s.substr(start, end - start + 1);
-}
+
 
 size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data) {
 	data->append((char*)ptr, size * nmemb);

@@ -11,11 +11,21 @@ include_directories(vendor/boost_1_83_0)
 
 # set(LEVELDB_BUILD_TESTS OFF)
 # set(LEVELDB_BUILD_BENCHMARKS OFF)
+#option(CURL_STATICLIB "Set to ON to build libcurl with static linking."  ON)
+# Add CURL as a subdirectory
+# Set CURL static library
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
+set(CURL_STATICLIB ON CACHE BOOL "Build CURL as a static lib")
+set(BUILD_CURL_EXE OFF CACHE BOOL "Do not build CURL executable")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
+set(BUILD_TESTING OFF CACHE BOOL "Do not build tests")
 
-find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIRS})
+# Add CURL as a subdirectory
+add_subdirectory(vendor/curl-8.5.0)
 
-
+if(WIN32)
+    add_definitions("-DCURL_STATICLIB")
+endif()
 
 
 # add_dependencies(${TARGET_NAME} libcurl fandev)
@@ -59,6 +69,6 @@ add_executable(fan ${SRC_FILES})
 
 
 # Final Build
-target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES}) #leveldb
+target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} libcurl) #leveldb
 target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
 

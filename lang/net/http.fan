@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-class Request {
-    foreign static fetch(url)
-}
-
-=======
 foreign class Request {
     construct new(url) {
         this._headers = {}
@@ -25,4 +19,3 @@ foreign class Request {
 
 
 
->>>>>>> ab3b3eed5e7aad325f53e17615edb90431f99783

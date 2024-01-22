@@ -4,7 +4,7 @@ out/
 .vs/
 zig-cache/
 zig-out/
-vendor/boost*
+vendor/*
 
 
 
