@@ -60,7 +60,7 @@ elseif(MSVC)
 endif()
 
 # Static Lib
-add_library(fan-dev STATIC ${WREN} ${LIB_FILES})
+add_library(fan-dev STATIC ${WREN} ${LIB_FILES} ${CURL_LIBRARIES})
 
 
 
@@ -69,6 +69,6 @@ add_executable(fan ${SRC_FILES})
 
 
 # Final Build
-target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} libcurl) #leveldb
+target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread libcurl) #leveldb
 target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
 

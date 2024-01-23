@@ -1,6 +1,5 @@
 #include "lib.hpp"
 #include "vm.hpp"
-#include "wren.h"
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -237,6 +236,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (!isStatic && strcmp(signature, "method(_)") == 0) {
 				return lib::net::http::method;
 			}
+
+			if (!isStatic && std::strcmp(signature, "req()") == 0) {
+				return lib::net::http::req;
+			}
 		}
 	}
 
@@ -381,7 +384,10 @@ vm::Runtime::~Runtime() {
 
 vm::Runtime::Runtime() {
 	/* In windows, this will init the winsock stuff */
-	curl_global_init(CURL_GLOBAL_ALL);
+	CURLcode ecode = curl_global_init(CURL_GLOBAL_ALL);
+	if (ecode != CURLE_OK) {
+		fprintf(stderr, "curl_global_init() failed: %s\n", curl_easy_strerror(ecode));
+	}
 
 	WrenConfiguration config;
 	wrenInitConfiguration(&config);

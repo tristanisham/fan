@@ -1,4 +1,5 @@
 #pragma once
+#include <wren.hpp>
 #include <cstring>
 #include <memory>
 #include <string>
@@ -87,6 +88,8 @@ namespace net::http {
 	void requestDealloc(void* data);
 
 	void method(WrenVM* vm);
+
+	void req(WrenVM* vm);
 
 	
 }
