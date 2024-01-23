@@ -88,6 +88,7 @@ namespace net::http {
 
 	void method(WrenVM* vm);
 
+	
 }
 
 namespace encoding {

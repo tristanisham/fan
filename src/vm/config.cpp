@@ -165,7 +165,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	for (const auto& seg : p) {
 		if (i == 0 && seg == "std") {
 			auto fan_install = std::getenv("FAN_LIB");
-			if (fan_install != NULL) {
+			if (fan_install != nullptr) {
 				searchPath.append(fan_install);
 			} else {
 				// lib::abort(vm, "standard library not found. Please set the environment variable: 'FAN_LIB'");
@@ -221,7 +221,7 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 	}
 
 	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Request") == 0) {
+		if (strcmp(className, "Client") == 0) {
 			methods.allocate = lib::net::http::requestAlloc;
 			methods.finalize = lib::net::http::requestDealloc;
 			return methods;
@@ -232,6 +232,13 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 }
 
 WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
+	if (strcmp(module, "std/net/http") == 0) {
+		if (strcmp(className, "Client") == 0) {
+			if (!isStatic && strcmp(signature, "method(_)") == 0) {
+				return lib::net::http::method;
+			}
+		}
+	}
 
 	if (strcmp(module, "std/fs") == 0) {
 		if (strcmp(className, "File") == 0) {
@@ -331,14 +338,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 			if (isStatic && std::strcmp(signature, "typeOf(_)") == 0) {
 				return lib::os::typeOf;
-			}
-		}
-	}
-
-	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Request") == 0) {
-			if (!isStatic && strcmp(signature, "method(_)")) {
-				return lib::net::http::method;
 			}
 		}
 	}
