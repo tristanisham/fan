@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 
-static const char* VERSION = "v0.4.0";
+static const char* VERSION = "v0.5.0";
 
 void cli::print_help() {
 #if NDEBUG
@@ -12,6 +12,8 @@ void cli::print_help() {
 			  << "----------------------------\n"
 			  << "\n"
 			  << "run <script.fan>"
+			  << "\n"
+			  << "repl -- starts a Fan REPL"
 			  << "\n"
 			  << "version"
 			  << "\n"
@@ -24,6 +26,8 @@ void cli::print_help() {
 			  << "----------------------------\n"
 			  << "\n"
 			  << "run <script.fan>"
+			  << "\n"
+			  << "repl -- starts a Fan REPL"
 			  << "\n"
 			  << "version"
 			  << "\n"

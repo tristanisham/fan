@@ -1,11 +1,10 @@
 #include "lib.hpp"
 #include "vm.hpp"
-#include "wren.h"
-#include <wren.hpp>
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <curl/curl.h>
 #include <filesystem>
 #include <iostream>
 #include <linux/limits.h>
@@ -13,10 +12,19 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <wren.hpp>
 
-int programArgCount;
+// int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
-// char sourceFile[PATH_MAX];
+
+std::string vm::trim(const std::string& s) {
+	auto start = s.find_first_not_of(" \t\n\r");
+	auto end = s.find_last_not_of(" \t\n\r");
+	if (start == std::string::npos || end == std::string::npos) {
+		return "";
+	}
+	return s.substr(start, end - start + 1);
+}
 
 // /**
 // * @param itemSlot is the number of slots ensured in the VM. It is the caller's responsibility to use this efficiently.
@@ -126,7 +134,6 @@ static void writeFn(WrenVM* vm, const char* text) {
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
 
-
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
 		printf("[%s:%d] [Error] %s\n", module, line, msg);
@@ -157,7 +164,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	for (const auto& seg : p) {
 		if (i == 0 && seg == "std") {
 			auto fan_install = std::getenv("FAN_LIB");
-			if (fan_install != NULL) {
+			if (fan_install != nullptr) {
 				searchPath.append(fan_install);
 			} else {
 				// lib::abort(vm, "standard library not found. Please set the environment variable: 'FAN_LIB'");
@@ -189,7 +196,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	char* string = new char[fsize + 1];
-	auto read_size = fread(string, fsize, 1, file);
+	(void)fread(string, fsize, 1, file);
 	string[fsize] = 0;
 	mod.source = string;
 	mod.onComplete = &loadModuleComplete;
@@ -213,7 +220,7 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 	}
 
 	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Request") == 0) {
+		if (strcmp(className, "Client") == 0) {
 			methods.allocate = lib::net::http::requestAlloc;
 			methods.finalize = lib::net::http::requestDealloc;
 			return methods;
@@ -224,6 +231,15 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 }
 
 WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
+	if (strcmp(module, "std/net/http") == 0) {
+		if (strcmp(className, "Client") == 0) {
+
+
+			if (!isStatic && std::strcmp(signature, "req()") == 0) {
+				return lib::net::http::req;
+			}
+		}
+	}
 
 	if (strcmp(module, "std/fs") == 0) {
 		if (strcmp(className, "File") == 0) {
@@ -325,16 +341,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::os::typeOf;
 			}
 		}
-
-
-	}
-
-	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Request") == 0) {
-			if (!isStatic && strcmp(signature, "method(_)")) {
-				return lib::net::http::method;
-			}
-		}
 	}
 
 	if (std::strcmp(module, "std/encoding") == 0) {
@@ -368,13 +374,19 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 
 void vm::Runtime::setEntryPoint(const std::string& target) {
 	this->entryPoint = std::filesystem::path(target);
-	auto relPath = this->entryPoint.relative_path();
-
-	auto relStr = relPath.c_str();
-	// Copy the string
 };
 
+vm::Runtime::~Runtime() {
+	curl_global_cleanup();
+	// wrenFreeVM ran further down the page in the shared pointer's "deleter" labmda.
+}
+
 vm::Runtime::Runtime() {
+	/* In windows, this will init the winsock stuff */
+	CURLcode ecode = curl_global_init(CURL_GLOBAL_ALL);
+	if (ecode != CURLE_OK) {
+		fprintf(stderr, "curl_global_init() failed: %s\n", curl_easy_strerror(ecode));
+	}
 
 	WrenConfiguration config;
 	wrenInitConfiguration(&config);

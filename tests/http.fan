@@ -1,4 +1,6 @@
-import "std/net/http" for Request
+import "std/net/http" for Client
 
-var resp = Request.fetch("https://example.com/")
-System.print("%(resp)")
+var client = Client.new("https://example.com")
+var body = client.req()
+System.print(body)
+
