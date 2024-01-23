@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <iostream>
 #include <lib.hpp>
 #include <map>
 #include <sstream>
