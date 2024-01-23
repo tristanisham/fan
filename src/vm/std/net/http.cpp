@@ -92,8 +92,8 @@ void lib::net::http::req(WrenVM* vm) {
 		lib::abort(vm, (boost::format("CURL Error: %1%") % curl_easy_strerror(res)).str());
 	}
 
-	std::cout << header_string << std::endl;
-	std::cout << response_string << std::endl;
+	// std::cout << header_string << std::endl;
+	// std::cout << response_string << std::endl;
 
 	std::istringstream tokenStream { header_string };
 	std::string token;
