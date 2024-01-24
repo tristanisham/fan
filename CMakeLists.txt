@@ -9,16 +9,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories(include)
 include_directories(vendor/boost_1_83_0)
 
-# set(LEVELDB_BUILD_TESTS OFF)
-# set(LEVELDB_BUILD_BENCHMARKS OFF)
-#option(CURL_STATICLIB "Set to ON to build libcurl with static linking."  ON)
-# Add CURL as a subdirectory
 # Set CURL static library
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(CURL_STATICLIB ON CACHE BOOL "Build CURL as a static lib")
 set(BUILD_CURL_EXE OFF CACHE BOOL "Do not build CURL executable")
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Do not build tests")
+set(WITH_EXAMPLES OFF CACHE BOOL "With Examples Flag")
+set(WITH_STATIC_LIB ON CACHE BOOL "With Static Library Flag")
+
 
 # Add CURL as a subdirectory
 add_subdirectory("vendor/curl-8.5.0")

@@ -235,7 +235,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		if (strcmp(className, "Client") == 0) {
 
 
-			if (!isStatic && std::strcmp(signature, "req()") == 0) {
+			if (!isStatic && std::strcmp(signature, "fetch()") == 0) {
 				return lib::net::http::req;
 			}
 		}
