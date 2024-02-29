@@ -107,12 +107,12 @@ std::string lib::wren_type_to_string(const WrenType& type) {
  * @param entries The entries you'd like to add to your map
  */
 size_t vm::createVmMap(WrenVM* vm, const int& slot, const std::unordered_map<std::string, std::string>& entries) {
-	auto slotCount = wrenGetSlotCount(vm);
-	size_t requiredSlotes = entries.size() * 2;
+	const auto slotCount = wrenGetSlotCount(vm);
+	const size_t requiredSlotes = entries.size() * 2;
 	if (slot > slotCount) {
 		throw std::logic_error { "slot greater than available slot count. You cannot assign a map to a dynamically allocated slot" };
 	}
-	wrenEnsureSlots(vm, requiredSlotes);
+	wrenEnsureSlots(vm, static_cast<int>(requiredSlotes));
 	wrenSetSlotNewMap(vm, slot);
 	auto key_slot = slotCount + 1;
 	auto val_slot = slotCount + 2;

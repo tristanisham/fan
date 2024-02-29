@@ -89,7 +89,7 @@ namespace os {
 
 namespace net::http {
 
-	inline size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data) {
+	inline size_t writeFunction(void* ptr, const size_t size, const size_t nmemb, std::string* data) {
 		data->append(static_cast<char*>(ptr), size * nmemb);
 		return size * nmemb;
 	}
@@ -160,7 +160,7 @@ namespace net::http {
 		 * fetch(string? url) returns a pair<header, resp> containing the HTTP response headers and body.
 		 * @throws std::runtime_error
 		 */
-		std::pair<std::string, std::string> fetch(std::string const& url = "") {
+		[[nodiscard]] std::pair<std::string, std::string> fetch(std::string const& url = "") const {
 			if (!url.empty()) {
 				this->url(url);
 			}
