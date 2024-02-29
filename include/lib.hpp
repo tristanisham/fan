@@ -35,7 +35,7 @@ namespace fs {
 
 	void exists(WrenVM* vm);
 
-	void seperator(WrenVM* vm);
+	void separator(WrenVM* vm);
 
 	void removeFile(WrenVM* vm);
 
@@ -149,7 +149,7 @@ namespace net::http {
 			std::string method_str;
 			try {
 				method_str = this->getHttpMethodString(method);
-			} catch (std::invalid_argument) {
+			} catch (std::invalid_argument e) {
 				method_str = "GET";
 			}
 

@@ -5,7 +5,8 @@ out/
 zig-cache/
 zig-out/
 vendor/*
-
+cmake-build-debug-wsl/
+cmake-build-release-wsl/
 
 
 

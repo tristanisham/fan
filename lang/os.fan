@@ -26,7 +26,7 @@ class Env {
   static loadDotEnv(path) {
     if (path == null) {
       var cwd = Path.cwd()
-      var path = "%(cwd)%(Path.seperator()).env"
+      var path = "%(cwd)%(Path.separator()).env"
 
       if (!Path.exists(path)) {
         return

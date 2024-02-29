@@ -4,19 +4,19 @@
 #include <cstring>
 #include <filesystem>
 #include <new>
-#include <stdio.h>
+#include <cstdio>
 #include <system_error>
 #include <unordered_set>
 #include <vm.hpp>
 
 static void closeFile(FILE** file) {
 	// Already closed.
-	if (*file == NULL) {
+	if (*file == nullptr) {
 		return;
 	}
 
 	fclose(*file);
-	*file = NULL;
+	*file = nullptr;
 }
 
 static bool isValidMode(const char* str) {
@@ -126,9 +126,9 @@ void lib::fs::canonical(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, target.c_str());
 }
 
-void lib::fs::seperator(WrenVM* vm) {
+void lib::fs::separator(WrenVM* vm) {
 	wrenEnsureSlots(vm, 1);
-	const char separator[2] = { std::filesystem::path::preferred_separator, '\0' };
+	constexpr char separator[2] = { std::filesystem::path::preferred_separator, '\0' };
 	wrenSetSlotString(vm, 0, separator);
 }
 

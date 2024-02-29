@@ -52,7 +52,7 @@ class Fs {
     foreign static remove(path)
 
     /**
-    * Recusively lists all files and directories in the provided path
+    * Recursively lists all files and directories in the provided path
     */
     foreign static listAll(path)
 
@@ -87,14 +87,14 @@ class Path {
         return _filepath
     }
 
-    /// join concatonates the entries (String or List of String) to the existing path
-    /// with the system's PATH_SEPERATOR. Returns the complete string on success or null on failure.
+    /// join concatenates the entries (String or List of String) to the existing path
+    /// with the system's PATH_SEPARATOR. Returns the complete string on success or null on failure.
     join(entries) {
         if (entries is String) {
-            _filepath = _filepath + this.seperator() + entries
+            _filepath = _filepath + this.separator() + entries
         } else if (entries is List) {
             for (entry in entries) {
-                _filepath = _filepath + this.seperator() + entry
+                _filepath = _filepath + this.separator() + entry
             }
         } else {
             return null
@@ -108,5 +108,5 @@ class Path {
 
     foreign static exists(path)
 
-    foreign static seperator()
+    foreign static separator()
 }

@@ -266,8 +266,8 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::fs::exists;
 			}
 
-			if (isStatic && strcmp(signature, "seperator()") == 0) {
-				return lib::fs::seperator;
+			if (isStatic && strcmp(signature, "separator()") == 0) {
+				return lib::fs::separator;
 			}
 		}
 
