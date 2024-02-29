@@ -199,7 +199,7 @@ void lib::os::processExec(WrenVM* vm) {
  * @throws std::runtime_error for failed process starts
  */
 std::string vm::exec(const char* cmd) {
-	std::array<char, 256> buffer;
+	std::array<char, 256> buffer{};
 	std::string result;
 	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
 	if (!pipe) {
