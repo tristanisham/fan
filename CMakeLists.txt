@@ -9,23 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories(include)
 include_directories(vendor/boost_1_83_0)
 
-# Set CURL static library
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
-set(CURL_STATICLIB ON CACHE BOOL "Build CURL as a static lib")
-set(BUILD_CURL_EXE OFF CACHE BOOL "Do not build CURL executable")
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
-set(BUILD_TESTING OFF CACHE BOOL "Do not build tests")
-set(WITH_EXAMPLES OFF CACHE BOOL "With Examples Flag")
-set(WITH_STATIC_LIB ON CACHE BOOL "With Static Library Flag")
-
-
-# Add CURL as a subdirectory
-add_subdirectory("vendor/curl-8.5.0")
-
-if(WIN32)
-    add_definitions("-DCURL_STATICLIB")
-endif()
-
+find_package(CURL REQUIRED)
 
 # add_dependencies(${TARGET_NAME} libcurl fandev)
 
@@ -58,16 +42,25 @@ elseif(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG")
 endif()
 
+# If the package has been found, compile definitions, include directories, and link libraries are added
+if(NOT CURL_FOUND)
+    message(FATAL_ERROR "CURL not found! Please install libcurl.")
+else ()
+    include_directories(${CURL_INCLUDE_DIRS})
+    # Assuming your target is named 'your_target'. Replace 'your_target' with the actual target name
+    add_library(fan-dev STATIC ${WREN} ${LIB_FILES} ${CURL_LIBRARIES})
+
+
+
+    # Executable
+    add_executable(fan ${SRC_FILES})
+
+
+    # Final Build
+    target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES}) #leveldb
+    target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
+endif()
+
 # Static Lib
-add_library(fan-dev STATIC ${WREN} ${LIB_FILES} ${CURL_LIBRARIES})
 
-
-
-# Executable
-add_executable(fan ${SRC_FILES})
-
-
-# Final Build
-target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread libcurl) #leveldb
-target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
 

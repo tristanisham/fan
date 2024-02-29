@@ -11,7 +11,7 @@
 void lib::net::http::requestAlloc(WrenVM* vm) {
 	try {
 		wrenEnsureSlots(vm, 2);
-		auto url = wrenGetSlotString(vm, 1);
+		const auto url = wrenGetSlotString(vm, 1);
 		if (url == nullptr) {
 			lib::abort(vm, "Invalid memory slot for function");
 		}
@@ -24,17 +24,17 @@ void lib::net::http::requestAlloc(WrenVM* vm) {
 			return;
 		}
 
-		if (client == nullptr) {
-			lib::abort(vm, "Could not initalize HTTP Client");
-			return;
-		}
+		// if (client == nullptr) {
+		// 	lib::abort(vm, "Could not initalize HTTP Client");
+		// 	return;
+		// }
 
 		client->url(url);
 
 		// Where the action happens
 		// Should never reach if CURL alloc fails.
 
-		Client** client_ptr = static_cast<Client**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(Client*)));
+		auto** client_ptr = static_cast<Client**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(Client*)));
 
 		*client_ptr = client;
 	} catch (const std::exception& e) {
@@ -58,7 +58,7 @@ void lib::net::http::requestDealloc(void* data) {
 
 void lib::net::http::req(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
-	Client** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
+	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
 	if (*client == nullptr) {
 		lib::abort(vm, "CURL Error: Cannot send request");
 		return;

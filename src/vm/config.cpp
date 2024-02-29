@@ -61,7 +61,7 @@ void lib::os::processArguments(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	wrenSetSlotNewList(vm, 0);
 	if (programArgsHolder) {
-		for (size_t i = 0; i < programArgsHolder->argCount; ++i) {
+		for (int i = 0; i < programArgsHolder->argCount; ++i) {
 			// Set the string in slot 1
 			wrenSetSlotString(vm, 1, programArgsHolder->args[i]);
 			// Add the string in slot 1 to the list in slot 0
@@ -106,7 +106,7 @@ std::string lib::wren_type_to_string(const WrenType& type) {
  * @param slot The target slot to write your map to. CreateVmMap will dynamically allocate new slots for your data.
  * @param entries The entries you'd like to add to your map
  */
-size_t vm::createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std::string, std::string>& entries) {
+size_t vm::createVmMap(WrenVM* vm, const int& slot, const std::unordered_map<std::string, std::string>& entries) {
 	auto slotCount = wrenGetSlotCount(vm);
 	size_t requiredSlotes = entries.size() * 2;
 	if (slot > slotCount) {

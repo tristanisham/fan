@@ -7,7 +7,7 @@
 
 namespace vm {
 
-size_t createVmMap(WrenVM* vm, const size_t& slot, const std::unordered_map<std::string, std::string>& entries);
+size_t createVmMap(WrenVM* vm, const int& slot, const std::unordered_map<std::string, std::string>& entries);
 
 // std::vector<std::variant<double, std::string, bool>> getList(WrenVM* vm, int listSlot, int itemSlot);
 

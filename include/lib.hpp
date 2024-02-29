@@ -90,7 +90,7 @@ namespace os {
 namespace net::http {
 
 	inline size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data) {
-		data->append((char*)ptr, size * nmemb);
+		data->append(static_cast<char*>(ptr), size * nmemb);
 		return size * nmemb;
 	}
 
@@ -121,35 +121,35 @@ namespace net::http {
 
 		enum class HttpMethod { GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH, TRACE };
 
-		void url(std::string const& url) {
+		void url(std::string const& url) const {
 			curl_easy_setopt(this->curl, CURLOPT_URL, url.c_str());
 		}
 
-		void followLocation(bool answer) {
+		void followLocation(const bool answer) const {
 			curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, (answer) ? 1L : 0L);
 		}
 
-		void autoReferer(bool answer) {
+		void autoReferer(const bool answer) const {
 			curl_easy_setopt(this->curl, CURLOPT_AUTOREFERER, (answer) ? 1L : 0L);
 		}
 
-		void noProgress(bool answer) {
+		void noProgress(const bool answer) const {
 			curl_easy_setopt(this->curl, CURLOPT_NOPROGRESS, (answer) ? 1L : 0L);
 		}
 
-		void maxRedirects(long answer = 50L) {
+		void maxRedirects(const long answer = 50L) const {
 			curl_easy_setopt(this->curl, CURLOPT_MAXREDIRS, answer);
 		}
 
-		void keepTCPAlive(bool answer) {
+		void keepTCPAlive(const bool answer) const {
 			curl_easy_setopt(this->curl, CURLOPT_TCP_KEEPALIVE, (answer) ? 1L : 0L);
 		}
 
-		void method(HttpMethod method) {
+		void method(const HttpMethod method) const {
 			std::string method_str;
 			try {
 				method_str = this->getHttpMethodString(method);
-			} catch (std::invalid_argument e) {
+			} catch (std::invalid_argument& e) {
 				method_str = "GET";
 			}
 
@@ -184,7 +184,7 @@ namespace net::http {
 		CURL* curl;
 		std::string _url;
 
-		std::string getHttpMethodString(HttpMethod method) {
+		static std::string getHttpMethodString(HttpMethod method) {
 			switch (method) {
 			case HttpMethod::GET:
 				return "GET";
