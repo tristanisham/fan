@@ -190,7 +190,7 @@ void lib::os::processExec(WrenVM* vm) {
 	try {
 		auto result = vm::exec(parsedArgs.c_str());
 		wrenSetSlotString(vm, 0, result.c_str());
-	} catch (std::runtime_error e) {
+	} catch (std::runtime_error& e) {
 		lib::abort(vm, e.what());
 	}
 }

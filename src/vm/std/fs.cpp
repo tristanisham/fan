@@ -96,7 +96,7 @@ void lib::fs::fileRead(WrenVM* vm) {
 		string[fsize] = 0;
 		wrenSetSlotString(vm, 0, string);
 		delete[] string;
-	} catch (std::bad_alloc e) {
+	} catch (std::bad_alloc& e) {
 		wrenSetSlotString(vm, 0, "Cannot allocate the required memory.");
 		wrenAbortFiber(vm, 0);
 		return;
