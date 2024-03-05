@@ -234,7 +234,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (strcmp(module, "std/net/http") == 0) {
 		if (strcmp(className, "Client") == 0) {
 
-
 			if (!isStatic && std::strcmp(signature, "fetch()") == 0) {
 				return lib::net::http::req;
 			}
@@ -412,17 +411,23 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 }
 
 void vm::Runtime::repl() {
-	std::string input;
+	std::string line;
 	std::cout << "%> ";
+
 	while (true) {
-		std::getline(std::cin, input);
-
-		if (input == "exit") {
-			break;
+		if (!std::getline(std::cin, line)) {
+			if (std::cin.eof()) {
+				// Handle EOF (Ctrl+D) here
+				std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				break;
+			} else {
+				// Handle other stream errors
+				break;
+			}
+		} else {
+			this->execute(line);
+			std::cout << "%> ";
 		}
-
-		this->execute(input);
-
-		std::cout << "%> ";
 	}
 }
