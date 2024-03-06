@@ -1,7 +1,7 @@
-foreign class Client {
+foreign class Request {
     construct new(url) {}
 
-    foreign fetch()
+    foreign send()
 }
 
 

@@ -211,7 +211,7 @@ namespace net::http {
 	void requestAlloc(WrenVM* vm);
 	void requestDealloc(void* data);
 
-	void req(WrenVM* vm);
+	void send(WrenVM* vm);
 
 }
 

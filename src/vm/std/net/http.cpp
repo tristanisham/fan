@@ -42,7 +42,7 @@ void lib::net::http::requestAlloc(WrenVM* vm) {
 	}
 }
 
-void closeClient(lib::net::http::Client** client) {
+static void closeClient(lib::net::http::Client** client) {
 	if (*client == nullptr) {
 		return;
 	}
@@ -56,7 +56,7 @@ void lib::net::http::requestDealloc(void* data) {
 	closeClient(static_cast<Client**>(data));
 }
 
-void lib::net::http::req(WrenVM* vm) {
+void lib::net::http::send(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
 	if (*client == nullptr) {

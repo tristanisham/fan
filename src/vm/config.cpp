@@ -7,11 +7,9 @@
 #include <curl/curl.h>
 #include <filesystem>
 #include <iostream>
-#include <linux/limits.h>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <wren.hpp>
 
 // int programArgCount;
@@ -180,15 +178,17 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 
 	searchPath.replace_extension(".fan");
 	if (!std::filesystem::exists(searchPath)) {
-		std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
+		const std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
 		std::cerr << fmt << std::endl;
-		mod.source = NULL;
+		mod.source = nullptr;
+		// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 		return mod;
 	}
 
 	FILE* file = fopen(searchPath.c_str(), "r");
 	if (file == nullptr) {
-		mod.source = NULL;
+		mod.source = nullptr;
+		// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 		return mod;
 	}
 
@@ -204,6 +204,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	fclose(file);
 	file = nullptr;
 
+	// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 	return mod;
 }
 
@@ -220,7 +221,7 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 	}
 
 	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Client") == 0) {
+		if (strcmp(className, "Request") == 0) {
 			methods.allocate = lib::net::http::requestAlloc;
 			methods.finalize = lib::net::http::requestDealloc;
 			return methods;
@@ -232,10 +233,10 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 
 WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
 	if (strcmp(module, "std/net/http") == 0) {
-		if (strcmp(className, "Client") == 0) {
+		if (strcmp(className, "Request") == 0) {
 
-			if (!isStatic && std::strcmp(signature, "fetch()") == 0) {
-				return lib::net::http::req;
+			if (!isStatic && std::strcmp(signature, "send()") == 0) {
+				return lib::net::http::send;
 			}
 		}
 	}
@@ -401,16 +402,16 @@ vm::Runtime::Runtime() {
 		wrenFreeVM(vm);	 // Replace with the appropriate cleanup function
 	};
 
-	std::shared_ptr<WrenVM> vm(unsafe_vm, deleter);
+	const std::shared_ptr<WrenVM> vm(unsafe_vm, deleter);
 
 	this->vm = vm;
 }
 
-WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module) {
+WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module) const {
 	return wrenInterpret(this->vm.get(), module.c_str(), code.c_str());
 }
 
-void vm::Runtime::repl() {
+void vm::Runtime::repl() const {
 	std::string line;
 	std::cout << "%> ";
 
@@ -426,8 +427,18 @@ void vm::Runtime::repl() {
 				break;
 			}
 		} else {
-			this->execute(line);
-			std::cout << "%> ";
+			switch (this->execute(line)) {
+			// case WREN_RESULT_SUCCESS:
+			// 	std::cout << "%> ";
+			// 	break;
+			// case WREN_RESULT_COMPILE_ERROR:
+			//
+			// case WREN_RESULT_RUNTIME_ERROR:
+			default:
+				std::cout << "%> ";
+				break;
+			}
+
 		}
 	}
 }
