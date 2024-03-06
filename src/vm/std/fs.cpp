@@ -231,8 +231,8 @@ void lib::fs::extension(WrenVM* vm) {
 
 	auto const target = wrenGetSlotString(vm, 1);
 	const std::filesystem::path input{target};
-	auto const ext = input.extension().c_str();
-	wrenSetSlotString(vm, 0, ext);
+	auto const ext = input.extension().string();
+	wrenSetSlotString(vm, 0, ext.c_str());
 }
 
 void lib::fs::mkdir(WrenVM* vm) {
