@@ -39,9 +39,15 @@ namespace fs {
 
 	void removeFile(WrenVM* vm);
 
-	void listAll(WrenVM* vm);
+	void list_all_recursive(WrenVM* vm);
+
+	void list_all(WrenVM* vm);
 
 	void isDirectory(WrenVM* vm);
+
+	void mkdir(WrenVM* vm);
+
+	void extension(WrenVM* vm);
 
 }  // namespace fs
 
@@ -228,6 +234,7 @@ namespace encoding {
 
 	void base16_decode(WrenVM* vm);
 
+	void md_to_html(WrenVM* vm);
 }
 
 }  // namespace lib

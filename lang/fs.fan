@@ -1,11 +1,12 @@
 class Fs {
     foreign static cwd()
+
     /**
-    * @returns Number|null
+    * @returns Num|null
     */
     static write(path, text) {
         if (path is String && text is String) {
-            var file = File.open(path, "w")
+            var file = File.open(path, "w+")
             var bytesLen = text.count
             file.write(text)
             file.close()
@@ -54,9 +55,13 @@ class Fs {
     /**
     * Recursively lists all files and directories in the provided path
     */
+    foreign static listAllRecursive(path)
+
     foreign static listAll(path)
 
     foreign static isDirectory(path)
+
+    foreign static mkdir(path)
 }
 
 foreign class File {
@@ -76,6 +81,10 @@ class Path {
 
     exists() {
         return Path.exists(_filepath)
+    }
+
+    extension() {
+        return Path.extension(_filepath)
     }
 
     /// Returns a bool indicating if the Path is to a directory or not.
@@ -109,4 +118,9 @@ class Path {
     foreign static exists(path)
 
     foreign static separator()
+
+    foreign static extension(path)
+
+
+
 }

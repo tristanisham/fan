@@ -49,7 +49,7 @@ void lib::fs::fileAlloc(WrenVM* vm) {
 		try {
 			full_path = std::filesystem::absolute(basic_path);
 
-		} catch (std::filesystem::filesystem_error const& e) {
+		} catch (std::filesystem::filesystem_error const& err) {
 			full_path = basic_path;
 			// lib::abort(vm, (boost::format("Unable to canonicalize %1%") % path).str());
 		}
@@ -65,11 +65,11 @@ void lib::fs::fileAlloc(WrenVM* vm) {
 }
 
 void lib::fs::fileFinalize(void* data) {
-	closeFile((FILE**)data);
+	closeFile(static_cast<FILE**>(data));
 }
 
 void lib::fs::fileWrite(WrenVM* vm) {
-	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
+	auto const file = static_cast<FILE**>(wrenGetSlotForeign(vm, 0));
 
 	if (*file == nullptr) {
 		lib::abort(vm, "Cannot write to a closed file.");
@@ -81,17 +81,17 @@ void lib::fs::fileWrite(WrenVM* vm) {
 }
 
 void lib::fs::fileRead(WrenVM* vm) {
-	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
+	const auto file = static_cast<FILE**>(wrenGetSlotForeign(vm, 0));
 	if (*file == nullptr) {
 		lib::abort(vm, "Cannot read from a closed file.");
 		return;
 	}
 
 	fseek(*file, 0, SEEK_END);
-	long fsize = ftell(*file);
+	const long fsize = ftell(*file);
 	fseek(*file, 0, SEEK_SET);
 	try {
-		char* string = new char[fsize + 1];
+		const auto string = new char[fsize + 1];
 		(void)fread(string, fsize, 1, *file);
 		string[fsize] = 0;
 		wrenSetSlotString(vm, 0, string);
@@ -104,7 +104,7 @@ void lib::fs::fileRead(WrenVM* vm) {
 }
 
 void lib::fs::fileClose(WrenVM* vm) {
-	FILE** file = (FILE**)wrenGetSlotForeign(vm, 0);
+	auto file = static_cast<FILE**>(wrenGetSlotForeign(vm, 0));
 	closeFile(file);
 }
 
@@ -122,7 +122,7 @@ void lib::fs::cwd(WrenVM* vm) {
 }
 
 void lib::fs::canonical(WrenVM* vm) {
-	auto target = std::filesystem::canonical(wrenGetSlotString(vm, 1));
+	const auto target = std::filesystem::canonical(wrenGetSlotString(vm, 1));
 	wrenSetSlotString(vm, 0, target.c_str());
 }
 
@@ -154,7 +154,7 @@ void lib::fs::removeFile(WrenVM* vm) {
 	}
 }
 
-void lib::fs::listAll(WrenVM* vm) {
+void lib::fs::list_all(WrenVM* vm) {
 	wrenEnsureSlots(vm, 3);
 	if (wrenGetSlotType(vm, 1) != WREN_TYPE_STRING) {
 		lib::abort(vm, "Fs.listAll requires one 'string' argument");
@@ -182,15 +182,65 @@ void lib::fs::listAll(WrenVM* vm) {
 	}
 }
 
+void lib::fs::list_all_recursive(WrenVM* vm) {
+	wrenEnsureSlots(vm, 3);
+	if (wrenGetSlotType(vm, 1) != WREN_TYPE_STRING) {
+		lib::abort(vm, "Fs.listAllRecursive requires one 'string' argument");
+	}
+
+	std::string target { wrenGetSlotString(vm, 1) };
+	if (!std::filesystem::exists(target)) {
+		lib::abort(vm, (boost::format("Path %1% does not exist") % target).str());
+	}
+
+	wrenSetSlotNewList(vm, 0);
+
+	try {
+		std::filesystem::recursive_directory_iterator iter(target);
+
+		for (auto const& entry : iter) {
+			wrenSetSlotString(vm, 2, entry.path().c_str());
+			if (wrenGetSlotType(vm, 0) == WREN_TYPE_LIST) {
+				// std::cout << "Saving: " << entry << std::endl;
+				wrenInsertInList(vm, 0, -1, 2);
+			}
+		}
+	} catch (std::filesystem::filesystem_error const& e) {
+		lib::abort(vm, e.what());
+	}
+}
+
 void lib::fs::isDirectory(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
-	auto slot_type = wrenGetSlotType(vm, 1);
+	auto const slot_type = wrenGetSlotType(vm, 1);
 	if (slot_type != WREN_TYPE_STRING) {
 		lib::abort(vm, (boost::format("Err bad type. Expected %1%. Recieved: %2%") % wren_type_to_string(WREN_TYPE_STRING) % wren_type_to_string(slot_type)).str());
 	}
 
-	auto target = wrenGetSlotString(vm, 1);
-	bool is_dir = std::filesystem::is_directory(target);
+	auto const target = wrenGetSlotString(vm, 1);
+	bool const is_dir = std::filesystem::is_directory(target);
 
 	wrenSetSlotBool(vm, 0, is_dir);
+}
+
+void lib::fs::extension(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	if (auto const slot_type = wrenGetSlotType(vm, 1); slot_type != WREN_TYPE_STRING) {
+		lib::abort(vm, (boost::format("Err bad type. Expected %1%. Recieved: %2%") % wren_type_to_string(WREN_TYPE_STRING) % wren_type_to_string(slot_type)).str());
+	}
+
+	auto const target = wrenGetSlotString(vm, 1);
+	const std::filesystem::path input{target};
+	auto const ext = input.extension().c_str();
+	wrenSetSlotString(vm, 0, ext);
+}
+
+void lib::fs::mkdir(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	if (auto const slot_type = wrenGetSlotType(vm, 1); slot_type != WREN_TYPE_STRING) {
+		lib::abort(vm, (boost::format("Err bad type. Expected %1%. Recieved: %2%") % wren_type_to_string(WREN_TYPE_STRING) % wren_type_to_string(slot_type)).str());
+	}
+	auto const target = wrenGetSlotString(vm, 1);
+	std::filesystem::path const input{target};
+	std::filesystem::create_directories(input);
 }

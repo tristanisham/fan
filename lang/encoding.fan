@@ -16,3 +16,6 @@ class Base16 {
     foreign static decode(data)
 }
 
+class Markdown {
+    foreign static toHTML(buff)
+}

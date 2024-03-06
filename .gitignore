@@ -4,9 +4,10 @@ out/
 .vs/
 zig-cache/
 zig-out/
-vendor/*
 cmake-build-debug-wsl/
 cmake-build-release-wsl/
 compile_commands.json
 
+# Added by cargo
 
+/target

@@ -181,21 +181,19 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 		const std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
 		std::cerr << fmt << std::endl;
 		mod.source = nullptr;
-		// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 		return mod;
 	}
 
 	FILE* file = fopen(searchPath.c_str(), "r");
 	if (file == nullptr) {
 		mod.source = nullptr;
-		// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 		return mod;
 	}
 
 	fseek(file, 0, SEEK_END);
-	long fsize = ftell(file);
+	const long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	char* string = new char[fsize + 1];
+	auto string = new char[fsize + 1];
 	(void)fread(string, fsize, 1, file);
 	string[fsize] = 0;
 	mod.source = string;
@@ -204,7 +202,6 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	fclose(file);
 	file = nullptr;
 
-	// ReSharper disable once CppSomeObjectMembersMightNotBeInitialized
 	return mod;
 }
 
@@ -269,6 +266,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && strcmp(signature, "separator()") == 0) {
 				return lib::fs::separator;
 			}
+
+			if (isStatic && std::strcmp(signature, "extension(_)") == 0) {
+				return lib::fs::extension;
+			}
 		}
 
 		if (std::strcmp(className, "Fs") == 0) {
@@ -280,12 +281,20 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::fs::removeFile;
 			}
 
+			if (isStatic && std::strcmp(signature, "listAllRecursive(_)") == 0) {
+				return lib::fs::list_all_recursive;
+			}
+
 			if (isStatic && std::strcmp(signature, "listAll(_)") == 0) {
-				return lib::fs::listAll;
+				return lib::fs::list_all;
 			}
 
 			if (isStatic && std::strcmp(signature, "isDirectory(_)") == 0) {
 				return lib::fs::isDirectory;
+			}
+
+			if (isStatic && std::strcmp(signature, "mkdir(_)") == 0) {
+				return lib::fs::mkdir;
 			}
 		}
 	}
@@ -367,6 +376,12 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::base64_decode;
 			}
 		}
+
+		if (std::strcmp(className, "Markdown") == 0) {
+			if (isStatic && std::strcmp(signature, "toHTML(_)") == 0) {
+				return lib::encoding::md_to_html;
+			}
+		}
 	}
 
 	return nullptr;
@@ -402,7 +417,7 @@ vm::Runtime::Runtime() {
 		wrenFreeVM(vm);	 // Replace with the appropriate cleanup function
 	};
 
-	const std::shared_ptr<WrenVM> vm(unsafe_vm, deleter);
+	std::shared_ptr<WrenVM> vm(unsafe_vm, deleter);
 
 	this->vm = vm;
 }
@@ -420,25 +435,17 @@ void vm::Runtime::repl() const {
 			if (std::cin.eof()) {
 				// Handle EOF (Ctrl+D) here
 				std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				break;
 			} else {
 				// Handle other stream errors
 				break;
 			}
 		} else {
-			switch (this->execute(line)) {
-			// case WREN_RESULT_SUCCESS:
-			// 	std::cout << "%> ";
-			// 	break;
-			// case WREN_RESULT_COMPILE_ERROR:
-			//
-			// case WREN_RESULT_RUNTIME_ERROR:
-			default:
-				std::cout << "%> ";
-				break;
+			if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
+				std::cerr << "Error: " + stat << std::endl;
 			}
-
+			std::cout << "%> ";
 		}
 	}
 }

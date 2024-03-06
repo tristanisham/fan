@@ -1,4 +1,6 @@
 #include <basen.hpp>
+#include <cmark/cmark.h>
+#include <iostream>
 #include <iterator>
 #include <lib.hpp>
 #include <nlohmann/json.hpp>
@@ -63,4 +65,17 @@ void lib::encoding::base16_decode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, decoded.str().c_str());
 }
 
-using json = nlohmann::json;
+void lib::encoding::md_to_html(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	auto const input = wrenGetSlotString(vm, 1);
+
+	auto out = cmark_markdown_to_html(input, std::strlen(input), 0);
+	wrenSetSlotString(vm, 0, out);
+	if (out != nullptr) {
+		std::free(out);
+		out = nullptr;
+	}
+
+}
+
+// using json = nlohmann::json;

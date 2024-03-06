@@ -42,7 +42,7 @@ void lib::net::http::requestAlloc(WrenVM* vm) {
 	}
 }
 
-static void closeClient(lib::net::http::Client** client) {
+void closeClient(lib::net::http::Client** client) {
 	if (*client == nullptr) {
 		return;
 	}

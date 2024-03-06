@@ -3,14 +3,13 @@
 #include <iostream>
 #include <stdio.h>
 
-static auto VERSION = "v0.0.6";
+static const char* VERSION = "v0.0.6";
 
 void cli::print_help() {
 #if NDEBUG
 	std::cout << "Fan " << VERSION << "\n"
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
-			  << "\n\t"
 			  << "run | r <script.fan>"
 			  << "\n"
 			  << "repl -- starts a Fan REPL"
@@ -24,7 +23,6 @@ void cli::print_help() {
 	std::cout << "Fan DEBUG " << VERSION << "\n"
 			  << "©️ 2023-present Tristan Isham\n"
 			  << "----------------------------\n"
-			  << "\n\t"
 			  << "run | r <script.fan>"
 			  << "\n"
 			  << "repl -- starts a Fan REPL"
