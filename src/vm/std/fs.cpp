@@ -54,11 +54,7 @@ void lib::fs::fileAlloc(WrenVM* vm) {
 			// lib::abort(vm, (boost::format("Unable to canonicalize %1%") % path).str());
 		}
 	} catch (std::bad_alloc const& e) {
-		lib::abort(vm, (boost::format("Unable to allocate appropriate memory %1") % e.what()).str());
-	}
-
-	if (!std::filesystem::exists(full_path)) {
-		lib::abort(vm, (boost::format("File %1% doesn't exist") % full_path).str());
+		lib::abort(vm, (boost::format("Unable to allocate appropriate memory %1%") % e.what()).str());
 	}
 
 	*file = fopen(full_path.c_str(), mode);
