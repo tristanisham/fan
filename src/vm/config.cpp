@@ -1,6 +1,8 @@
 #include "lib.hpp"
 #include "vm.hpp"
+
 #include <boost/format.hpp>
+#include <cli.hpp>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
@@ -8,6 +10,7 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <rang.hpp>
 #include <stdexcept>
 #include <string>
 #include <wren.hpp>
@@ -130,17 +133,18 @@ static void writeFn(WrenVM* vm, const char* text) {
 	printf("%s", text);
 }
 
-static void errorFn(WrenVM* vm, WrenErrorType errorType, const char* module, const int line, const char* msg) {
+static void errorFn(WrenVM* vm, const WrenErrorType errorType, const char* module, const int line, const char* msg) {
 
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
-		printf("[%s:%d] [Error] %s\n", module, line, msg);
+		std::cerr << boost::format("compile [%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		// printf("[%s:%d] [Error] %s\n", module, line, msg);
 	} break;
 	case WREN_ERROR_STACK_TRACE: {
-		printf("[%s:%d] in %s\n", module, line, msg);
+		std::cerr << boost::format("[%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
 	} break;
 	case WREN_ERROR_RUNTIME: {
-		printf("[Runtime Error] %s\n", msg);
+		std::cerr << boost::format("runtime [%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
 		// Need to find a way to keep track of user source to print actual file name.
 	} break;
 	}
@@ -267,8 +271,16 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::fs::separator;
 			}
 
-			if (isStatic && std::strcmp(signature, "extension(_)") == 0) {
+			if (isStatic && std::strcmp(signature, "ext(_)") == 0) {
 				return lib::fs::extension;
+			}
+
+			if (isStatic && std::strcmp(signature, "basename(_)") == 0) {
+				return lib::fs::basename;
+			}
+
+			if (isStatic && std::strcmp(signature, "filename(_)") == 0) {
+				return lib::fs::filename;
 			}
 		}
 
@@ -428,7 +440,8 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 
 void vm::Runtime::repl() const {
 	std::string line;
-	std::cout << "%> ";
+	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL"  << std::endl;
+	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
 	while (true) {
 		if (!std::getline(std::cin, line)) {
@@ -445,7 +458,7 @@ void vm::Runtime::repl() const {
 			if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
 				std::cerr << "Error: " + stat << std::endl;
 			}
-			std::cout << "%> ";
+			std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 		}
 	}
 }

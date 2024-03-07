@@ -240,3 +240,24 @@ void lib::fs::mkdir(WrenVM* vm) {
 	std::filesystem::path const input{target};
 	std::filesystem::create_directories(input);
 }
+
+void lib::fs::basename(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	if (auto const slot_type = wrenGetSlotType(vm, 1); slot_type != WREN_TYPE_STRING) {
+		lib::abort(vm, (boost::format("Err bad type. Expected %1%. Recieved: %2%") % wren_type_to_string(WREN_TYPE_STRING) % wren_type_to_string(slot_type)).str());
+	}
+	std::filesystem::path target{wrenGetSlotString(vm, 1)};
+	auto const output = target.parent_path().string();
+	wrenSetSlotString(vm, 0, output.c_str());
+}
+
+void lib::fs::filename(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	if (auto const slot_type = wrenGetSlotType(vm, 1); slot_type != WREN_TYPE_STRING) {
+		lib::abort(vm, (boost::format("Err bad type. Expected %1%. Recieved: %2%") % wren_type_to_string(WREN_TYPE_STRING) % wren_type_to_string(slot_type)).str());
+	}
+	std::filesystem::path target{wrenGetSlotString(vm, 1)};
+	auto const output = target.filename().string();
+	wrenSetSlotString(vm, 0, output.c_str());
+}
+

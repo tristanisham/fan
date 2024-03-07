@@ -16,7 +16,9 @@
  */
 int main(int argc, char* argv[]) {
 	if (argc <= 1) {
-		cli::print_help();
+		vm::Runtime runtime {};
+		runtime.repl();
+		std::exit(0);
 	}
 
 	for (int i = 0; i < argc; ++i) {

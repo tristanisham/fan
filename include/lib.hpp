@@ -49,6 +49,10 @@ namespace fs {
 
 	void extension(WrenVM* vm);
 
+	void basename(WrenVM* vm);
+
+	void filename(WrenVM* vm);
+
 }  // namespace fs
 
 namespace os {

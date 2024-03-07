@@ -83,9 +83,7 @@ class Path {
         return Path.exists(_filepath)
     }
 
-    extension() {
-        return Path.extension(_filepath)
-    }
+
 
     /// Returns a bool indicating if the Path is to a directory or not.
     isDirectory() {
@@ -94,6 +92,14 @@ class Path {
 
     toString() {
         return _filepath
+    }
+
+    abs(path) {
+        return Path.canonical(path)
+    }
+
+    abs() {
+        return Path.canonical(_filepath)
     }
 
     /// join concatenates the entries (String or List of String) to the existing path
@@ -119,8 +125,23 @@ class Path {
 
     foreign static separator()
 
-    foreign static extension(path)
+    foreign static ext(path)
 
+    ext() {
+            return Path.ext(_filepath)
+        }
+
+    foreign static basename(path)
+
+    basename() {
+        return Path.basename(_filepath)
+    }
+
+    foreign static filename(path)
+
+    filename() {
+        return Path.filename(_filepath)
+    }
 
 
 }
