@@ -102,21 +102,36 @@ class Path {
         return Path.canonical(_filepath)
     }
 
+    replaceExt(str) {
+        var newFP = _filepath.trimEnd(Path.ext(_filepath))
+        return newFP + str
+    }
+
     /// join concatenates the entries (String or List of String) to the existing path
     /// with the system's PATH_SEPARATOR. Returns the complete string on success or null on failure.
-    join(entries) {
-        if (entries is String) {
-            _filepath = _filepath + this.separator() + entries
-        } else if (entries is List) {
-            for (entry in entries) {
-                _filepath = _filepath + this.separator() + entry
+
+    static join(entries) {
+     var buffer = ""
+
+     for (entry in entries) {
+        buffer = buffer + Path.separator() + entry
+     }
+
+     var i = 0
+     var newBuffer = ""
+     while (i < buffer.count) {
+        var char = buffer[i]
+        var s = Path.separator()
+        if (i+1 <= buffer.count) {
+            if (char != s || (char == s && buffer[i+1] != s)) {
+                    newBuffer = newBuffer + char
             }
-        } else {
-            return null
         }
 
-        return _filepath
+        i = i + 1
+     }
 
+     return Path.from(newBuffer)
     }
 
     foreign static canonical(path)

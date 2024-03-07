@@ -282,6 +282,8 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && std::strcmp(signature, "filename(_)") == 0) {
 				return lib::fs::filename;
 			}
+
+
 		}
 
 		if (std::strcmp(className, "Fs") == 0) {

@@ -53,6 +53,8 @@ namespace fs {
 
 	void filename(WrenVM* vm);
 
+
+
 }  // namespace fs
 
 namespace os {
