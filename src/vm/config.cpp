@@ -454,11 +454,11 @@ void vm::Runtime::repl() const {
 				// Handle other stream errors
 				break;
 			}
-		} else {
+		}
 			if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
-				std::cerr << "Error: " + stat << std::endl;
+				// std::cerr << "Error: " + stat << std::endl;
 			}
 			std::cout << rang::fg::blue << "%> " << rang::fg::reset;
-		}
+
 	}
 }
