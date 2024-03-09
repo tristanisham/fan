@@ -24,6 +24,7 @@
 #ifndef wren_h
 #define wren_h
 
+#include "wren.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13489,6 +13490,7 @@ WrenForeignMethodFn wrenMetaBindForeignMethod(WrenVM* vm,
   ASSERT(false, "Unknown method.");
   return NULL;
 }
+
 
 #endif
 // End file "wren_opt_meta.c"

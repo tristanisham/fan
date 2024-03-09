@@ -1,7 +1,6 @@
 #ifndef wren_h
 #define wren_h
 
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -555,5 +554,6 @@ WREN_API void *wrenGetUserData(WrenVM *vm);
 
 // Sets user data associated with the WrenVM.
 WREN_API void wrenSetUserData(WrenVM *vm, void *userData);
+
 
 #endif

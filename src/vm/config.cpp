@@ -1,6 +1,8 @@
+#include "boost/format/format_fwd.hpp"
 #include "lib.hpp"
+#include "nlohmann/json.hpp"
 #include "vm.hpp"
-
+#include "wren.h"
 #include <boost/format.hpp>
 #include <cli.hpp>
 #include <cstddef>
@@ -8,12 +10,17 @@
 #include <cstring>
 #include <curl/curl.h>
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <rang.hpp>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
+#include <variant>
 #include <wren.hpp>
+
+using json = nlohmann::json;
 
 // int programArgCount;
 std::unique_ptr<lib::os::ArgHolder> programArgsHolder;
@@ -282,8 +289,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && std::strcmp(signature, "filename(_)") == 0) {
 				return lib::fs::filename;
 			}
-
-
 		}
 
 		if (std::strcmp(className, "Fs") == 0) {
@@ -366,7 +371,7 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 	}
 
-	if (std::strcmp(module, "std/encoding") == 0) {
+	if (std::strcmp(module, "std/encode") == 0) {
 		if (std::strcmp(className, "Base64") == 0) {
 			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
 				return lib::encoding::base64_encode;
@@ -396,6 +401,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::md_to_html;
 			}
 		}
+
+		// if (std::strcmp(className, "JSON") == 0) {
+		// 	// TBD
+		// }
 	}
 
 	return nullptr;
@@ -407,7 +416,67 @@ void vm::Runtime::setEntryPoint(const std::string& target) {
 
 vm::Runtime::~Runtime() {
 	curl_global_cleanup();
+
+	for (auto const& handle : this->handles) {
+		wrenReleaseHandle(this->vm.get(), handle.second);
+	}
 	// wrenFreeVM ran further down the page in the shared pointer's "deleter" labmda.
+}
+
+static void extract_value(WrenType ty, json& data) {
+	switch (ty) {
+		case WREN_TYPE_BOOL:
+			data[wrenGetSlotBool(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+		case WREN_TYPE_NUM:
+			data[wrenGetSlotDouble(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+		case WREN_TYPE_STRING:
+			data[wrenGetSlotString(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+
+		default:
+			break;
+		}
+}
+
+nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot) {
+	if (auto type = wrenGetSlotType(vm, mapSlot); type != WREN_TYPE_MAP) {
+		throw std::invalid_argument("Slot is not type Map");
+	}
+
+	nlohmann::json data;
+	auto const mapCount = wrenGetMapCount(vm, mapSlot);
+	wrenEnsureSlots(vm, 3);
+	for (int i = 0; i < mapCount; i++) {
+		wrenGetMapValue(vm, mapSlot, keySlot, valSlot);
+		auto const keyType = wrenGetSlotType(vm, keySlot);
+		auto const valType = wrenGetSlotType(vm, valSlot);
+
+
+		switch (keyType) {
+		case WREN_TYPE_BOOL:
+			data[wrenGetSlotBool(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+		case WREN_TYPE_NUM:
+			data[wrenGetSlotDouble(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+		case WREN_TYPE_STRING:
+			data[wrenGetSlotString(vm, keySlot)];
+			extract_value(keyType, data);
+			break;
+		default:
+			lib::abort(vm, (boost::format("%1% cannot be map keys") % lib::wren_type_to_string(keyType)).str());
+			break;
+		}
+
+		
+	}
 }
 
 vm::Runtime::Runtime() {
@@ -442,7 +511,7 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 
 void vm::Runtime::repl() const {
 	std::string line;
-	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL"  << std::endl;
+	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL" << std::endl;
 	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
 	while (true) {
@@ -457,10 +526,9 @@ void vm::Runtime::repl() const {
 				break;
 			}
 		}
-			if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
-				// std::cerr << "Error: " + stat << std::endl;
-			}
-			std::cout << rang::fg::blue << "%> " << rang::fg::reset;
-
+		if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
+			// std::cerr << "Error: " + stat << std::endl;
+		}
+		std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 	}
 }
