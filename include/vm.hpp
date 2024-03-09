@@ -2,7 +2,6 @@
 #include "nlohmann/json.hpp"
 #include "wren.h"
 #include <filesystem>
-#include <functional>
 #include <map>
 #include <string>
 #include <string_view>

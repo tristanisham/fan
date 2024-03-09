@@ -1,5 +1,4 @@
 #include "boost/format/format_fwd.hpp"
-#include "boost/none.hpp"
 #include "lib.hpp"
 #include "nlohmann/json.hpp"
 #include "vm.hpp"
@@ -11,14 +10,11 @@
 #include <cstring>
 #include <curl/curl.h>
 #include <filesystem>
-#include <functional>
 #include <iostream>
 #include <memory>
-#include <optional>
 #include <rang.hpp>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 #include <variant>
 #include <wren.hpp>
 
