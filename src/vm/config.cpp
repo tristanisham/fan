@@ -1,5 +1,4 @@
-#include "boost/format/format_fwd.hpp"
-#include "lib.hpp"
+#include <lib.hpp>
 #include "nlohmann/json.hpp"
 #include "vm.hpp"
 #include "wren.h"
@@ -16,7 +15,6 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
-#include <wren.hpp>
 
 using json = nlohmann::json;
 
@@ -372,31 +370,31 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 	if (std::strcmp(module, "std/encode") == 0) {
 		if (std::strcmp(className, "Base64") == 0) {
 			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
-				return lib::encoding::base64_encode;
+				return lib::encode::base64_encode;
 			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
-				return lib::encoding::base64_decode;
+				return lib::encode::base64_decode;
 			}
 		}
 
 		if (std::strcmp(className, "Base32") == 0) {
 			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
-				return lib::encoding::base64_encode;
+				return lib::encode::base64_encode;
 			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
-				return lib::encoding::base64_decode;
+				return lib::encode::base64_decode;
 			}
 		}
 
 		if (std::strcmp(className, "Base16") == 0) {
 			if (isStatic && std::strcmp(signature, "encode(_)") == 0) {
-				return lib::encoding::base64_encode;
+				return lib::encode::base64_encode;
 			} else if (isStatic && std::strcmp(signature, "decode(_)") == 0) {
-				return lib::encoding::base64_decode;
+				return lib::encode::base64_decode;
 			}
 		}
 
 		if (std::strcmp(className, "Markdown") == 0) {
 			if (isStatic && std::strcmp(signature, "toHTML(_)") == 0) {
-				return lib::encoding::md_to_html;
+				return lib::encode::md_to_html;
 			}
 		}
 

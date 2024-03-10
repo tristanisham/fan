@@ -227,7 +227,7 @@ namespace net::http {
 
 }
 
-namespace encoding {
+namespace encode {
 	void base64_encode(WrenVM* vm);
 
 	void base64_decode(WrenVM* vm);

@@ -47,22 +47,16 @@ endif()
 # If the package has been found, compile definitions, include directories, and link libraries are added
 if(NOT CURL_FOUND)
     message(FATAL_ERROR "CURL not found! Please install libcurl.")
-else ()
-    include_directories(${CURL_INCLUDE_DIRS})
-    # Assuming your target is named 'your_target'. Replace 'your_target' with the actual target name
-    add_library(fan-dev STATIC ${WREN} ${LIB_FILES})
-
-
-
-    # Executable
-    add_executable(fan ${SRC_FILES})
-
-
-    # Final Build
-    target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} cmark) #leveldb
-    target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
 endif()
 
-# Static Lib
 
+include_directories(${CURL_INCLUDE_DIRS})
+# Assuming your target is named 'your_target'. Replace 'your_target' with the actual target name
+add_library(fan-dev STATIC ${WREN} ${LIB_FILES})
 
+# Executable
+add_executable(fan ${SRC_FILES})
+
+# Final Build
+target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} cmark) #leveldb
+target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)

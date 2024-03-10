@@ -1,11 +1,10 @@
-#ifndef wren_hpp
-#define wren_hpp
+#pragma once
 
-// This is a convenience header for users that want to compile Wren as C and
-// link to it from a C++ application.
-
+#ifdef __cplusplus
 extern "C" {
-#include "wren.h"
+
+#include <wren.h>
+
 }
 
 #endif

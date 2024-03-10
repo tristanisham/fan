@@ -1,6 +1,5 @@
 #include <basen.hpp>
 #include <cmark/cmark.h>
-#include <iostream>
 #include <iterator>
 #include <lib.hpp>
 #include <nlohmann/json.hpp>
@@ -8,7 +7,7 @@
 #include <string>
 #include <wren.hpp>
 
-void lib::encoding::base64_encode(WrenVM* vm) {
+void lib::encode::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
@@ -18,7 +17,7 @@ void lib::encoding::base64_encode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, encoded.c_str());
 }
 
-void lib::encoding::base64_decode(WrenVM* vm) {
+void lib::encode::base64_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
@@ -27,7 +26,7 @@ void lib::encoding::base64_decode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, decoded.str().c_str());
 }
 
-void lib::encoding::base32_encode(WrenVM* vm) {
+void lib::encode::base32_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
@@ -37,7 +36,7 @@ void lib::encoding::base32_encode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, encoded.c_str());
 }
 
-void lib::encoding::base32_decode(WrenVM* vm) {
+void lib::encode::base32_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
@@ -46,7 +45,7 @@ void lib::encoding::base32_decode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, decoded.str().c_str());
 }
 
-void lib::encoding::base16_encode(WrenVM* vm) {
+void lib::encode::base16_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
@@ -56,7 +55,7 @@ void lib::encoding::base16_encode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, encoded.c_str());
 }
 
-void lib::encoding::base16_decode(WrenVM* vm) {
+void lib::encode::base16_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
@@ -65,7 +64,7 @@ void lib::encoding::base16_decode(WrenVM* vm) {
 	wrenSetSlotString(vm, 0, decoded.str().c_str());
 }
 
-void lib::encoding::md_to_html(WrenVM* vm) {
+void lib::encode::md_to_html(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	auto const input = wrenGetSlotString(vm, 1);
 
