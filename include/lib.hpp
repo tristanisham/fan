@@ -1,4 +1,5 @@
 #pragma once
+#include "wren.h"
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -241,6 +242,9 @@ namespace encode {
 	void base16_decode(WrenVM* vm);
 
 	void md_to_html(WrenVM* vm);
+
+	void jsonAlloc(WrenVM* vm);
+	void jsonDealloc(void* data);
 }
 
 }  // namespace lib

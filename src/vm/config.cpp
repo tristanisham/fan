@@ -1,4 +1,3 @@
-#include <lib.hpp>
 #include "nlohmann/json.hpp"
 #include "vm.hpp"
 #include "wren.h"
@@ -10,6 +9,7 @@
 #include <curl/curl.h>
 #include <filesystem>
 #include <iostream>
+#include <lib.hpp>
 #include <memory>
 #include <rang.hpp>
 #include <stdexcept>
@@ -232,6 +232,13 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
+	if (std::strcmp(module, "std/encode/") == 0) {
+		if (std::strcmp(className, "JSON") == 0) {
+			methods.allocate = lib::encode::jsonAlloc;
+			methods.finalize = lib::encode::jsonDealloc;
+		}
+	}
+
 	return methods;
 }
 
@@ -399,11 +406,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		}
 
 		// if (std::strcmp(className, "JSON") == 0) {
-		// 	// TBD
 		// }
-	}
 
-	return nullptr;
+		return nullptr;
+	}
 }
 
 void vm::Runtime::setEntryPoint(const std::string& target) {

@@ -21,11 +21,9 @@ class Markdown {
 }
 
 foreign class JSON {
-    construct encode(map) {}
+    construct encode(data) {
+    }
 
-    static mapKeys(map) {
-        if (map is Map) {
-            return map.keys
-        }
-    }    
+    foreign toString()
+
 }

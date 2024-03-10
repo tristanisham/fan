@@ -78,3 +78,11 @@ void lib::encode::md_to_html(WrenVM* vm) {
 }
 
 // using json = nlohmann::json;
+
+void lib::encode::jsonAlloc(WrenVM *vm) {
+
+}
+
+void lib::encode::jsonDealloc(void *data) {
+	
+}

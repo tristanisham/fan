@@ -186,3 +186,4 @@ class Color {
         return "\e[0m" 
     }
 }
+
