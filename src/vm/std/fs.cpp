@@ -28,9 +28,8 @@ static bool isValidMode(const char* str) {
 }
 
 void lib::fs::fileAlloc(WrenVM* vm) {
-	FILE** file = (FILE**)wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*));
-	auto count = wrenGetSlotCount(vm);
-	if (count < 3) {
+	FILE** file = static_cast<FILE**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(FILE*)));
+	if (auto count = wrenGetSlotCount(vm); count < 3) {
 		lib::abort(vm, (boost::format("Invalid number of paramaters. Expected 2, recieved %1%") % count).str());
 	}
 

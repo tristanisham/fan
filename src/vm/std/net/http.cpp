@@ -24,17 +24,13 @@ void lib::net::http::requestAlloc(WrenVM* vm) {
 			return;
 		}
 
-		// if (client == nullptr) {
-		// 	lib::abort(vm, "Could not initalize HTTP Client");
-		// 	return;
-		// }
 
 		client->url(url);
 
 		// Where the action happens
 		// Should never reach if CURL alloc fails.
 
-		auto** client_ptr = static_cast<Client**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(Client*)));
+		auto const client_ptr = static_cast<Client**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(Client*)));
 
 		*client_ptr = client;
 	} catch (const std::exception& e) {

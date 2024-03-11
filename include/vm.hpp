@@ -1,6 +1,5 @@
 #pragma once
 #include "nlohmann/json.hpp"
-#include "wren.h"
 #include <filesystem>
 #include <map>
 #include <string>
@@ -35,12 +34,11 @@ private:
 	std::shared_ptr<WrenVM> vm;
 	std::filesystem::path entryPoint;
 	std::map<std::string, WrenHandle*> handles;
-	
 };
 
-	
-	/**
-	* @throws std::invalid_argument if slot is not a Map.
-	*/
-	nlohmann::json map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot);
+/**
+ * @throws std::invalid_argument if slot is not a Map.
+ */
+nlohmann::json map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot);
+
 }  // namespace vm

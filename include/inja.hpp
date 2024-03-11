@@ -397,8 +397,8 @@ public:
 
   size_t pos;
 
-  AstNode(size_t pos): pos(pos) {}
-  virtual ~AstNode() {}
+  explicit AstNode(size_t pos): pos(pos) {}
+  virtual ~AstNode() = default;
 };
 
 class BlockNode : public AstNode {

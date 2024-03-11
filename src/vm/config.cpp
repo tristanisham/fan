@@ -1,3 +1,4 @@
+#include "boost/format/format_fwd.hpp"
 #include "nlohmann/json.hpp"
 #include "vm.hpp"
 #include "wren.h"
@@ -140,14 +141,14 @@ static void errorFn(WrenVM* vm, const WrenErrorType errorType, const char* modul
 
 	switch (errorType) {
 	case WREN_ERROR_COMPILE: {
-		std::cerr << boost::format("compile [%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		std::cerr << rang::fg::red << msg << rang::fg::reset << boost::format(" at: %1%:%2%") % module % line << std::endl;
 		// printf("[%s:%d] [Error] %s\n", module, line, msg);
 	} break;
 	case WREN_ERROR_STACK_TRACE: {
-		std::cerr << boost::format("[%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		std::cerr << boost::format("%1%:%2% ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
 	} break;
 	case WREN_ERROR_RUNTIME: {
-		std::cerr << boost::format("runtime [%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		std::cerr << boost::format("Runtime Error: ") << rang::fg::red << msg << rang::fg::reset << std::endl;
 		// Need to find a way to keep track of user source to print actual file name.
 	} break;
 	}
@@ -232,10 +233,11 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
-	if (std::strcmp(module, "std/encode/") == 0) {
+	if (std::strcmp(module, "std/encode") == 0) {
 		if (std::strcmp(className, "JSON") == 0) {
 			methods.allocate = lib::encode::jsonAlloc;
 			methods.finalize = lib::encode::jsonDealloc;
+			return methods;
 		}
 	}
 
@@ -405,11 +407,14 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			}
 		}
 
-		// if (std::strcmp(className, "JSON") == 0) {
-		// }
-
-		return nullptr;
+		if (std::strcmp(className, "JSON") == 0) {
+			if (!isStatic && std::strcmp(signature, "toString()") == 0) {
+				return lib::encode::json_to_string;
+			}
+		}
 	}
+
+	return nullptr;
 }
 
 void vm::Runtime::setEntryPoint(const std::string& target) {
@@ -426,7 +431,7 @@ vm::Runtime::~Runtime() {
 }
 
 nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot) {
-	if (auto type = wrenGetSlotType(vm, mapSlot); type != WREN_TYPE_MAP) {
+	if (const auto type = wrenGetSlotType(vm, mapSlot); type != WREN_TYPE_MAP) {
 		throw std::invalid_argument("Slot is not type Map");
 	}
 

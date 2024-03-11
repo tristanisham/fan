@@ -3,7 +3,7 @@
 #ifdef __cplusplus
 extern "C" {
 
-#include <wren.h>
+#include "wren.h"
 
 }
 

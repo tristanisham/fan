@@ -1,5 +1,4 @@
 #pragma once
-#include "wren.h"
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -7,6 +6,7 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -53,8 +53,6 @@ namespace fs {
 	void basename(WrenVM* vm);
 
 	void filename(WrenVM* vm);
-
-
 
 }  // namespace fs
 
@@ -229,6 +227,8 @@ namespace net::http {
 }
 
 namespace encode {
+	using json = nlohmann::json;
+
 	void base64_encode(WrenVM* vm);
 
 	void base64_decode(WrenVM* vm);
@@ -243,8 +243,23 @@ namespace encode {
 
 	void md_to_html(WrenVM* vm);
 
+	class JSON {
+		json buff;
+
+	public:
+		JSON() = default;
+
+		explicit JSON(json data)
+			: buff(std::move(data)) {};
+
+		std::string to_string();
+
+	};
+
 	void jsonAlloc(WrenVM* vm);
 	void jsonDealloc(void* data);
+	void json_to_string(WrenVM* vm);
+
 }
 
 }  // namespace lib

@@ -29,9 +29,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # DEBUG              #
     ########################
 
-    # Add back: fsanitize=leak
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fasynchronous-unwind-tables -ggdb3 -Wall  -fsanitize=leak -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer")
-    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -no-pie -Wall -fno-omit-frame-pointer")
+    # add back: -fsanitize=address, -no-pie (cmp)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -no-pie -fasynchronous-unwind-tables -g -Wall -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address -g -fsanitize=leak -fasynchronous-unwind-tables -fsanitize=undefined -Wall -fno-omit-frame-pointer")
 
     ########################
     # RELEASE              #

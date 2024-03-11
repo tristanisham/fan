@@ -5,11 +5,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <errno.h>
+#include <cerrno>
 #include <filesystem>
 #include <memory>
 #include <stdexcept>
-#include <stdlib.h>
 
 #ifdef _WIN32
 #include <tlhelp32.h>
@@ -22,7 +21,7 @@ void lib::os::getEnv(WrenVM* vm) {
 	const char* key = wrenGetSlotString(vm, 1);
 	auto val = std::getenv(key);
 	wrenEnsureSlots(vm, 1);
-	if (val == NULL) {
+	if (val == nullptr) {
 		wrenSetSlotNull(vm, 0);
 	} else {
 		wrenSetSlotString(vm, 0, val);
@@ -224,12 +223,12 @@ void lib::os::processExit(WrenVM* vm) {
 		lib::abort(vm, "Process.exit(_) requires a NUMBER paramater");
 	}
 
-	std::exit(exitCode);
+	std::exit(static_cast<int>(exitCode));
 }
 
 void lib::os::typeOf(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
-	auto valType = wrenGetSlotType(vm, 1);
-	auto valStr = lib::wren_type_to_string(valType);
+	const auto valType = wrenGetSlotType(vm, 1);
+	const auto valStr = lib::wren_type_to_string(valType);
 	wrenSetSlotString(vm, 0, valStr.c_str());
 }
