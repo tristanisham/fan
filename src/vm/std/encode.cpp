@@ -1,9 +1,11 @@
 #include <basen.hpp>
 #include <cmark/cmark.h>
 #include <cstdlib>
+#include <iostream>
 #include <lib.hpp>
 #include <nlohmann/json.hpp>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vm.hpp>
 
@@ -81,14 +83,19 @@ void lib::encode::jsonAlloc(WrenVM* vm) {
 		lib::abort(vm, "JSON.encode must have at least one argument of type Map");
 	}
 
-	wrenEnsureSlots(vm, 1);
+	wrenEnsureSlots(vm, 4);
 	if (auto const type = wrenGetSlotType(vm, 1); type != WREN_TYPE_MAP) {
 		lib::abort(vm, "JSON.encode's first argument must be of type Map.");
 		return;
 	}
-	// auto const data = vm::map_to_json(vm, 1, 2, 3);
-	// std::cout << data << std::endl;
-	auto const buff = new JSON();
+
+	JSON* buff;
+	try {
+		auto const data = vm::map_to_json(vm, 1, 2, 3);
+		buff = new JSON { data };
+	} catch (std::invalid_argument const& err) {
+		buff = new JSON {};
+	}
 
 	JSON** json_ptr = static_cast<JSON**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(JSON*)));
 	*json_ptr = buff;

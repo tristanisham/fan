@@ -21,8 +21,7 @@ class Markdown {
 }
 
 foreign class JSON {
-    construct encode(data) {
-    }
+    construct encode(data) {}
 
     foreign toString()
 

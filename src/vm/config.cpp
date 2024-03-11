@@ -432,7 +432,7 @@ vm::Runtime::~Runtime() {
 
 nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot) {
 	if (const auto type = wrenGetSlotType(vm, mapSlot); type != WREN_TYPE_MAP) {
-		throw std::invalid_argument("Slot is not type Map");
+		throw std::invalid_argument((boost::format("Slot %1% is not type Map") % mapSlot).str());
 	}
 
 	nlohmann::json data;
@@ -464,30 +464,30 @@ nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot
 		case WREN_TYPE_BOOL:
 
 			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = wrenGetSlotBool(vm, keySlot);
+				data[std::get<std::string>(keyVal)] = wrenGetSlotBool(vm, valSlot);
 
 			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = wrenGetSlotBool(vm, keySlot);
+				data[std::get<bool>(keyVal)] = wrenGetSlotBool(vm, valSlot);
 
 			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = wrenGetSlotBool(vm, keySlot);
+				data[std::get<double>(keyVal)] = wrenGetSlotBool(vm, valSlot);
 			}
 			break;
 		case WREN_TYPE_NUM:
 
 			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = wrenGetSlotDouble(vm, keySlot);
+				data[std::get<std::string>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
 
 			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = wrenGetSlotDouble(vm, keySlot);
+				data[std::get<bool>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
 
 			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = wrenGetSlotDouble(vm, keySlot);
+				data[std::get<double>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
 			}
 			break;
 		case WREN_TYPE_STRING:
 			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = std::string { wrenGetSlotString(vm, keySlot) };
+				data[std::get<std::string>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
 
 			} else if (keyType == WREN_TYPE_BOOL) {
 				data[std::get<bool>(keyVal)] = std::string { wrenGetSlotString(vm, keySlot) };
