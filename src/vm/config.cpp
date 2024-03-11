@@ -490,10 +490,10 @@ nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot
 				data[std::get<std::string>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
 
 			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = std::string { wrenGetSlotString(vm, keySlot) };
+				data[std::get<bool>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
 
 			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = std::string { wrenGetSlotString(vm, keySlot) };
+				data[std::get<double>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
 			}
 
 			break;
