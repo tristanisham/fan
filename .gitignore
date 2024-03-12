@@ -1,13 +1,1 @@
-build/
-.cache/
-out/
-.vs/
-zig-cache/
-zig-out/
-cmake-build-debug-wsl/
-cmake-build-release-wsl/
-compile_commands.json
-venv/
-# Added by cargo
-
 /target
