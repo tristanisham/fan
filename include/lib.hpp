@@ -254,11 +254,15 @@ namespace encode {
 
 		std::string to_string();
 
+		template<class T>
+		void insert(std::string key, T val);
+
 	};
 
 	void jsonAlloc(WrenVM* vm);
 	void jsonDealloc(void* data);
 	void json_to_string(WrenVM* vm);
+	void json_insert(WrenVM* vm);
 
 }
 

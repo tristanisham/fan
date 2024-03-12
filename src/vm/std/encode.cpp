@@ -1,13 +1,12 @@
 #include <basen.hpp>
 #include <cmark/cmark.h>
 #include <cstdlib>
-#include <iostream>
 #include <lib.hpp>
 #include <nlohmann/json.hpp>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vm.hpp>
+#include <wren.hpp>
 
 void lib::encode::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
@@ -78,24 +77,46 @@ void lib::encode::md_to_html(WrenVM* vm) {
 	}
 }
 
+// JSON
+
+// @TODO add actual error handling
+template <class T> void lib::encode::JSON::insert(std::string key, T val) {
+	this->buff[key] = val;
+}
+
+void lib::encode::json_insert(WrenVM* vm) {
+	wrenEnsureSlots(vm, 3);
+	auto const data = static_cast<JSON**>(wrenGetSlotForeign(vm, 0));
+	auto const key = wrenGetSlotString(vm, 0);
+	auto const keyType = wrenGetSlotType(vm, 1);
+	auto const valType = wrenGetSlotType(vm, 2);
+
+	switch (valType) {
+	case WREN_TYPE_BOOL:
+
+		(*data)->insert(key, wrenGetSlotBool(vm, 2));
+
+		break;
+	case WREN_TYPE_NUM:
+
+		(*data)->insert(key, wrenGetSlotDouble(vm, 2));
+
+		break;
+	case WREN_TYPE_STRING:
+		(*data)->insert(key, wrenGetSlotString(vm, 2));
+
+		break;
+	case WREN_TYPE_MAP:
+	case WREN_TYPE_LIST:
+		throw std::invalid_argument("Values for maps cannot be of type List and Map at this time.");
+	// TODO: Add maps, lists, and anything with .toJSON() methods.
+	default:
+		throw std::invalid_argument((boost::format("%1% cannot be map values") % lib::wren_type_to_string(keyType)).str());
+	}
+}
+
 void lib::encode::jsonAlloc(WrenVM* vm) {
-	if (wrenGetSlotCount(vm) < 2) {
-		lib::abort(vm, "JSON.encode must have at least one argument of type Map");
-	}
-
-	wrenEnsureSlots(vm, 4);
-	if (auto const type = wrenGetSlotType(vm, 1); type != WREN_TYPE_MAP) {
-		lib::abort(vm, "JSON.encode's first argument must be of type Map.");
-		return;
-	}
-
-	JSON* buff;
-	try {
-		auto const data = vm::map_to_json(vm, 1, 2, 3);
-		buff = new JSON { data };
-	} catch (std::invalid_argument const& err) {
-		buff = new JSON {};
-	}
+	JSON* buff = new JSON {};
 
 	JSON** json_ptr = static_cast<JSON**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(JSON*)));
 	*json_ptr = buff;
@@ -111,8 +132,7 @@ void lib::encode::jsonDealloc(void* data) {
 }
 
 std::string lib::encode::JSON::to_string() {
-	std::string out = this->buff.dump();
-	return out;
+	return this->buff.dump();
 }
 
 void lib::encode::json_to_string(WrenVM* vm) {

@@ -15,6 +15,7 @@
 #include <rang.hpp>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <variant>
 
 using json = nlohmann::json;
@@ -410,6 +411,8 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 		if (std::strcmp(className, "JSON") == 0) {
 			if (!isStatic && std::strcmp(signature, "toString()") == 0) {
 				return lib::encode::json_to_string;
+			} else if (!isStatic && std::strcmp(signature, "insert(_,_)") == 0) {
+				return lib::encode::json_insert;
 			}
 		}
 	}
@@ -430,85 +433,7 @@ vm::Runtime::~Runtime() {
 	// wrenFreeVM ran further down the page in the shared pointer's "deleter" labmda.
 }
 
-nlohmann::json vm::map_to_json(WrenVM* vm, int mapSlot, int keySlot, int valSlot) {
-	if (const auto type = wrenGetSlotType(vm, mapSlot); type != WREN_TYPE_MAP) {
-		throw std::invalid_argument((boost::format("Slot %1% is not type Map") % mapSlot).str());
-	}
 
-	nlohmann::json data;
-	auto const mapCount = wrenGetMapCount(vm, mapSlot);
-	wrenEnsureSlots(vm, 3);
-	for (int i = 0; i < mapCount; i++) {
-		wrenGetMapValue(vm, mapSlot, keySlot, valSlot);
-		auto const keyType = wrenGetSlotType(vm, keySlot);
-		auto const valType = wrenGetSlotType(vm, valSlot);
-
-		std::variant<bool, double, std::string> keyVal;
-
-		switch (keyType) {
-		case WREN_TYPE_BOOL:
-			keyVal = wrenGetSlotBool(vm, keySlot);
-			break;
-		case WREN_TYPE_NUM:
-			keyVal = wrenGetSlotDouble(vm, keySlot);
-			break;
-		case WREN_TYPE_STRING:
-			keyVal = wrenGetSlotString(vm, keySlot);
-			break;
-		default:
-			lib::abort(vm, (boost::format("%1% cannot be map keys") % lib::wren_type_to_string(keyType)).str());
-			break;
-		}
-
-		switch (valType) {
-		case WREN_TYPE_BOOL:
-
-			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = wrenGetSlotBool(vm, valSlot);
-
-			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = wrenGetSlotBool(vm, valSlot);
-
-			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = wrenGetSlotBool(vm, valSlot);
-			}
-			break;
-		case WREN_TYPE_NUM:
-
-			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
-
-			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
-
-			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = wrenGetSlotDouble(vm, valSlot);
-			}
-			break;
-		case WREN_TYPE_STRING:
-			if (keyType == WREN_TYPE_STRING) {
-				data[std::get<std::string>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
-
-			} else if (keyType == WREN_TYPE_BOOL) {
-				data[std::get<bool>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
-
-			} else if (keyType == WREN_TYPE_NUM) {
-				data[std::get<double>(keyVal)] = std::string { wrenGetSlotString(vm, valSlot) };
-			}
-
-			break;
-		case WREN_TYPE_NULL:
-		case WREN_TYPE_MAP:
-		case WREN_TYPE_LIST:
-			throw std::invalid_argument("Values for maps cannot be of type List and Map at this time.");
-		// TODO: Add maps, lists, and anything with .toJSON() methods.
-		default:
-			throw std::invalid_argument((boost::format("%1% cannot be map values") % lib::wren_type_to_string(keyType)).str());
-		}
-	}
-
-	return data;
-}
 
 vm::Runtime::Runtime() {
 	/* In windows, this will init the winsock stuff */
