@@ -21,12 +21,12 @@ class Markdown {
 }
 
 foreign class JSON {
-    construct encode(data) {
-        if (!(data is Map)) {
-            Fiber.abort("Argument 'data' must be of type Map")
-        }
+    construct new() {
+       
+    }
 
-        
+    [key]=(val) {
+        this.insert(key, val)
     }
 
     foreign insert(key, val)

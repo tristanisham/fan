@@ -87,7 +87,7 @@ template <class T> void lib::encode::JSON::insert(std::string key, T val) {
 void lib::encode::json_insert(WrenVM* vm) {
 	wrenEnsureSlots(vm, 3);
 	auto const data = static_cast<JSON**>(wrenGetSlotForeign(vm, 0));
-	auto const key = wrenGetSlotString(vm, 0);
+	auto const key = wrenGetSlotString(vm, 1);
 	auto const keyType = wrenGetSlotType(vm, 1);
 	auto const valType = wrenGetSlotType(vm, 2);
 
