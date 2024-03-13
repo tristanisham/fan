@@ -7,11 +7,11 @@ use std::{env, fs, ptr};
 use wren::*;
 
 pub struct FanVM {
-    pub vm: Box<wren::WrenVM>,
+    vm: Box<wren::WrenVM>,
 }
 
-impl FanVM {
-    pub fn new() -> Self {
+impl Default for FanVM {
+    fn default() -> Self {
         let mut config = Box::new(WrenConfiguration {
             reallocateFn: None,
             resolveModuleFn: None,
@@ -33,8 +33,54 @@ impl FanVM {
 
         config.writeFn = Some(write_fn);
         config.errorFn = Some(error_fn);
+        config.loadModuleFn = Some(load_modules);
+        config.bindForeignClassFn = Some(bind_foreign_class);
+        config.bindForeignMethodFn = Some(bind_foreign_method);
 
-        todo!();
+        let config_ptr: *mut WrenConfiguration = &mut *config;
+        let unsafe_vm = unsafe { wrenNewVM(config_ptr) };
+
+        let my_vm = unsafe { Box::from_raw(unsafe_vm) };
+
+        Self::new(my_vm)
+    }
+}
+
+impl Drop for FanVM {
+    fn drop(&mut self) {
+        unsafe {
+            let vm_ptr: *mut WrenVM = &mut *self.vm;
+            if !vm_ptr.is_null() {
+                wrenFreeVM(vm_ptr);
+            }
+        }
+    }
+}
+
+impl FanVM {
+    pub fn new(vm: Box<WrenVM>) -> Self {
+        Self { vm }
+    }
+
+    pub fn exec(&self, data: String) -> WrenInterpretResult {
+        
+    }
+}
+
+pub enum FanInterpretResult {
+    Success,
+    CompileErr,
+    RuntimeErr
+}
+
+impl From<WrenInterpretResult> for FanInterpretResult {
+    fn from(value: WrenInterpretResult) -> Self {
+        match value {
+            WrenErrorType_WREN_ERROR_COMPILE => Self::CompileErr,
+            WrenErrorType_WREN_ERROR_RUNTIME => Self::RuntimeErr,
+            WrenErrorType_WREN_ERROR_STACK_TRACE => Self::Success,
+            _ => unreachable!(),
+        }
     }
 }
 
@@ -148,6 +194,7 @@ extern "C" fn load_modules(vm: *mut WrenVM, name: *const libc::c_char) -> WrenLo
     let content_heap = CString::new(content).unwrap();
     let content_ptr = content_heap.as_ptr();
     module.source = content_ptr;
+    module.onComplete = Some(load_module_complete);
 
     module
 }
@@ -160,4 +207,29 @@ pub fn abort(vm: *mut WrenVM, msg: String) {
         wrenSetSlotString(vm, 0, out.as_ptr());
         wrenAbortFiber(vm, 0);
     }
+}
+
+#[no_mangle]
+extern "C" fn bind_foreign_class(
+    vm: *mut WrenVM,
+    module: *const libc::c_char,
+    class_name: *const libc::c_char,
+) -> WrenForeignClassMethods {
+    let methods = WrenForeignClassMethods {
+        allocate: None,
+        finalize: None,
+    };
+
+    methods
+}
+
+#[no_mangle]
+extern "C" fn bind_foreign_method(
+    vm: *mut WrenVM,
+    module: *const libc::c_char,
+    class_name: *const libc::c_char,
+    is_static: bool,
+    signature: *const libc::c_char,
+) -> WrenForeignMethodFn {
+    None
 }

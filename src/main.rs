@@ -1,3 +1,5 @@
+use fan::FanVM;
+
 fn main() {
-    println!("Hello, world!");
+    let vm = FanVM::default();
 }
