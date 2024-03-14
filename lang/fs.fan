@@ -59,90 +59,89 @@ foreign class File {
     foreign close()
 }
 
-// class Path {
+class Path {
 
-//     construct from(file) {
-//         _filepath = file
-//     }
+    construct from(file) {
+        _filepath = file
+    }
 
-//     exists() {
-//         return Path.exists(_filepath)
-//     }
+    exists() {
+        return Path.exists(_filepath)
+    }
+
+    /// Returns a bool indicating if the Path is to a directory or not.
+    isDirectory() {
+        return Fs.isDirectory(_filepath)
+    }
+
+    toString() {
+        return _filepath
+    }
+
+    abs(path) {
+        return Path.canonical(path)
+    }
+
+    abs() {
+        return Path.canonical(_filepath)
+    }
+
+    replaceExt(str) {
+        var newFP = _filepath.trimEnd(Path.ext(_filepath))
+        return newFP + str
+    }
+
+    /// join concatenates the entries (String or List of String) to the existing path
+    /// with the system's PATH_SEPARATOR. Returns the complete string on success or null on failure.
+
+    static join(entries) {
+     var buffer = ""
+
+     for (entry in entries) {
+        buffer = buffer + Path.separator() + entry
+     }
+
+     var i = 0
+     var newBuffer = ""
+     while (i < buffer.count) {
+        var char = buffer[i]
+        var s = Path.separator()
+        if (i+1 <= buffer.count) {
+            if (char != s || (char == s && buffer[i+1] != s)) {
+                    newBuffer = newBuffer + char
+            }
+        }
+
+        i = i + 1
+     }
+
+     return Path.from(newBuffer)
+    }
+
+    // Returns the paramater's canonical path or errors
+    foreign static canonical(path)
+
+    foreign static exists(path)
+
+    foreign static separator()
+
+    foreign static ext(path)
+
+    ext() {
+            return Path.ext(_filepath)
+        }
+
+    foreign static basename(path)
+
+    basename() {
+        return Path.basename(_filepath)
+    }
+
+    foreign static filename(path)
+
+    filename() {
+        return Path.filename(_filepath)
+    }
 
 
-
-//     /// Returns a bool indicating if the Path is to a directory or not.
-//     isDirectory() {
-//         return Fs.isDirectory(_filepath)
-//     }
-
-//     toString() {
-//         return _filepath
-//     }
-
-//     abs(path) {
-//         return Path.canonical(path)
-//     }
-
-//     abs() {
-//         return Path.canonical(_filepath)
-//     }
-
-//     replaceExt(str) {
-//         var newFP = _filepath.trimEnd(Path.ext(_filepath))
-//         return newFP + str
-//     }
-
-//     /// join concatenates the entries (String or List of String) to the existing path
-//     /// with the system's PATH_SEPARATOR. Returns the complete string on success or null on failure.
-
-//     static join(entries) {
-//      var buffer = ""
-
-//      for (entry in entries) {
-//         buffer = buffer + Path.separator() + entry
-//      }
-
-//      var i = 0
-//      var newBuffer = ""
-//      while (i < buffer.count) {
-//         var char = buffer[i]
-//         var s = Path.separator()
-//         if (i+1 <= buffer.count) {
-//             if (char != s || (char == s && buffer[i+1] != s)) {
-//                     newBuffer = newBuffer + char
-//             }
-//         }
-
-//         i = i + 1
-//      }
-
-//      return Path.from(newBuffer)
-//     }
-
-//     foreign static canonical(path)
-
-//     foreign static exists(path)
-
-//     foreign static separator()
-
-//     foreign static ext(path)
-
-//     ext() {
-//             return Path.ext(_filepath)
-//         }
-
-//     foreign static basename(path)
-
-//     basename() {
-//         return Path.basename(_filepath)
-//     }
-
-//     foreign static filename(path)
-
-//     filename() {
-//         return Path.filename(_filepath)
-//     }
-
-
-// }
+}

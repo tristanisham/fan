@@ -9,7 +9,6 @@ use std::str::FromStr;
 use std::{env, fs, ptr};
 use wren::*;
 
-
 pub struct FanVM {
     vm: Box<wren::WrenVM>,
 }
@@ -316,9 +315,19 @@ extern "C" fn bind_foreign_method(
                     "listAllRecursive(_)" => return Some(lang::fs::list_dir_recursive),
                     "listAll(_)" => return Some(lang::fs::list_all),
                     "isDirectory(_)" => return Some(lang::fs::is_dir),
+                    "mkdir(_)" => return Some(lang::fs::mkdir),
                     _ => {}
                 },
                 // Not static
+                false => match sig.as_str() {
+                    _ => {}
+                },
+            },
+            "Path" => match is_static {
+                true => match sig.as_str() {
+                    "canonical(_)" => return Some(lang::fs::canonical),
+                    _ => {}
+                },
                 false => match sig.as_str() {
                     _ => {}
                 },

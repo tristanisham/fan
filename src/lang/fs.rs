@@ -210,3 +210,21 @@ pub extern "C" fn is_dir(vm: *mut WrenVM) {
         wrenSetSlotBool(vm, 0, result);
     }
 }
+
+pub extern "C" fn mkdir(vm: *mut WrenVM) {
+    unsafe { wrenEnsureSlots(vm, 2)};
+
+    let path_cstr = unsafe { CString::from(CStr::from_ptr(wrenGetSlotString(vm, 1))) };
+    let mut buff = String::new();
+    path_cstr.as_bytes().read_to_string(&mut buff).unwrap();
+
+    let path = PathBuf::from(buff);
+
+    if let Err(e) = fs::create_dir_all(path) {
+        crate::abort(vm, &e.to_string());
+    }
+}
+
+pub extern "C" fn canonical(vm: *mut WrenVM) {
+    todo!()
+}
