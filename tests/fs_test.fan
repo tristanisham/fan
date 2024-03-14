@@ -1,8 +1,8 @@
-// import "std/fs" for File
+import "std/fs" for File
 
-// var file = File.open("fan.sh", "r+")
-// System.print(file.read())
-// file.close()
+var file = File.open("Cargo.toml", "r+")
+System.print(file.read())
+file.close()
 
-import "std/fs" for Fs
+// import "std/fs" for Fs
 

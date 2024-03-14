@@ -1,3 +1,6 @@
+#![feature(cstr_count_bytes)]
+
+mod lang;
 mod wren;
 use std::ffi::{CStr, CString};
 use std::io::Read;
@@ -5,6 +8,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::{env, fs, ptr};
 use wren::*;
+
 
 pub struct FanVM {
     vm: Box<wren::WrenVM>,
@@ -62,15 +66,26 @@ impl FanVM {
         Self { vm }
     }
 
-    pub fn exec(&self, data: String) -> WrenInterpretResult {
-        
+    /// Executes code in the main FanVM.
+    /// Will SegFault if any Fan foreign bindings are unimplemented.
+    pub fn exec(&mut self, code: &str, module: Option<&str>) -> FanInterpretResult {
+        let vm_ptr: *mut WrenVM = &mut *self.vm;
+        let mod_str = CString::new(module.unwrap_or("main")).unwrap();
+        let mod_str_ptr = mod_str.as_ptr();
+
+        let code_str = CString::new(code).unwrap();
+        let code_str_ptr = code_str.as_ptr();
+        let result: FanInterpretResult =
+            unsafe { wrenInterpret(vm_ptr, mod_str_ptr, code_str_ptr).into() };
+
+        result
     }
 }
 
 pub enum FanInterpretResult {
     Success,
     CompileErr,
-    RuntimeErr
+    RuntimeErr,
 }
 
 impl From<WrenInterpretResult> for FanInterpretResult {
@@ -86,15 +101,12 @@ impl From<WrenInterpretResult> for FanInterpretResult {
 
 #[no_mangle]
 extern "C" fn write_fn(_vm: *mut WrenVM, text: *const libc::c_char) {
-    let buff = unsafe {
-        let data = CString::from(CStr::from_ptr(text));
-        data
-    };
+    let buff = unsafe { CString::from(CStr::from_ptr(text)) };
 
     let mut output = String::new();
     buff.as_bytes().read_to_string(&mut output).unwrap();
 
-    println!("{output}")
+    print!("{output}")
 }
 
 #[no_mangle]
@@ -135,7 +147,9 @@ extern "C" fn load_module_complete(
     result: WrenLoadModuleResult,
 ) {
     if !result.source.is_null() {
-        let _ = unsafe { CStr::from_ptr(result.source) };
+        unsafe {
+            drop(CString::from_raw(result.source as *mut libc::c_char));
+        }
     }
 }
 
@@ -157,16 +171,16 @@ extern "C" fn load_modules(vm: *mut WrenVM, name: *const libc::c_char) -> WrenLo
 
     if !fan_path.exists() {
         let msg = format!("Standard library {fan_lib} not found");
-        abort(vm, msg);
+        abort(vm, &msg);
     }
 
     if usr_path.starts_with("std/") {
-        usr_path.strip_prefix("std/").unwrap();
-        let new_path = fan_path.join(usr_path);
+        let stripped = usr_path.strip_prefix("std/").unwrap();
+        let new_path = fan_path.join(stripped);
         fan_path = new_path;
     }
 
-    if fan_path.extension().is_some() {
+    if !fan_path.extension().is_some() {
         fan_path.set_extension("fan");
     }
 
@@ -185,22 +199,22 @@ extern "C" fn load_modules(vm: *mut WrenVM, name: *const libc::c_char) -> WrenLo
         Err(e) => {
             abort(
                 vm,
-                format!("Could not read module of {}\n{}", fan_path.display(), e),
+                &format!("Could not read module of {}\n{}", fan_path.display(), e),
             );
             return module;
         }
     };
 
     let content_heap = CString::new(content).unwrap();
-    let content_ptr = content_heap.as_ptr();
+
+    let content_ptr = content_heap.into_raw();
     module.source = content_ptr;
-    module.onComplete = Some(load_module_complete);
 
     module
 }
 
 /// Aborts the current fiber and sends an error message back to the VM.
-pub fn abort(vm: *mut WrenVM, msg: String) {
+pub fn abort(vm: *mut WrenVM, msg: &str) {
     unsafe {
         wrenEnsureSlots(vm, 1);
         let out = CString::new(msg.as_bytes().to_vec()).unwrap();
@@ -211,25 +225,109 @@ pub fn abort(vm: *mut WrenVM, msg: String) {
 
 #[no_mangle]
 extern "C" fn bind_foreign_class(
-    vm: *mut WrenVM,
-    module: *const libc::c_char,
+    _vm: *mut WrenVM,
+    module_name: *const libc::c_char,
     class_name: *const libc::c_char,
 ) -> WrenForeignClassMethods {
-    let methods = WrenForeignClassMethods {
+    let mut methods = WrenForeignClassMethods {
         allocate: None,
         finalize: None,
     };
+
+    let mut module = String::new();
+    let mut class = String::new();
+
+    {
+        let module_cstr = unsafe { CString::from(CStr::from_ptr(module_name)) };
+        let class_cstr = unsafe { CString::from(CStr::from_ptr(class_name)) };
+
+        module_cstr.as_bytes().read_to_string(&mut module).unwrap();
+        class_cstr.as_bytes().read_to_string(&mut class).unwrap();
+    }
+
+    match module.as_str() {
+        "std/fs" => match class.as_str() {
+            "File" => {
+                methods.allocate = Some(lang::fs::file_alloc);
+                methods.finalize = Some(lang::fs::file_dealloc);
+            }
+            _ => {}
+        },
+        _ => {}
+    }
 
     methods
 }
 
 #[no_mangle]
 extern "C" fn bind_foreign_method(
-    vm: *mut WrenVM,
-    module: *const libc::c_char,
+    _vm: *mut WrenVM,
+    module_name: *const libc::c_char,
     class_name: *const libc::c_char,
     is_static: bool,
     signature: *const libc::c_char,
 ) -> WrenForeignMethodFn {
+    let mut module = String::new();
+    let mut class = String::new();
+    let mut sig = String::new();
+
+    {
+        let module_cstr = unsafe { CString::from(CStr::from_ptr(module_name)) };
+        let class_cstr = unsafe { CString::from(CStr::from_ptr(class_name)) };
+        let sig_cstr = unsafe { CString::from(CStr::from_ptr(signature)) };
+
+        module_cstr.as_bytes().read_to_string(&mut module).unwrap();
+        class_cstr.as_bytes().read_to_string(&mut class).unwrap();
+        sig_cstr.as_bytes().read_to_string(&mut sig).unwrap();
+    }
+
+    match module.as_str() {
+        "std/os" => match class.as_str() {
+            "Env" => match is_static {
+                // Is Static
+                true => match sig.as_str() {
+                    "get(_)" => return Some(lang::os::get_env),
+                    "set(_,_)" => return Some(lang::os::set_env),
+                    _ => {}
+                },
+                // Not static
+                false => match sig.as_str() {
+                    _ => {}
+                },
+            },
+            _ => {}
+        },
+        "std/fs" => match class.as_str() {
+            "File" => match is_static {
+                true => match sig.as_str() {
+                    _ => {}
+                },
+                // Not static
+                false => match sig.as_str() {
+                    "write(_)" => return Some(lang::fs::file_write),
+                    "read()" => return Some(lang::fs::file_read),
+                    "close()" => return Some(lang::fs::file_close),
+                    _ => {}
+                },
+            },
+            "Fs" => match is_static {
+                true => match sig.as_str() {
+                    "remove(_)" => return Some(lang::fs::remove_file),
+                    "listAllRecursive(_)" => return Some(lang::fs::list_dir_recursive),
+                    "listAll(_)" => return Some(lang::fs::list_all),
+                    "isDirectory(_)" => return Some(lang::fs::is_dir),
+                    _ => {}
+                },
+                // Not static
+                false => match sig.as_str() {
+                    _ => {}
+                },
+            },
+            _ => {}
+        },
+
+        _ => {}
+    }
+
     None
 }

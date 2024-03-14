@@ -1,4 +1,4 @@
-import "std/fs" for File, Path
+// import "std/fs" for File, Path
 
 class Env {
   // get returns the associated value from 'key'.
@@ -61,20 +61,20 @@ class Env {
 
 }
 
-class Process {
+  class Process {
   // TODO: This will need to be smarter when wren supports CLI options.
-  static args { allArguments.count >= 3 ? allArguments[3..-1] : [] }
+    static args { allArguments.count >= 3 ? allArguments[3..-1] : [] }
 
-  foreign static allArguments
-  foreign static cwd
-  foreign static pid
-  foreign static ppid
-  foreign static exec(target, args)
-  foreign static exit(code)
-}
+    foreign static allArguments
+    foreign static cwd
+    foreign static pid
+    foreign static ppid
+    foreign static exec(target, args)
+    foreign static exit(code)
+  }
 
-class Runtime {
-  foreign static os
-  foreign static arch
-  foreign static typeOf(data)
-}
+  class Runtime {
+    foreign static os
+    foreign static arch
+    foreign static typeOf(data)
+  }

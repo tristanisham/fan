@@ -1,19 +1,11 @@
+import "std/os" for Env
 
-// System.print("std/fs Dir test")
-// import "std/fs" for Dir
-
-// var dir = Dir.cwd()
-// System.print(Dir.cwd())
-
-System.print("std/os  test")
-import "std/os" for Env, Process, Runtime
-
-// var home = Env.get("HOME")
-// if (home != null) {
-//     System.print(home)
-// } else {
-//     System.print("Null")
-// }
+var home = Env.get("HOME")
+if (home != null) {
+    System.print(home)
+} else {
+    System.print("Null")
+}
 
 // System.print("Setting ENV TEST:")
 // Env.set("TEST", "YES")
@@ -46,10 +38,10 @@ import "std/os" for Env, Process, Runtime
 // } else {
 //     System.print("fail")
 // }
-System.print("-------------------------------------------")
-System.print("Logging process args: %(Process.args.count)")
-System.print("%(Runtime.os): %(Runtime.arch)")
+// System.print("-------------------------------------------")
+// System.print("Logging process args: %(Process.args.count)")
+// System.print("%(Runtime.os): %(Runtime.arch)")
 
-for (arg in Process.args) {
-    System.print(arg)
-}
+// for (arg in Process.args) {
+//     System.print(arg)
+// }
