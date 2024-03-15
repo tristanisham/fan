@@ -10,7 +10,9 @@ use std::{
 };
 use walkdir::WalkDir;
 
-use crate::wren::*;
+use crate::{lang, wren::*};
+
+use super::vm_string;
 
 extern "C" fn close_file(file: *mut *mut FILE) {
     unsafe {
@@ -212,7 +214,7 @@ pub extern "C" fn is_dir(vm: *mut WrenVM) {
 }
 
 pub extern "C" fn mkdir(vm: *mut WrenVM) {
-    unsafe { wrenEnsureSlots(vm, 2)};
+    unsafe { wrenEnsureSlots(vm, 2) };
 
     let path_cstr = unsafe { CString::from(CStr::from_ptr(wrenGetSlotString(vm, 1))) };
     let mut buff = String::new();
@@ -226,5 +228,75 @@ pub extern "C" fn mkdir(vm: *mut WrenVM) {
 }
 
 pub extern "C" fn canonical(vm: *mut WrenVM) {
-    todo!()
+    let path = unsafe { lang::vm_string(vm, 1) };
+    if let Err(e) = path {
+        crate::abort(vm, &e.to_string());
+        return;
+    }
+
+    // This is okay. I already checked to see if it was an error.
+    let path = PathBuf::from(path.unwrap());
+
+    match path.canonicalize() {
+        Ok(pb) => {
+            let pb = pb.to_str().unwrap();
+            let pb_str = CString::new(pb).unwrap();
+            let pb_ptr = pb_str.as_ptr();
+            unsafe {
+                wrenSetSlotString(vm, 0, pb_ptr);
+            }
+        }
+        Err(e) => {
+            crate::abort(vm, &e.to_string());
+            return;
+        }
+    }
+}
+
+pub extern "C" fn exists(vm: *mut WrenVM) {
+    let target = unsafe { vm_string(vm, 1) }.unwrap();
+    let p = PathBuf::from(target);
+    unsafe {
+        wrenSetSlotBool(vm, 0, p.exists());
+    }
+}
+
+pub extern "C" fn separator(vm: *mut WrenVM) {
+    unsafe {
+        wrenEnsureSlots(vm, 1);
+        let sep = std::path::MAIN_SEPARATOR_STR;
+        let c_str = CString::new(sep).unwrap();
+        let c_ptr = c_str.as_ptr();
+        wrenSetSlotString(vm, 0, c_ptr);
+    }
+}
+
+pub extern "C" fn ext(vm: *mut WrenVM) {
+    let path = unsafe { vm_string(vm, 1) }.unwrap();
+    let path = PathBuf::from(path);
+
+    // This is a tad inefficient
+    let end = match path.extension() {
+        Some(s) => s.to_string_lossy().to_string(),
+        None => String::new(),
+    };
+
+    let out = CString::new(end).unwrap();
+    let out_ptr = out.as_ptr();
+    unsafe { wrenSetSlotString(vm, 0, out_ptr) };
+}
+
+pub extern "C" fn filename(vm: *mut WrenVM) {
+    let path = unsafe { vm_string(vm, 1) }.unwrap();
+    let path = PathBuf::from(path);
+
+    // This is a tad inefficient
+    let end = match path.file_name() {
+        Some(s) => s.to_string_lossy().to_string(),
+        None => String::new(),
+    };
+
+    let out = CString::new(end).unwrap();
+    let out_ptr = out.as_ptr();
+    unsafe { wrenSetSlotString(vm, 0, out_ptr) };
 }

@@ -69,12 +69,13 @@ class Env {
     foreign static cwd
     foreign static pid
     foreign static ppid
-    foreign static exec(target, args)
     foreign static exit(code)
+    foreign static exec(target, args)
+
   }
 
   class Runtime {
     foreign static os
     foreign static arch
-    foreign static typeOf(data)
+    // foreign static typeOf(data)
   }

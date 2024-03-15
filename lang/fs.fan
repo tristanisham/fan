@@ -121,21 +121,20 @@ class Path {
     // Returns the paramater's canonical path or errors
     foreign static canonical(path)
 
+    // Returns true if the path exists
     foreign static exists(path)
 
+    // Returns your system seperator
     foreign static separator()
 
+    // `ext` returns the extension of a provided path, or an empty string
+    // if no extension exists
     foreign static ext(path)
 
     ext() {
             return Path.ext(_filepath)
         }
 
-    foreign static basename(path)
-
-    basename() {
-        return Path.basename(_filepath)
-    }
 
     foreign static filename(path)
 

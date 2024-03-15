@@ -294,6 +294,38 @@ extern "C" fn bind_foreign_method(
                     _ => {}
                 },
             },
+            "Process" => match is_static {
+                // Is Static
+                true => match sig.as_str() {
+                    "allArguments()" => return Some(lang::os::process::all_args),
+                    "cwd()" => return Some(lang::os::process::cwd),
+                    "pid()" => return Some(lang::os::process::pid),
+                    "ppid()" => return Some(lang::os::process::ppid),
+                    "exit(_)" => return Some(lang::os::process::exit),
+                    "exec(_)" => return Some(lang::os::process::exec),
+
+                    _ => {}
+                },
+                // Not static
+                false => match sig.as_str() {
+                    _ => {}
+                },
+
+            },
+            "Runtime" => match is_static {
+                // Is Static
+                true => match sig.as_str() {
+                    "os()" => return Some(lang::os::runtime::os),
+                    "arch()" => return Some(lang::os::runtime::arch),
+                    // "set(_,_)" => return Some(),
+                    _ => {}
+                },
+                // Not static
+                false => match sig.as_str() {
+                    _ => {}
+                },
+            },
+            
             _ => {}
         },
         "std/fs" => match class.as_str() {
@@ -326,6 +358,10 @@ extern "C" fn bind_foreign_method(
             "Path" => match is_static {
                 true => match sig.as_str() {
                     "canonical(_)" => return Some(lang::fs::canonical),
+                    "exists(_)" => return Some(lang::fs::exists),
+                    "separator()" => return Some(lang::fs::separator),
+                    "ext(_)" => return Some(lang::fs::ext),
+                    "filename(_)" => return Some(lang::fs::filename),
                     _ => {}
                 },
                 false => match sig.as_str() {
