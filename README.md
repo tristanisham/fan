@@ -5,8 +5,8 @@
 
 # Fan
 
-Fan is a dynamically-typed programming language based on
-[Wren](https://wren.io). Fan's aim is to be _statically compilable_, portable,
+Fan is a dynamically-typed programming language. It is based on
+[Wren](https://wren.io), but features significant customizations to its runtime. Fan's aim is to be _statically compilable_, portable,
 and come with batteries-included.
 
 ```sh
