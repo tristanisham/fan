@@ -282,8 +282,6 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			if (isStatic && std::strcmp(signature, "filename(_)") == 0) {
 				return lib::fs::filename;
 			}
-
-
 		}
 
 		if (std::strcmp(className, "Fs") == 0) {
@@ -442,7 +440,7 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 
 void vm::Runtime::repl() const {
 	std::string line;
-	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL"  << std::endl;
+	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL" << std::endl;
 	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
 	while (true) {
@@ -457,10 +455,9 @@ void vm::Runtime::repl() const {
 				break;
 			}
 		}
-			if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
-				// std::cerr << "Error: " + stat << std::endl;
-			}
-			std::cout << rang::fg::blue << "%> " << rang::fg::reset;
-
+		if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
+			// std::cerr << "Error: " + stat << std::endl;
+		}
+		std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 	}
 }

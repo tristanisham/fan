@@ -1,7 +1,7 @@
 #include "boost/algorithm/string/join.hpp"
 //@clang-ignore
-#include <boost/format.hpp>
 #include "vm.hpp"
+#include <boost/format.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <wren.hpp>
+
 
 #ifdef _WIN32
 #include <tlhelp32.h>
@@ -199,7 +200,7 @@ void lib::os::processExec(WrenVM* vm) {
  * @throws std::runtime_error for failed process starts
  */
 std::string vm::exec(const char* cmd) {
-	std::array<char, 256> buffer{};
+	std::array<char, 256> buffer {};
 	std::string result;
 	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
 	if (!pipe) {
