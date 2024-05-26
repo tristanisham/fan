@@ -94,10 +94,8 @@ std::string lib::wren_type_to_string(const WrenType& type) {
 		return "null";
 	case WREN_TYPE_STRING:
 		return "String";
-	case WREN_TYPE_UNKNOWN:
-		return "unknown";
 	default:
-		return "invalid";
+		return "unknown";
 	}
 }
 
@@ -439,12 +437,12 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 }
 
 void vm::Runtime::repl() const {
-	std::string line;
+	std::string buffer;
 	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL" << std::endl;
 	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
 	while (true) {
-		if (!std::getline(std::cin, line)) {
+		if (!std::getline(std::cin, buffer)) {
 			if (std::cin.eof()) {
 				// Handle EOF (Ctrl+D) here
 				std::cin.clear();
@@ -455,7 +453,7 @@ void vm::Runtime::repl() const {
 				break;
 			}
 		}
-		if (auto stat = this->execute(line); stat != WREN_RESULT_SUCCESS) {
+		if (auto stat = this->execute(buffer); stat != WREN_RESULT_SUCCESS) {
 			// std::cerr << "Error: " + stat << std::endl;
 		}
 		std::cout << rang::fg::blue << "%> " << rang::fg::reset;

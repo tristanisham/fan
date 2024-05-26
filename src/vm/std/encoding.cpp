@@ -69,7 +69,10 @@ void lib::encoding::md_to_html(WrenVM* vm) {
 	auto const input = wrenGetSlotString(vm, 1);
 
 	auto out = cmark_markdown_to_html(input, std::strlen(input), 0);
-	wrenSetSlotString(vm, 0, out);
+	std::string buffer{out};
+	wrenSetSlotString(vm, 0, buffer.c_str());
+
+	// Free the memory returned by CMark
 	if (out != nullptr) {
 		std::free(out);
 		out = nullptr;
