@@ -30,13 +30,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     ########################
 
     # Add back: fsanitize=leak
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fasynchronous-unwind-tables -ggdb3 -Wall  -fsanitize=leak -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fasynchronous-unwind-tables -ggdb3 -Wall  -fsanitize=leak -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -flto=auto")
     set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -no-pie -Wall -fno-omit-frame-pointer")
 
     ########################
     # RELEASE              #
     ########################
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIE -D_FORTIFY_SOURCE=2 -fexceptions -Wall -O2 -flto -funroll-loops")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIE -D_FORTIFY_SOURCE=2 -fexceptions -Wall -O2 -flto=auto -funroll-loops")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS_RELEASE} -fPIE  -s")
     # -static -static-libgcc -static-libstdc++
 elseif(MSVC)
