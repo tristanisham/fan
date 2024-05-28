@@ -53,8 +53,6 @@ namespace fs {
 
 	void filename(WrenVM* vm);
 
-
-
 }  // namespace fs
 
 namespace os {
@@ -114,6 +112,8 @@ namespace net::http {
 				throw std::runtime_error("Failed to initialize CURL");
 			}
 
+			this->header_list = nullptr;
+
 			// Default CURL arguments:
 			this->followLocation(true);
 			this->autoReferer(true);
@@ -127,11 +127,22 @@ namespace net::http {
 				return;
 			}
 
+			if (this->header_list != nullptr) {
+				// Cleans up header list on CURL client
+				curl_slist_free_all(this->header_list);
+			}
+
 			curl_easy_cleanup(this->curl);
 			this->curl = nullptr;
 		}
 
 		enum class HttpMethod { GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH, TRACE };
+
+		void header(std::string const& key, std::string const& val) {
+			std::string newBuff = (boost::format("%1%: %2%") % key % val).str();
+			this->header_list = curl_slist_append(this->header_list, newBuff.c_str());
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, this->header_list);
+		}
 
 		void url(std::string const& url) const {
 			curl_easy_setopt(this->curl, CURLOPT_URL, url.c_str());
@@ -168,6 +179,15 @@ namespace net::http {
 			curl_easy_setopt(this->curl, CURLOPT_CUSTOMREQUEST, method_str.c_str());
 		}
 
+		void body(std::string const& data) {
+			this->_body = data;
+			// Specify the data to send
+			curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->_body.c_str());
+
+			// Set the size of the data to send
+			curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->_body.length());
+		}
+
 		/**
 		 * fetch(string? url) returns a pair<header, resp> containing the HTTP response headers and body.
 		 * @throws std::runtime_error
@@ -195,6 +215,8 @@ namespace net::http {
 	private:
 		CURL* curl;
 		std::string _url;
+		curl_slist* header_list;
+		std::string _body;
 
 		static std::string getHttpMethodString(HttpMethod method) {
 			switch (method) {
@@ -224,6 +246,12 @@ namespace net::http {
 	void requestDealloc(void* data);
 
 	void send(WrenVM* vm);
+
+	void setMethod(WrenVM* vm);
+
+	void setHeader(WrenVM* vm);
+
+	void setBody(WrenVM* vm);
 
 }
 

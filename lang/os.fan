@@ -1,4 +1,4 @@
-import "std/fs" for File, Path
+import "std/fs" for File, Path, Fs
 
 class Env {
   // get returns the associated value from 'key'.
@@ -25,7 +25,7 @@ class Env {
 
   static loadDotEnv(path) {
     if (path == null) {
-      var cwd = Path.cwd()
+      var cwd = Fs.cwd()
       var path = "%(cwd)%(Path.separator()).env"
 
       if (!Path.exists(path)) {

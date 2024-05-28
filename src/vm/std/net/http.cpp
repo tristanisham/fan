@@ -1,4 +1,3 @@
-#include "boost/format/format_fwd.hpp"
 #include <boost/format.hpp>
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -56,11 +55,75 @@ void lib::net::http::requestDealloc(void* data) {
 	closeClient(static_cast<Client**>(data));
 }
 
+void lib::net::http::setHeader(WrenVM* vm) {
+	wrenEnsureSlots(vm, 3);
+	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
+	if (*client == nullptr) {
+		lib::abort(vm, "CURL Error: Cannot build client when setting header");
+		return;
+	}
+
+	auto const key = wrenGetSlotString(vm, 1);
+	auto const val = wrenGetSlotString(vm, 2);
+
+	(*client)->header(key, val);
+}
+
+void lib::net::http::setMethod(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
+	if (*client == nullptr) {
+		lib::abort(vm, "CURL Error: Cannot build client when setting method");
+		return;
+	}
+
+	Client::HttpMethod verb;
+
+	auto const methodStr = wrenGetSlotString(vm, 1);
+	if (strcmp(methodStr, "GET") == 0) {
+		verb = Client::HttpMethod::GET;
+	} else if (strcmp(methodStr, "POST") == 0) {
+		verb = Client::HttpMethod::POST;
+	} else if (strcmp(methodStr, "PUT") == 0) {
+		verb = Client::HttpMethod::PUT;
+	} else if (strcmp(methodStr, "DELETE") == 0) {
+		verb = Client::HttpMethod::DELETE;
+	} else if (strcmp(methodStr, "HEAD") == 0) {
+		verb = Client::HttpMethod::HEAD;
+	} else if (strcmp(methodStr, "OPTIONS") == 0) {
+		verb = Client::HttpMethod::OPTIONS;
+	} else if (strcmp(methodStr, "PATCH") == 0) {
+		verb = Client::HttpMethod::PATCH;
+	} else if (strcmp(methodStr, "TRACE") == 0) {
+		verb = Client::HttpMethod::TRACE;
+	} else {
+		verb = Client::HttpMethod::GET;	 // Return UNKNOWN for unrecognized methods
+	}
+
+	// Innefficiant (I do the workd twice) but fuck it.
+	(*client)->method(verb);
+}
+
+void lib::net::http::setBody(WrenVM* vm) {
+	wrenEnsureSlots(vm, 2);
+	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
+	if (*client == nullptr) {
+		lib::abort(vm, "CURL Error: Cannot build client when generating body");
+		return;
+	}
+
+	auto const data_slice = wrenGetSlotString(vm, 1);
+	std::string data { data_slice };
+
+
+	(*client)->body(data);
+}
+
 void lib::net::http::send(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
 	auto** client = static_cast<Client**>(wrenGetSlotForeign(vm, 0));
 	if (*client == nullptr) {
-		lib::abort(vm, "CURL Error: Cannot send request");
+		lib::abort(vm, "CURL Error: Cannot build client to send request");
 		return;
 	}
 

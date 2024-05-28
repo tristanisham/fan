@@ -3,13 +3,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <curl/curl.h>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
 
 /**
- * Fan is a language runtime focused on making software devlopment easy,
+ * Fan is a language runtime focused on making software development easy,
  * performant, and fun. The Fan command line tool features a simple REPL and
  * the ability to execute a script, typically the last argument value on the
  * command line if no other commands or flags are passed.
