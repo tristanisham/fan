@@ -25,7 +25,7 @@ void lib::os::getEnv(WrenVM* vm) {
 	const char* key = wrenGetSlotString(vm, 1);
 	auto val = std::getenv(key);
 	wrenEnsureSlots(vm, 1);
-	if (val == NULL) {
+	if (val == nullptr) {
 		wrenSetSlotNull(vm, 0);
 	} else {
 		wrenSetSlotString(vm, 0, val);
@@ -103,7 +103,7 @@ double getParentProcessId() {
 	return 0;  // Parent process not found.
 #else
 	pid_t ppid = getppid();
-	double dPpid = static_cast<double>(ppid);
+	auto dPpid = static_cast<double>(ppid);
 	return dPpid;
 #endif
 }
@@ -155,7 +155,7 @@ constexpr std::string_view vm::getPlatformArchitecture() {
 void lib::os::runtimeOS(WrenVM* vm) {
 	wrenEnsureSlots(vm, 1);
 	auto os = vm::getOperatingSystem();
-	if (os != "uknown") {
+	if (os != "unknown") {
 		wrenSetSlotString(vm, 0, os.data());
 	} else {
 		wrenSetSlotNull(vm, 0);
@@ -183,7 +183,7 @@ void lib::os::processExec(WrenVM* vm) {
 	for (int i = 0; i < argsLen; i++) {
 		wrenGetListElement(vm, 2, i, 4);
 		auto arg = wrenGetSlotString(vm, 4);
-		args.push_back(arg);
+		args.emplace_back(arg);
 	}
 
 	std::string parsedArgs = boost::algorithm::join(args, " ");

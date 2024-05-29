@@ -10,6 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories("include/")
 include_directories("vendor/")
 
+
 # CMark
 link_directories("vendor/cmark")
 
@@ -30,8 +31,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     ########################
 
     # Add back: fsanitize=leak
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fasynchronous-unwind-tables -ggdb3 -Wall  -fsanitize=leak -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -flto=auto")
-    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak -fsanitize=address -fsanitize=undefined -no-pie -Wall -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fsanitize=address,leak,undefined -fno-omit-frame-pointer -fasynchronous-unwind-tables -no-pie -ggdb3 -Wall -flto=auto")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address,leak,undefined -fno-omit-frame-pointer -no-pie -Wall -fno-omit-frame-pointer")
 
     ########################
     # RELEASE              #
@@ -57,10 +58,17 @@ else ()
     # Executable
     add_executable(fan ${SRC_FILES})
 
+    # Link libasan only for debug builds
+#    if(CMAKE_BUILD_TYPE MATCHES Debug)
+#        target_link_libraries(fan PRIVATE asan)
+#    endif()
+
 
     # Final Build
     target_link_libraries(fan-dev PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} pthread ${CURL_LIBRARIES} cmark) #leveldb
     target_link_libraries(fan PRIVATE ${CMAKE_CXX_STANDARD_LIBRARIES} fan-dev)
+
+
 endif()
 
 # Static Lib
