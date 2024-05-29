@@ -27,15 +27,13 @@ file(GLOB_RECURSE SRC_FILES src/main.cpp src/cli/*.cpp)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     ########################
-    # DEBUG              #
+    #        DEBUG         #
     ########################
-
-    # Add back: fsanitize=leak
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -fsanitize=address,leak,undefined -fno-omit-frame-pointer -fasynchronous-unwind-tables -no-pie -ggdb3 -Wall -flto=auto")
     set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address,leak,undefined -fno-omit-frame-pointer -no-pie -Wall -fno-omit-frame-pointer")
 
     ########################
-    # RELEASE              #
+    #        RELEASE       #
     ########################
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIE -D_FORTIFY_SOURCE=2 -fexceptions -Wall -O2 -flto=auto -funroll-loops")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS_RELEASE} -fPIE  -s")

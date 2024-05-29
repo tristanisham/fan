@@ -1,4 +1,5 @@
 #pragma once
+#include "nlohmann/json.hpp"
 #include <boost/format.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -12,6 +13,8 @@
 #include <vector>
 #include <wren.hpp>
 
+using json = nlohmann::json;
+
 namespace lib {
 void abort(WrenVM* vm, const std::string& msg);
 std::string wren_type_to_string(const WrenType& type);
@@ -20,7 +23,7 @@ namespace fs {
 	/// Allocator for the std/fs/File class.
 	void fileAlloc(WrenVM* vm);
 
-	/// Dealocates File data.
+	/// Deallocates File data.
 	void fileFinalize(void* data);
 
 	void fileWrite(WrenVM* vm);
@@ -269,6 +272,16 @@ namespace encoding {
 	void base16_decode(WrenVM* vm);
 
 	void md_to_html(WrenVM* vm);
+
+	void jsonAlloc(WrenVM* vm);
+	void jsonDealloc(void* data);
+
+	class JSON {
+		json data;
+	public:
+		explicit JSON(std::string const& source);
+	};
+
 }
 
 

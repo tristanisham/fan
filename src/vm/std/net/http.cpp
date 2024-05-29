@@ -24,7 +24,7 @@ void lib::net::http::requestAlloc(WrenVM* vm) {
 		}
 
 		// if (client == nullptr) {
-		// 	lib::abort(vm, "Could not initalize HTTP Client");
+		// 	lib::abort(vm, "Could not initialize HTTP Client");
 		// 	return;
 		// }
 
@@ -100,7 +100,7 @@ void lib::net::http::setMethod(WrenVM* vm) {
 		verb = Client::HttpMethod::GET;	 // Return UNKNOWN for unrecognized methods
 	}
 
-	// Innefficiant (I do the workd twice) but fuck it.
+	// Inefficient (I do the work twice), but fuck it.
 	(*client)->method(verb);
 }
 

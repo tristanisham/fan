@@ -107,11 +107,11 @@ std::string lib::wren_type_to_string(const WrenType& type) {
  */
 size_t vm::createVmMap(WrenVM* vm, const int& slot, const std::unordered_map<std::string, std::string>& entries) {
 	const auto slotCount = wrenGetSlotCount(vm);
-	const size_t requiredSlotes = entries.size() * 2;
+	const size_t requiredSlots = entries.size() * 2;
 	if (slot > slotCount) {
 		throw std::logic_error { "slot greater than available slot count. You cannot assign a map to a dynamically allocated slot" };
 	}
-	wrenEnsureSlots(vm, static_cast<int>(requiredSlotes));
+	wrenEnsureSlots(vm, static_cast<int>(requiredSlots));
 	wrenSetSlotNewMap(vm, slot);
 	auto key_slot = slotCount + 1;
 	auto val_slot = slotCount + 2;
@@ -223,6 +223,14 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		if (strcmp(className, "Request") == 0) {
 			methods.allocate = lib::net::http::requestAlloc;
 			methods.finalize = lib::net::http::requestDealloc;
+			return methods;
+		}
+	}
+
+	if (std::strcmp(module, "std/encoding") == 0) {
+		if (strcmp(className, "JSON") == 0) {
+			methods.allocate = lib::encoding::jsonAlloc;
+			methods.finalize = lib::encoding::jsonDealloc;
 			return methods;
 		}
 	}
@@ -471,3 +479,5 @@ void vm::Runtime::repl() const {
 		std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 	}
 }
+
+
