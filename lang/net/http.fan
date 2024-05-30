@@ -1,5 +1,5 @@
 foreign class Request {
-    construct parse(url) {}
+    construct new(url) {}
 
     foreign send()
 

@@ -9,6 +9,9 @@
 
 void lib::encoding::base64_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base64_encode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
 
@@ -19,6 +22,9 @@ void lib::encoding::base64_encode(WrenVM* vm) {
 
 void lib::encoding::base64_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base64_decode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
 
@@ -28,6 +34,9 @@ void lib::encoding::base64_decode(WrenVM* vm) {
 
 void lib::encoding::base32_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base32_encode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
 
@@ -38,6 +47,9 @@ void lib::encoding::base32_encode(WrenVM* vm) {
 
 void lib::encoding::base32_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base32_decode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
 
@@ -47,6 +59,9 @@ void lib::encoding::base32_decode(WrenVM* vm) {
 
 void lib::encoding::base16_encode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base16_encode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::string encoded;
 
@@ -57,6 +72,9 @@ void lib::encoding::base16_encode(WrenVM* vm) {
 
 void lib::encoding::base16_decode(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error base16_decode:  parameter 1 must be a String.");
+	}
 	std::string input { wrenGetSlotString(vm, 1) };
 	std::stringstream decoded;
 
@@ -66,6 +84,9 @@ void lib::encoding::base16_decode(WrenVM* vm) {
 
 void lib::encoding::md_to_html(WrenVM* vm) {
 	wrenEnsureSlots(vm, 2);
+	if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
+		lib::abort(vm, "Error md_to_html:  parameter 1 must be a String.");
+	}
 	auto const input = wrenGetSlotString(vm, 1);
 
 	auto out = cmark_markdown_to_html(input, std::strlen(input), 0);
@@ -78,47 +99,4 @@ void lib::encoding::md_to_html(WrenVM* vm) {
 		out = nullptr;
 	}
 
-}
-
-lib::encoding::JSON::JSON(const std::string& source) {
-	this->data = json::parse(source);
-}
-
-
-
-void lib::encoding::jsonAlloc(WrenVM* vm) {
-	try {
-		wrenEnsureSlots(vm, 2);
-		std::string data{ wrenGetSlotString(vm, 1)};
-		if (wrenGetSlotType(vm, 1) != WrenType::WREN_TYPE_STRING) {
-			lib::abort(vm, "Error: parameter 1 must be a String");
-		}
-
-		JSON* buffer;
-		try {
-			buffer = new JSON(data);
-		} catch (std::runtime_error const& err) {
-			lib::abort(vm, (boost::format("Error constructing JSON object: %1%") %  err.what()).str());
-			return;
-		}
-
-		auto** json_ptr = static_cast<JSON**>(wrenSetSlotNewForeign(vm, 0, 0, sizeof(JSON*)));
-		*json_ptr = buffer;
-
-	} catch (std::exception const& err) {
-		lib::abort(vm, err.what());
-	}
-}
-
-void closeJSON(lib::encoding::JSON** object) {
-	if (*object == nullptr) {
-		return;
-	}
-
-	delete *object;
-	*object = nullptr;
-}
-
-void lib::encoding::jsonDealloc(void* data) {
-	closeJSON(static_cast<JSON**>(data));
 }

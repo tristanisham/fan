@@ -273,15 +273,6 @@ namespace encoding {
 
 	void md_to_html(WrenVM* vm);
 
-	void jsonAlloc(WrenVM* vm);
-	void jsonDealloc(void* data);
-
-	class JSON {
-		json data;
-	public:
-		explicit JSON(std::string const& source);
-	};
-
 }
 
 

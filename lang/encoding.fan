@@ -20,8 +20,4 @@ class Markdown {
     foreign static toHTML(buff)
 }
 
-foreign class JSON {
-     construct new(data) {}
 
-
- }

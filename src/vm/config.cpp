@@ -227,13 +227,6 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 		}
 	}
 
-	if (std::strcmp(module, "std/encoding") == 0) {
-		if (strcmp(className, "JSON") == 0) {
-			methods.allocate = lib::encoding::jsonAlloc;
-			methods.finalize = lib::encoding::jsonDealloc;
-			return methods;
-		}
-	}
 
 	return methods;
 }
@@ -412,6 +405,10 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::md_to_html;
 			}
 		}
+
+//		if (std::strcmp(className, "JSON") == 0) {
+//
+//		}
 	}
 
 	return nullptr;
