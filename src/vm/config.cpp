@@ -440,13 +440,13 @@ vm::Runtime::Runtime() {
 	// Stores own copy of config. Can drop config.
 	WrenVM* unsafe_vm = wrenNewVM(&config);
 
-	auto deleter = [](WrenVM* vm) {
-		wrenFreeVM(vm);	 // Replace with the appropriate cleanup function
+	auto deleter = [](WrenVM* vma) {
+		wrenFreeVM(vma);	 // Replace with the appropriate cleanup function
 	};
 
-	std::shared_ptr<WrenVM> vm(unsafe_vm, deleter);
+	std::shared_ptr<WrenVM> vmx(unsafe_vm, deleter);
 
-	this->vm = vm;
+	this->vm = vmx;
 }
 
 WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::string& module) const {
