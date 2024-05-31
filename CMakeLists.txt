@@ -18,7 +18,7 @@ find_package(CURL REQUIRED)
 
 file(GLOB_RECURSE WREN src/wren/*.c)
 file(GLOB_RECURSE LIB_FILES  src/vm/*.cpp src/vm/*.c)
-file(GLOB_RECURSE SRC_FILES src/main.cpp src/cli/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/main.cpp)
 
 # Static Analyzer: https://gcc.gnu.org/onlinedocs/gcc-10.1.0/gcc/Static-Analyzer-Options.html
 # Linker Options: https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html

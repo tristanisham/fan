@@ -2,14 +2,16 @@
 #include "vm.hpp"
 
 #include <boost/format.hpp>
-#include <cli.hpp>
+#include <meta.hpp>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <curl/curl.h>
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <rang.hpp>
 #include <stdexcept>
 #include <string>
@@ -139,10 +141,23 @@ static void errorFn(WrenVM* vm, const WrenErrorType errorType, const char* modul
 		// printf("[%s:%d] [Error] %s\n", module, line, msg);
 	} break;
 	case WREN_ERROR_STACK_TRACE: {
-		std::cerr << boost::format("[%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		std::cerr << rang::fg::red << boost::format("[%1%:%2%] ") % module % line << rang::fg::reset << msg << std::endl;
 	} break;
 	case WREN_ERROR_RUNTIME: {
-		std::cerr << boost::format("runtime [%1%:%2%] ") % module % line << rang::fg::red << msg << rang::fg::reset << std::endl;
+		if (module) {
+			std::cerr << boost::format("runtime [%1%:%2%] ") % module % line;
+		} else {
+			std::cerr << rang::fg::red << "Error: " << rang::fg::reset << msg << std::endl;
+			if (std::getenv("FAN_LIB") == NULL) {
+				std::cerr << rang::fg::blue << "\nHELP: " << rang::fg::reset
+				<< "Fan requires the " << rang::fg::yellow << "FAN_LIB " << rang::fg::reset
+				<< "environment variable to be set with the path to Fan's standard library.\n"
+				<< "This is typically found in the "  << rang::fg::yellow << "lang/ " << rang::fg::reset
+				<< "directory included in your installation.\n\n"
+				<< "export FAN_LIB=\"" << rang::fg::yellow << "/fake/path/to/replace"
+				<< rang::fg::reset << "/fan/lang\"" << std::endl;
+			}
+		}
 		// Need to find a way to keep track of user source to print actual file name.
 	} break;
 	}
@@ -226,7 +241,6 @@ WrenForeignClassMethods bindForeignClassFn(WrenVM* vm, const char* module, const
 			return methods;
 		}
 	}
-
 
 	return methods;
 }
@@ -406,9 +420,9 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 			}
 		}
 
-//		if (std::strcmp(className, "JSON") == 0) {
-//
-//		}
+		//		if (std::strcmp(className, "JSON") == 0) {
+		//
+		//		}
 	}
 
 	return nullptr;
@@ -441,7 +455,7 @@ vm::Runtime::Runtime() {
 	WrenVM* unsafe_vm = wrenNewVM(&config);
 
 	auto deleter = [](WrenVM* vma) {
-		wrenFreeVM(vma);	 // Replace with the appropriate cleanup function
+		wrenFreeVM(vma);  // Replace with the appropriate cleanup function
 	};
 
 	std::shared_ptr<WrenVM> vmx(unsafe_vm, deleter);
@@ -455,7 +469,7 @@ WrenInterpretResult vm::Runtime::execute(const std::string& code, const std::str
 
 void vm::Runtime::repl() const {
 	std::string buffer;
-	std::cout << rang::style::bold << "Fan " << cli::VERSION << " REPL" << std::endl;
+	std::cout << rang::style::bold << "Fan " << meta::VERSION << " REPL" << std::endl;
 	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
 	while (true) {
@@ -476,5 +490,3 @@ void vm::Runtime::repl() const {
 		std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 	}
 }
-
-
