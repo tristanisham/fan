@@ -88,7 +88,7 @@ void lib::fs::fileRead(WrenVM* vm) {
 	fseek(*file, 0, SEEK_SET);
 	try {
 		const auto string = new char[fsize + 1];
-		(void)fread(string, fsize, 1, *file);
+		static_cast<void>(fread(string, fsize, 1, *file));
 		string[fsize] = 0;
 		wrenSetSlotString(vm, 0, string);
 		delete[] string;

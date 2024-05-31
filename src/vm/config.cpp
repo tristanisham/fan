@@ -148,7 +148,7 @@ static void errorFn(WrenVM* vm, const WrenErrorType errorType, const char* modul
 			std::cerr << boost::format("runtime [%1%:%2%] ") % module % line;
 		} else {
 			std::cerr << rang::fg::red << "Error: " << rang::fg::reset << msg << std::endl;
-			if (std::getenv("FAN_LIB") == NULL) {
+			if (std::getenv("FAN_LIB") == nullptr) {
 				std::cerr << rang::fg::blue << "\nHELP: " << rang::fg::reset
 				<< "Fan requires the " << rang::fg::yellow << "FAN_LIB " << rang::fg::reset
 				<< "environment variable to be set with the path to Fan's standard library.\n"
@@ -196,7 +196,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	searchPath.replace_extension(".fan");
 	if (!std::filesystem::exists(searchPath)) {
 		const std::string fmt = (boost::format("File %1% wasn't found.") % searchPath).str();
-		std::cerr << fmt << std::endl;
+		std::cerr << rang::fg::red << "Error: " << rang::fg::reset << fmt << std::endl;
 		mod.source = nullptr;
 		return mod;
 	}
@@ -211,7 +211,7 @@ WrenLoadModuleResult loadModuleFn(WrenVM* vm, const char* name) {
 	const long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	auto string = new char[fsize + 1];
-	(void)fread(string, fsize, 1, file);
+	static_cast<void>(fread(string, fsize, 1, file));
 	string[fsize] = 0;
 	mod.source = string;
 	mod.onComplete = &loadModuleComplete;
@@ -434,7 +434,7 @@ void vm::Runtime::setEntryPoint(const std::string& target) {
 
 vm::Runtime::~Runtime() {
 	curl_global_cleanup();
-	// wrenFreeVM ran further down the page in the shared pointer's "deleter" labmda.
+	// wrenFreeVM ran further down the page in the shared pointer's "deleter" lambda.
 }
 
 vm::Runtime::Runtime() {
