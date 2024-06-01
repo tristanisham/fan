@@ -2,7 +2,6 @@
 #include "vm.hpp"
 
 #include <boost/format.hpp>
-#include <meta.hpp>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -11,6 +10,7 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <meta.hpp>
 #include <ostream>
 #include <rang.hpp>
 #include <stdexcept>
@@ -149,13 +149,10 @@ static void errorFn(WrenVM* vm, const WrenErrorType errorType, const char* modul
 		} else {
 			std::cerr << rang::fg::red << "Error: " << rang::fg::reset << msg << std::endl;
 			if (std::getenv("FAN_LIB") == nullptr) {
-				std::cerr << rang::fg::blue << "\nHELP: " << rang::fg::reset
-				<< "Fan requires the " << rang::fg::yellow << "FAN_LIB " << rang::fg::reset
-				<< "environment variable to be set with the path to Fan's standard library.\n"
-				<< "This is typically found in the "  << rang::fg::yellow << "lang/ " << rang::fg::reset
-				<< "directory included in your installation.\n\n"
-				<< "export FAN_LIB=\"" << rang::fg::yellow << "/fake/path/to/replace"
-				<< rang::fg::reset << "/fan/lang\"" << std::endl;
+				std::cerr << rang::fg::blue << "\nHELP: " << rang::fg::reset << "Fan requires the " << rang::fg::yellow << "FAN_LIB " << rang::fg::reset
+						  << "environment variable to be set with the path to Fan's standard library.\n"
+						  << "This is typically found in the " << rang::fg::yellow << "lang/ " << rang::fg::reset << "directory included in your installation.\n\n"
+						  << "export FAN_LIB=\"" << rang::fg::yellow << "/fake/path/to/replace" << rang::fg::reset << "/fan/lang\"" << std::endl;
 			}
 		}
 		// Need to find a way to keep track of user source to print actual file name.
@@ -419,10 +416,18 @@ WrenForeignMethodFn bindForeignMethodFn(WrenVM* vm, const char* module, const ch
 				return lib::encoding::md_to_html;
 			}
 		}
+	}
 
-		//		if (std::strcmp(className, "JSON") == 0) {
-		//
-		//		}
+	if (std::strcmp(module, "std/regex") == 0) {
+		if (std::strcmp(className, "Regex") == 0) {
+			if (isStatic && std::strcmp(signature, "match(_,_,_)") == 0) {
+				return lib::regex::match;
+			}
+
+			if (isStatic && std::strcmp(signature, "contains(_,_,_)") == 0) {
+				return lib::regex::contains;
+			}
+		}
 	}
 
 	return nullptr;

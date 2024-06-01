@@ -275,6 +275,10 @@ namespace encoding {
 
 }
 
+namespace regex {
+	void match(WrenVM* vm);
 
+	void contains(WrenVM* vm);
+}
 
 }  // namespace lib

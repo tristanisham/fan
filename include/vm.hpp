@@ -5,6 +5,14 @@
 #include <unordered_map>
 #include <wren.hpp>
 
+#ifndef NDEBUG
+	#include <rang.hpp>
+    #define DEBUG_PRINT(...) std::cout << rang::fg::blue << "DEBUG " << rang::fg::reset << __VA_ARGS__ << std::endl;
+#else
+    #define DEBUG_PRINT(...)
+#endif
+
+
 namespace vm {
 
 size_t createVmMap(WrenVM* vm, const int& slot, const std::unordered_map<std::string, std::string>& entries);
