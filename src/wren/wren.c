@@ -2248,8 +2248,7 @@ void wrenDebugPrintStackTrace(WrenVM* vm) {
 	if (IS_STRING(fiber->error)) {
 		vm->config.errorFn(vm, WREN_ERROR_RUNTIME, NULL, -1, AS_CSTRING(fiber->error));
 	} else {
-		// TODO: Print something a little useful here. Maybe the name of the error's
-		// class?
+		// TODO: Print something a little useful here. Maybe the name of the error's class?
 		vm->config.errorFn(vm, WREN_ERROR_RUNTIME, NULL, -1, "[error object]");
 	}
 
