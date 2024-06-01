@@ -76,8 +76,8 @@ std::regex::flag_type extractFlags(std::vector<std::string> const& tokens) {
 			local_flags |= std::regex_constants::optimize;
 		} else if (flag == "collate") {
 			local_flags |= std::regex_constants::collate;
-		} else if (flag == "multiline") {
-			local_flags |= std::regex_constants::multiline;
+		/*} else if (flag == "multiline") {
+			local_flags |= std::regex_constants::multiline;*/
 		} else if (flag == "extended") {
 			local_flags |= std::regex_constants::extended;
 		} else if (flag == "awk") {
