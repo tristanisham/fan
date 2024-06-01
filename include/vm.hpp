@@ -6,12 +6,11 @@
 #include <wren.hpp>
 
 #ifndef NDEBUG
-	#include <rang.hpp>
-    #define DEBUG_PRINT(...) std::cout << rang::fg::blue << "DEBUG " << rang::fg::reset << __VA_ARGS__ << std::endl;
+#include <rang.hpp>
+#define DEBUG_PRINT(...) std::cout << rang::fg::blue << "DEBUG " << rang::fg::reset << __VA_ARGS__ << std::endl;
 #else
-    #define DEBUG_PRINT(...)
+#define DEBUG_PRINT(...)
 #endif
-
 
 namespace vm {
 
