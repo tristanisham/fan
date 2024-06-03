@@ -13,6 +13,8 @@ and come with batteries-included.
 Right now, you still have to clone the repository, but then just run the following Docker command to build a release version
 of Fan. Once I figure out the registry, this will be simpler still. 
 
+## Manually
+
 ```shell
 docker build -t fan .
 ```
