@@ -9,12 +9,21 @@ Fan is a dynamically-typed programming language. It is based on
 [Wren](https://wren.io), but features significant customizations to its runtime. Fan's aim is to be _statically compilable_, portable,
 and come with batteries-included.
 
+## Docker
+Right now, you still have to clone the repository, but then just run the following Docker command to build a release version
+of Fan. Once I figure out the registry, this will be simpler still. 
+
+```shell
+docker build -t fan .
+```
+
+
 ```sh
 git clone --recurse-submodules https://github.com/tristanisham/fan.git
 ```
 
 Fan currently supports, GCC, Clang, and targets *nix systems. Windows support
-is a work in progross. MSVC is God's punishment for man's arrogance.
+is a work in progress. MSVC is God's punishment for man's arrogance.
 
 ## Setup & Dependencies
 
