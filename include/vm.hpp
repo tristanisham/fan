@@ -4,6 +4,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <wren.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 #ifndef NDEBUG
 #include <rang.hpp>
@@ -26,7 +27,7 @@ constexpr std::string_view getPlatformArchitecture();
 
 class Runtime {
 public:
-	Runtime();
+	Runtime() = default;
 	~Runtime();
 	[[nodiscard]] WrenInterpretResult execute(const std::string& code, const std::string& module = "main") const;
 	void repl() const;
