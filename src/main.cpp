@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
 		meta::print_version();
 	});
 
-	auto subc_run = app.add_subcommand("run", "Run a Fan script");
+	auto subcmd_run = app.add_subcommand("run", "Run a Fan script");
 	std::string run_target;
-	subc_run->add_option("file", run_target, "Fan script to run");
-	subc_run->callback([&]() {
+	subcmd_run->add_option("file", run_target, "Fan script to run");
+	subcmd_run->callback([&]() {
 		std::filesystem::path target { run_target };
 		if (!std::filesystem::exists(target)) {
 			fprintf(stderr, "File does not exist, or is not .fan\n");
@@ -56,8 +56,8 @@ int main(int argc, char* argv[]) {
 		}
 	});
 
-	auto subc_repl = app.add_subcommand("repl", "Start the Fan repl");
-	subc_repl->callback([&]() {
+	auto subcmd_repl = app.add_subcommand("repl", "Start the Fan repl");
+	subcmd_repl->callback([&]() {
 		vm::Runtime runtime {};
 		runtime.repl();
 		throw CLI::Success();
