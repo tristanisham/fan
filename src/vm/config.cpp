@@ -558,13 +558,13 @@ void vm::Runtime::repl() const {
 							}
 							break;
 						}
-						case 'C':
-							std::cout << "\nRight arrow pressed" << std::endl;
-							break;
-						case 'D':
-							std::cout << "\nLeft arrow pressed" << std::endl;
-							break;
-						}
+//						case 'C':
+//							std::cout << "\nRight arrow pressed" << std::endl;
+//							break;
+//						case 'D':
+//							std::cout << "\nLeft arrow pressed" << std::endl;
+//							break;
+//						}
 					}
 				} else if (c == '\n') {
 					std::cout << std::endl;
