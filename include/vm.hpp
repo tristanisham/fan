@@ -5,10 +5,14 @@
 #include <unordered_map>
 #include <wren.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <termios.h>
+#include <csignal>
 
 #ifndef NDEBUG
 #include <rang.hpp>
 #define DEBUG_PRINT(...) std::cout << rang::fg::blue << "DEBUG " << rang::fg::reset << __VA_ARGS__ << std::endl;
+#define ERROR_PRINT(...) std::cout << rang::fg::red << "ERROR " << rang::fg::reset << __VA_ARGS__ << std::endl;
+
 #else
 #define DEBUG_PRINT(...)
 #endif
