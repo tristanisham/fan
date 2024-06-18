@@ -27,7 +27,7 @@ constexpr std::string_view getPlatformArchitecture();
 
 class Runtime {
 public:
-	Runtime() = default;
+	Runtime();
 	~Runtime();
 	[[nodiscard]] WrenInterpretResult execute(const std::string& code, const std::string& module = "main") const;
 	void repl() const;
