@@ -3,7 +3,7 @@
 
 namespace meta {
 // Traditional SEMVER. The gopher can't get you here.
-inline auto VERSION = "v0.1.0";
+inline auto VERSION = "v0.1.1";
 
 inline void print_version() {
 #if NDEBUG

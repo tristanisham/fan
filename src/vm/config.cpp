@@ -491,7 +491,7 @@ static void setRawMode(bool enable) {
 // }
 
 // Function to set the command in the terminal input
-static void setCommandInTerminal(const std::string &command) {
+static void setCommandInTerminal(const std::string& command) {
 	std::cout << "\033[2K\r" << command << std::flush;
 }
 
@@ -502,74 +502,103 @@ void vm::Runtime::repl() const {
 	std::string buffer;
 	std::vector<std::string> history;
 
-//	signal(SIGINT, [](int signum) {
-//		setRawMode(false);	// Disable raw mode
-//		exit(signum);
-//	});
+		signal(SIGINT, [](int signum) {
+			setRawMode(false);	// Disable raw mode
+			exit(signum);
+		});
 
 	std::cout << rang::style::bold << "Fan " << meta::VERSION << " REPL" << std::endl;
 	std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 
-	setRawMode(true);  // Enable raw mode
-	while (true) {
-		char c;
-		buffer.clear();
-		std::cout.flush();
-
+	try {
+		setRawMode(true);  // Enable raw mode
 		while (true) {
-			if (!read(STDIN_FILENO, &c, 1)) {
-				if (std::cin.eof()) {
-					std::cin.clear();
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-					break;
-				}
-			}
+			char c;
+			buffer.clear();
+			std::cout.flush();
 
-			if (c == '\033') {	// Escape character
-				char seq[2];
-				read(STDIN_FILENO, &seq, 2);
-				if (seq[0] == '[') {
-					switch (seq[1]) {
-					case 'A':
-						std::cout << "\nUp arrow pressed" << std::endl;
-						break;
-					case 'B':
-						std::cout << "\nDown arrow pressed" << std::endl;
-						break;
-					case 'C':
-						std::cout << "\nRight arrow pressed" << std::endl;
-						break;
-					case 'D':
-						std::cout << "\nLeft arrow pressed" << std::endl;
+			uint navCounter = 0;
+
+			while (true) {
+				if (!read(STDIN_FILENO, &c, 1)) {
+					if (std::cin.eof()) {
+						std::cin.clear();
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 						break;
 					}
 				}
-			} else if (c == '\n') {
-				std::cout << std::endl;
-				break;
-			} else if (c == 27 || c == 3) {
-				goto exitRepl;
-			} else if (c == 8 || c == 127) {  // Backspace or Delete key
-				if (!buffer.empty()) {
-					buffer.pop_back();
-					std::cout << "\b";  // Move cursor back, print space, move cursor back again
+
+				if (c == '\033') {	// Escape character
+
+					char seq[2];
+					read(STDIN_FILENO, &seq, 2);
+					if (seq[0] == '[') {
+						switch (seq[1]) {
+						case 'A': {
+							std::cout << "\nUp arrow pressed" << std::endl;
+							std::string lastCmd;
+							lastCmd = history.at(history.size() - navCounter);
+
+							setCommandInTerminal(lastCmd);
+
+							if (!history.empty()) {
+								navCounter++;
+							}
+
+							break;
+						}
+						case 'B': {
+							std::cout << "\nDown arrow pressed" << std::endl;
+							std::string lastCmd;
+							lastCmd = history.at(history.size() - navCounter);
+
+							setCommandInTerminal(lastCmd);
+							if (!history.empty() && navCounter > 0) {
+								navCounter--;
+							}
+							break;
+						}
+						case 'C':
+							std::cout << "\nRight arrow pressed" << std::endl;
+							break;
+						case 'D':
+							std::cout << "\nLeft arrow pressed" << std::endl;
+							break;
+						}
+					}
+				} else if (c == '\n') {
+					std::cout << std::endl;
+					break;
+				} else if (c == 27 || c == 3) {
+					goto exitRepl;
+				} else if (c == 8 || c == 127) {  // Backspace or Delete key
+					if (!buffer.empty()) {
+						buffer.pop_back();
+						std::cout << "\b";	// Move cursor back, print space, move cursor back again
+					}
+				} else {
+					buffer += c;
+					std::cout << c << std::flush;
 				}
-			} else {
-				buffer += c;
-				std::cout << c << std::flush;
 			}
+
+			if (buffer.empty()) {
+				continue;
+			}
+
+			//		DEBUG_PRINT("AT RUNTIME");
+			std::string modified_input = buffer;
+			if (auto stat = this->execute(modified_input); stat == 0) {
+				history.push_back(buffer);
+			}
+
+			std::cout << rang::fg::blue << "%> " << rang::fg::reset;
 		}
 
-		if (buffer.empty())
-			continue;
-		DEBUG_PRINT("AT RUNTIME")
-		std::string modified_input = buffer;
-		if (auto stat = this->execute(modified_input); stat == 0) {
-			history.push_back(buffer);
-		}
+	exitRepl:
+		setRawMode(false);	// Disable raw mode
+	} catch (std::out_of_range const& err) {
 
-		std::cout << rang::fg::blue << "%> " << rang::fg::reset;
+	} catch (std::exception const& err) {
 	}
-exitRepl:
-	setRawMode(false);	// Disable raw mode
 }
