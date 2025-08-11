@@ -44,6 +44,8 @@ elseif(MSVC)
 endif()
 
 # If the package has been found, compile definitions, include directories, and link libraries are added
+find_package(CURL REQUIRED)
+
 if(NOT CURL_FOUND)
     message(FATAL_ERROR "CURL not found! Please install libcurl.")
 else ()
